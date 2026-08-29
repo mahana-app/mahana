@@ -1,0 +1,334 @@
+/* Mahana — habillage général.
+   Une seule feuille de style : l'app est petite, et tout se lit d'un coup.
+   Clair le jour, sombre la nuit (le téléphone décide tout seul). */
+
+:root {
+  --fond: #f2f6f9;
+  --carte: #ffffff;
+  --encre: #10222e;
+  --doux: #647c8c;
+  --estompe: #9aabb6;
+  --menthe: #17c3a2;
+  --menthe-sombre: #0f9c81;
+  --bleu: #4a7dff;
+  --corail: #ff7a59;
+  --or: #f7b731;
+  --bord: rgba(16, 34, 46, 0.09);
+  --piste: rgba(16, 34, 46, 0.07);
+  --ombre: 0 6px 22px rgba(16, 34, 46, 0.07);
+  --barre: rgba(255, 255, 255, 0.92);
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --fond: #0d151e;
+    --carte: #16202b;
+    --encre: #eaf2f7;
+    --doux: #93a8b6;
+    --estompe: #6c828f;
+    --bord: rgba(255, 255, 255, 0.1);
+    --piste: rgba(255, 255, 255, 0.09);
+    --ombre: 0 6px 22px rgba(0, 0, 0, 0.35);
+    --barre: rgba(22, 32, 43, 0.94);
+  }
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html,
+body,
+#root {
+  height: 100%;
+}
+
+body {
+  margin: 0;
+  background: var(--fond);
+  color: var(--encre);
+  font-family: Nunito, system-ui, -apple-system, 'Segoe UI', sans-serif;
+  font-size: 16px;
+  -webkit-font-smoothing: antialiased;
+  overscroll-behavior-y: none;
+}
+
+h1,
+h2,
+h3 {
+  margin: 0;
+  font-weight: 800;
+  letter-spacing: -0.01em;
+}
+
+button {
+  font: inherit;
+  color: inherit;
+  cursor: pointer;
+}
+
+input,
+select {
+  font: inherit;
+  color: inherit;
+}
+
+/* ---------- structure ---------- */
+
+.page {
+  max-width: 520px;
+  margin: 0 auto;
+  padding: 14px 16px calc(96px + env(safe-area-inset-bottom));
+}
+
+.entete {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 8px 2px 14px;
+}
+
+.entete h1 {
+  font-size: 24px;
+}
+
+.bonjour {
+  color: var(--doux);
+  font-size: 13px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+}
+
+.rond-entete {
+  width: 40px;
+  height: 40px;
+  border-radius: 999px;
+  border: 1px solid var(--bord);
+  background: var(--carte);
+  display: grid;
+  place-items: center;
+  box-shadow: var(--ombre);
+}
+
+.carte {
+  background: var(--carte);
+  border: 1px solid var(--bord);
+  border-radius: 20px;
+  padding: 16px;
+  box-shadow: var(--ombre);
+  margin-bottom: 14px;
+}
+
+.carte h2 {
+  font-size: 16px;
+  margin-bottom: 4px;
+}
+
+.kicker {
+  font-size: 11px;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.16em;
+  color: var(--estompe);
+}
+
+.doux {
+  color: var(--doux);
+  font-size: 14px;
+  line-height: 1.45;
+}
+
+.rangee {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.chiffre {
+  font-variant-numeric: tabular-nums;
+  font-weight: 800;
+}
+
+/* ---------- boutons ---------- */
+
+.bouton {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  width: 100%;
+  padding: 15px 20px;
+  border: 0;
+  border-radius: 999px;
+  background: linear-gradient(120deg, var(--menthe), var(--bleu));
+  color: #fff;
+  font-weight: 800;
+  font-size: 16px;
+  box-shadow: 0 8px 18px rgba(23, 195, 162, 0.28);
+}
+
+.bouton.chaud {
+  background: linear-gradient(120deg, var(--corail), var(--or));
+  box-shadow: 0 8px 18px rgba(255, 122, 89, 0.28);
+}
+
+.bouton:active {
+  transform: translateY(1px);
+}
+
+.bouton-fin {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 9px 14px;
+  border-radius: 999px;
+  border: 1px solid var(--bord);
+  background: transparent;
+  color: var(--doux);
+  font-size: 14px;
+  font-weight: 700;
+}
+
+.pilule {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 12px;
+  border-radius: 999px;
+  background: var(--piste);
+  color: var(--doux);
+  font-size: 13px;
+  font-weight: 800;
+}
+
+/* ---------- champs ---------- */
+
+.champ {
+  width: 100%;
+  padding: 12px 14px;
+  border-radius: 14px;
+  border: 1px solid var(--bord);
+  background: var(--fond);
+  font-weight: 700;
+}
+
+.etiquette {
+  display: block;
+  margin-bottom: 6px;
+  font-size: 13px;
+  font-weight: 800;
+  color: var(--doux);
+}
+
+/* ---------- barre d'onglets ---------- */
+
+.onglets {
+  position: fixed;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 5;
+  display: flex;
+  justify-content: center;
+  gap: 4px;
+  padding: 8px 8px calc(8px + env(safe-area-inset-bottom));
+  background: var(--barre);
+  backdrop-filter: blur(14px);
+  border-top: 1px solid var(--bord);
+}
+
+.onglet {
+  flex: 1 1 0;
+  max-width: 120px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 3px;
+  padding: 6px 4px;
+  border: 0;
+  background: none;
+  color: var(--estompe);
+  font-size: 11px;
+  font-weight: 800;
+}
+
+.onglet.actif {
+  color: var(--menthe);
+}
+
+/* ---------- divers ---------- */
+
+.grille-plans {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 10px;
+}
+
+.choix {
+  text-align: left;
+  padding: 14px;
+  border-radius: 16px;
+  border: 1.5px solid var(--bord);
+  background: var(--carte);
+}
+
+.choix.actif {
+  border-color: var(--menthe);
+  background: rgba(23, 195, 162, 0.08);
+}
+
+.choix b {
+  display: block;
+  font-size: 17px;
+}
+
+.choix span {
+  color: var(--doux);
+  font-size: 13px;
+  font-weight: 600;
+}
+
+.ligne-liste {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 12px 0;
+  border-bottom: 1px solid var(--bord);
+}
+
+.ligne-liste:last-child {
+  border-bottom: 0;
+}
+
+.vide {
+  text-align: center;
+  color: var(--doux);
+  padding: 26px 10px;
+  font-size: 14px;
+  line-height: 1.5;
+}
+
+@keyframes apparait {
+  from {
+    opacity: 0;
+    transform: translateY(6px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+.page > * {
+  animation: apparait 0.28s ease both;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .page > * {
+    animation: none;
+  }
+}
