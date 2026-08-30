@@ -9,6 +9,7 @@ import { useApp } from '../lib/etat'
 import { useSuiviGps } from '../lib/gps'
 import { poidsActuel } from '../lib/profil'
 import { SORTIES, allure, caloriesSortie } from '../lib/sport'
+import { nombreFr } from '../lib/formats'
 
 export default function Sortie({ fermer }: { fermer: () => void }) {
   const { etat, noterSeance } = useApp()
@@ -75,7 +76,7 @@ export default function Sortie({ fermer }: { fermer: () => void }) {
           <div style={{ fontSize: 50 }}>{type.emoji}</div>
           <h2 style={{ fontSize: 21, marginTop: 4 }}>{type.nom}</h2>
           <div className="rangee" style={{ marginTop: 18 }}>
-            <Bloc valeur={gps.distanceKm.toFixed(2)} legende="km" />
+            <Bloc valeur={nombreFr(gps.distanceKm, 2)} legende="km" />
             <Bloc valeur={chrono(secondes * 1000)} legende="durée" />
             <Bloc valeur={String(kcal)} legende="kcal" />
           </div>
@@ -131,7 +132,7 @@ export default function Sortie({ fermer }: { fermer: () => void }) {
       <div className="carte" style={{ textAlign: 'center', padding: '26px 18px' }}>
         <div className="kicker">Distance</div>
         <div className="chiffre" style={{ fontSize: 52, lineHeight: 1.1 }}>
-          {gps.distanceKm.toFixed(2)}
+          {nombreFr(gps.distanceKm, 2)}
           <span style={{ fontSize: 20, color: 'var(--doux)' }}> km</span>
         </div>
         <div className="rangee" style={{ marginTop: 20 }}>

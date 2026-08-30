@@ -8,6 +8,7 @@ import { useApp } from '../lib/etat'
 import { bilan, serie, serieLaPlusLongue } from '../lib/jeune'
 import type { Vue } from '../lib/navigation'
 import { imc, lectureImc, objectifCalories, poidsActuel } from '../lib/profil'
+import { nombreFr } from '../lib/formats'
 
 export default function Moi({ ouvrir }: { ouvrir: (vue: Vue) => void }) {
   const { etat } = useApp()
@@ -63,7 +64,7 @@ export default function Moi({ ouvrir }: { ouvrir: (vue: Vue) => void }) {
                 style={{ fontSize: 19, color: ecart <= 0 ? 'var(--menthe-fonce)' : 'var(--corail)' }}
               >
                 {ecart > 0 ? '+' : ''}
-                {ecart.toFixed(1)} kg
+                {nombreFr(ecart, 1)} kg
               </div>
               <div className="doux mini">depuis le début</div>
             </div>
@@ -73,13 +74,13 @@ export default function Moi({ ouvrir }: { ouvrir: (vue: Vue) => void }) {
         <div style={{ display: 'flex', gap: 8, marginTop: 14, flexWrap: 'wrap' }}>
           {profil.poidsBut !== null && poids !== null && (
             <span className="pilule menthe">
-              🎯 {Math.abs(poids - profil.poidsBut).toFixed(1)} kg
+              🎯 {nombreFr(Math.abs(poids - profil.poidsBut), 1)} kg
               {poids > profil.poidsBut ? ' avant l’objectif' : ' sous l’objectif'}
             </span>
           )}
           {valeurImc !== null && (
             <span className="pilule">
-              IMC {valeurImc.toFixed(1)} · {lectureImc(valeurImc)}
+              IMC {nombreFr(valeurImc, 1)} · {lectureImc(valeurImc)}
             </span>
           )}
           {kcal !== null && <span className="pilule ambre">{kcal} kcal par jour</span>}

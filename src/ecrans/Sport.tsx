@@ -8,6 +8,7 @@ import { useApp } from '../lib/etat'
 import type { Vue } from '../lib/navigation'
 import { poidsActuel } from '../lib/profil'
 import { FAMILLES, SEANCES, caloriesSeance } from '../lib/sport'
+import { nombreFr } from '../lib/formats'
 
 export default function Sport({ ouvrir }: { ouvrir: (vue: Vue) => void }) {
   const { etat, supprimerSeance } = useApp()
@@ -147,7 +148,7 @@ export default function Sport({ ouvrir }: { ouvrir: (vue: Vue) => void }) {
                   <div className="doux mini">
                     {jourRelatif(new Date(seance.jour + 'T12:00'))} · {seance.minutes} min ·{' '}
                     {seance.kcal} kcal
-                    {seance.distanceKm ? ` · ${seance.distanceKm.toFixed(2)} km` : ''}
+                    {seance.distanceKm ? ` · ${nombreFr(seance.distanceKm, 2)} km` : ''}
                   </div>
                 </div>
                 <button

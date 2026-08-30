@@ -5,6 +5,7 @@ import { useState } from 'react'
 import Entete from '../composants/Entete'
 import { clefJour, deClefJour, jourCourt } from '../lib/dates'
 import { useApp } from '../lib/etat'
+import { nombreFr } from '../lib/formats'
 
 export default function EcranCorps({ fermer }: { fermer: () => void }) {
   const { etat, noterPoids, supprimerPesee } = useApp()
@@ -51,7 +52,7 @@ export default function EcranCorps({ fermer }: { fermer: () => void }) {
                     style={{ color: ecartDepart <= 0 ? 'var(--menthe-fonce)' : 'var(--corail)' }}
                   >
                     {ecartDepart > 0 ? '+' : ''}
-                    {ecartDepart.toFixed(1)} kg depuis le début
+                    {nombreFr(ecartDepart, 1)} kg depuis le début
                   </div>
                 )}
               </div>
@@ -60,11 +61,11 @@ export default function EcranCorps({ fermer }: { fermer: () => void }) {
               <div style={{ display: 'flex', gap: 8, marginTop: 12, flexWrap: 'wrap' }}>
                 {resteAFaire !== null && (
                   <span className="pilule">
-                    🎯 {Math.abs(resteAFaire).toFixed(1)} kg
+                    🎯 {nombreFr(Math.abs(resteAFaire), 1)} kg
                     {resteAFaire > 0 ? ' avant l’objectif' : ' sous l’objectif'}
                   </span>
                 )}
-                {imc !== null && <span className="pilule">IMC {imc.toFixed(1)}</span>}
+                {imc !== null && <span className="pilule">IMC {nombreFr(imc, 1)}</span>}
               </div>
             )}
           </>
@@ -136,7 +137,7 @@ export default function EcranCorps({ fermer }: { fermer: () => void }) {
                         }}
                       >
                         {ecart > 0 ? '+' : ''}
-                        {ecart.toFixed(1)}
+                        {nombreFr(ecart, 1)}
                       </span>
                     )}
                     <button
