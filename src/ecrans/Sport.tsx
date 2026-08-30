@@ -2,6 +2,7 @@
 
 import { useMemo, useState } from 'react'
 import Entete from '../composants/Entete'
+import Symbole from '../composants/Symbole'
 import { IconeFleche, IconeGps } from '../composants/Icones'
 import { ajouterJours, clefJour, jourRelatif } from '../lib/dates'
 import { useApp } from '../lib/etat'
@@ -28,7 +29,7 @@ export default function Sport({ ouvrir, fermer }: { ouvrir: (vue: Vue) => void; 
     <div className="page">
       <Entete kicker="Bouger" titre="Séances" retour={fermer} ouvrirReglages={() => ouvrir({ nom: 'reglages' })} />
 
-      <div className="carte" style={{ background: 'var(--menthe-pale)' }}>
+      <div className="carte" style={{ background: 'var(--olive-pale)' }}>
         <div className="rangee">
           <div>
             <div className="kicker">Cette semaine</div>
@@ -40,7 +41,7 @@ export default function Sport({ ouvrir, fermer }: { ouvrir: (vue: Vue) => void; 
               {semaine.reduce((t, s) => t + s.kcal, 0)} kcal brûlées
             </div>
           </div>
-          <div style={{ fontSize: 34 }}>🏅</div>
+          <Symbole nom="medaille" taille={32} couleur="var(--argile)" />
         </div>
       </div>
 
@@ -52,7 +53,7 @@ export default function Sport({ ouvrir, fermer }: { ouvrir: (vue: Vue) => void; 
           width: '100%',
           border: 0,
           textAlign: 'left',
-          background: 'linear-gradient(120deg, #34b795, #2f8fd0)',
+          background: 'linear-gradient(120deg, #386874, #274c57)',
           color: '#fff',
         }}
         onClick={() => ouvrir({ nom: 'sortie' })}
@@ -92,7 +93,10 @@ export default function Sport({ ouvrir, fermer }: { ouvrir: (vue: Vue) => void; 
       {FAMILLES.filter((f) => famille === 'toutes' || famille === f.id).map((f) => (
         <div key={f.id}>
           <div className="titre-section" style={{ marginTop: 6 }}>
-            {f.emoji} {f.nom} — <span style={{ color: 'var(--doux)', fontWeight: 500 }}>{f.detail}</span>
+            <span style={{ display: 'inline-flex', alignItems: 'center', gap: 8, verticalAlign: 'middle' }}>
+              <Symbole nom={f.icone} taille={20} couleur={f.couleur} /> {f.nom}
+            </span>
+            <span style={{ color: 'var(--doux)', fontWeight: 400, fontSize: 15 }}> — {f.detail}</span>
           </div>
           {liste
             .filter((s) => s.categorie === f.id)
@@ -112,12 +116,21 @@ export default function Sport({ ouvrir, fermer }: { ouvrir: (vue: Vue) => void; 
                       borderRadius: 14,
                       display: 'grid',
                       placeItems: 'center',
-                      fontSize: 22,
                       background: 'var(--piste)',
                       flex: '0 0 auto',
+                      color: 'var(--doux)',
                     }}
                   >
-                    {seance.emoji}
+                    <Symbole
+                      nom={
+                        seance.categorie === 'cardio'
+                          ? 'coeur'
+                          : seance.categorie === 'pilates'
+                            ? 'lotus'
+                            : 'sport'
+                      }
+                      taille={22}
+                    />
                   </div>
                   <div style={{ flex: 1, minWidth: 0 }}>
                     <div style={{ fontWeight: 700 }}>{seance.nom}</div>

@@ -4,6 +4,7 @@
 
 import { useState } from 'react'
 import Entete from '../composants/Entete'
+import Symbole from '../composants/Symbole'
 import JaugeDemi from '../composants/JaugeDemi'
 import RegleImc from '../composants/RegleImc'
 import { ajouterJours, clefJour, heuresMinutes, initialeJour } from '../lib/dates'
@@ -116,20 +117,22 @@ export default function Progres({ ouvrir }: { ouvrir: (vue: Vue) => void }) {
       {/* le score du jour */}
       <div className="carte">
         <div className="rangee" style={{ marginBottom: 8 }}>
-          <div style={{ fontWeight: 800 }}>⭐ Score du jour</div>
+          <h2 style={{ fontSize: 19, display: 'flex', alignItems: 'center', gap: 8 }}>
+            <Symbole nom="score" taille={19} couleur="var(--argile)" /> Score du jour
+          </h2>
           <span className="doux mini">{motDuScore(score.total)}</span>
         </div>
         <JaugeDemi
           part={score.total / 100}
           centre={String(score.total)}
           legendeCentre="sur 100"
-          couleurs={['#34b795', '#f6b45e']}
+          couleurs={['#4e5b3c', '#c0603a']}
         />
         <div style={{ marginTop: 10 }}>
           {score.parties.map((partie) => (
             <div key={partie.id} className="ligne-liste">
               <div style={{ display: 'flex', alignItems: 'center', gap: 10, minWidth: 0 }}>
-                <span style={{ fontSize: 17 }}>{partie.emoji}</span>
+                <Symbole nom={partie.icone} taille={19} couleur={partie.couleur} />
                 <div style={{ minWidth: 0 }}>
                   <div style={{ fontWeight: 600, fontSize: 14 }}>{partie.nom}</div>
                   <div className="doux mini">
@@ -151,7 +154,9 @@ export default function Progres({ ouvrir }: { ouvrir: (vue: Vue) => void }) {
       {/* la série de la semaine */}
       <div className="carte">
         <div className="rangee">
-          <div style={{ fontWeight: 800 }}>🔥 Série</div>
+          <h2 style={{ fontSize: 19, display: 'flex', alignItems: 'center', gap: 8 }}>
+            <Symbole nom="flamme" taille={19} couleur="var(--argile)" /> Série
+          </h2>
           <span className="pilule corail">{serie(etat)} jours</span>
         </div>
         <div style={{ display: 'flex', gap: 6, margin: '14px 0 12px' }}>
@@ -168,9 +173,9 @@ export default function Progres({ ouvrir }: { ouvrir: (vue: Vue) => void }) {
                     borderRadius: 999,
                     display: 'grid',
                     placeItems: 'center',
-                    background: reussi ? 'var(--degrade-menthe)' : 'var(--piste)',
+                    background: reussi ? 'var(--degrade-argile)' : 'var(--piste)',
                     color: reussi ? '#fff' : 'var(--estompe)',
-                    border: clef === clefJour() ? '2px solid var(--menthe)' : '2px solid transparent',
+                    border: clef === clefJour() ? '2px solid var(--argile)' : '2px solid transparent',
                     opacity: futur ? 0.4 : 1,
                     fontWeight: 800,
                     fontSize: 13,
@@ -186,16 +191,18 @@ export default function Progres({ ouvrir }: { ouvrir: (vue: Vue) => void }) {
           })}
         </div>
         <div className="rangee">
-          <Compteur emoji="🏅" valeur={String(serieLaPlusLongue(etat))} legende="meilleure série" />
-          <Compteur emoji="⏳" valeur={String(etat.jeunes.filter(objectifAtteint).length)} legende="jeûnes réussis" />
-          <Compteur emoji="💪" valeur={String(etat.seances.length)} legende="séances" />
+          <Compteur icone="medaille" valeur={String(serieLaPlusLongue(etat))} legende="meilleure série" />
+          <Compteur icone="jeune" valeur={String(etat.jeunes.filter(objectifAtteint).length)} legende="jeûnes réussis" />
+          <Compteur icone="sport" valeur={String(etat.seances.length)} legende="séances" />
         </div>
       </div>
 
       {/* l'IMC */}
       {valeurImc !== null && (
         <div className="carte">
-          <div style={{ fontWeight: 800, marginBottom: 8 }}>⚖️ Indice de masse corporelle</div>
+          <h2 style={{ fontSize: 19, marginBottom: 8, display: 'flex', alignItems: 'center', gap: 8 }}>
+            <Symbole nom="poids" taille={19} couleur="var(--miel)" /> Indice de masse corporelle
+          </h2>
           <RegleImc valeur={valeurImc} />
           <p className="doux mini" style={{ margin: '12px 0 0' }}>
             L'IMC ne distingue pas le muscle de la graisse : c'est un repère, pas un verdict.
@@ -218,7 +225,7 @@ export default function Progres({ ouvrir }: { ouvrir: (vue: Vue) => void }) {
                 border: 0,
                 fontWeight: 700,
                 fontSize: 14,
-                background: type === valeur ? 'var(--degrade-menthe)' : 'transparent',
+                background: type === valeur ? 'var(--degrade-argile)' : 'transparent',
                 color: type === valeur ? '#fff' : 'var(--doux)',
               }}
             >
@@ -243,25 +250,29 @@ export default function Progres({ ouvrir }: { ouvrir: (vue: Vue) => void }) {
       {/* les calories, en barres empilées */}
       <div className="carte">
         <div className="rangee">
-          <div style={{ fontWeight: 800 }}>🍽️ Calories</div>
+          <h2 style={{ fontSize: 19, display: 'flex', alignItems: 'center', gap: 8 }}>
+            <Symbole nom="dejeuner" taille={19} couleur="var(--olive)" /> Calories
+          </h2>
           {but && <span className="doux mini">objectif {but} kcal</span>}
         </div>
         <BarresEmpilees cases={totaux} />
         <div style={{ display: 'flex', gap: 14, marginTop: 10, flexWrap: 'wrap' }}>
-          <Legende couleur="var(--ambre)" nom="Glucides" />
-          <Legende couleur="var(--menthe)" nom="Protéines" />
-          <Legende couleur="var(--corail)" nom="Lipides" />
+          <Legende couleur="var(--miel)" nom="Glucides" />
+          <Legende couleur="var(--olive)" nom="Protéines" />
+          <Legende couleur="var(--argile)" nom="Lipides" />
         </div>
       </div>
 
       {/* le jeûne */}
       <div className="carte">
-        <div style={{ fontWeight: 800, marginBottom: 4 }}>⏳ Heures de jeûne</div>
+        <h2 style={{ fontSize: 19, marginBottom: 4, display: 'flex', alignItems: 'center', gap: 8 }}>
+          <Symbole nom="jeune" taille={19} couleur="var(--argile)" /> Heures de jeûne
+        </h2>
         <Barres
           cases={totaux.map((c) => ({
             libelle: c.libelle,
             valeur: c.heuresJeune,
-            couleur: c.jeuneReussi ? 'var(--degrade-menthe)' : 'var(--piste)',
+            couleur: c.jeuneReussi ? 'var(--degrade-argile)' : 'var(--piste)',
           }))}
           unite="h"
         />
@@ -269,14 +280,16 @@ export default function Progres({ ouvrir }: { ouvrir: (vue: Vue) => void }) {
 
       {/* les pas */}
       <div className="carte">
-        <div style={{ fontWeight: 800, marginBottom: 4 }}>👟 Pas</div>
+        <h2 style={{ fontSize: 19, marginBottom: 4, display: 'flex', alignItems: 'center', gap: 8 }}>
+          <Symbole nom="pas" taille={19} couleur="var(--miel)" /> Pas
+        </h2>
         <Barres
           cases={totaux.map((c) => ({
             libelle: c.libelle,
             valeur: c.pas,
             couleur:
               c.pas >= etat.profil.butPas
-                ? 'linear-gradient(180deg, #f6b45e, #f4886c)'
+                ? 'linear-gradient(180deg, #c89a5b, #c0603a)'
                 : 'var(--piste)',
           }))}
           unite=""
@@ -285,12 +298,14 @@ export default function Progres({ ouvrir }: { ouvrir: (vue: Vue) => void }) {
 
       {/* le sport */}
       <div className="carte">
-        <div style={{ fontWeight: 800, marginBottom: 4 }}>💪 Minutes de sport</div>
+        <h2 style={{ fontSize: 19, marginBottom: 4, display: 'flex', alignItems: 'center', gap: 8 }}>
+          <Symbole nom="sport" taille={19} couleur="var(--canard)" /> Minutes de sport
+        </h2>
         <Barres
           cases={totaux.map((c) => ({
             libelle: c.libelle,
             valeur: c.minutesSport,
-            couleur: c.minutesSport ? 'linear-gradient(180deg, #b09ae6, #8f74dd)' : 'var(--piste)',
+            couleur: c.minutesSport ? 'linear-gradient(180deg, #386874, #274c57)' : 'var(--piste)',
           }))}
           unite="min"
         />
@@ -304,10 +319,20 @@ export default function Progres({ ouvrir }: { ouvrir: (vue: Vue) => void }) {
 
 /* ---------- petits blocs ---------- */
 
-function Compteur({ emoji, valeur, legende }: { emoji: string; valeur: string; legende: string }) {
+function Compteur({
+  icone,
+  valeur,
+  legende,
+}: {
+  icone: Parameters<typeof Symbole>[0]['nom']
+  valeur: string
+  legende: string
+}) {
   return (
     <div style={{ flex: 1, textAlign: 'center' }}>
-      <div style={{ fontSize: 17 }}>{emoji}</div>
+      <div style={{ display: 'flex', justifyContent: 'center', color: 'var(--doux)' }}>
+        <Symbole nom={icone} taille={18} />
+      </div>
       <div className="chiffre" style={{ fontSize: 20 }}>
         {valeur}
       </div>
@@ -381,9 +406,9 @@ function BarresEmpilees({
         const total = valeur(c)
         const hauteur = Math.max(4, (total / maximum) * 78)
         const parts = [
-          { valeur: c.glucides * 4, couleur: 'var(--ambre)' },
-          { valeur: c.proteines * 4, couleur: 'var(--menthe)' },
-          { valeur: c.lipides * 9, couleur: 'var(--corail)' },
+          { valeur: c.glucides * 4, couleur: 'var(--miel)' },
+          { valeur: c.proteines * 4, couleur: 'var(--olive)' },
+          { valeur: c.lipides * 9, couleur: 'var(--argile)' },
         ]
         return (
           <div key={index} style={{ flex: 1, textAlign: 'center', minWidth: 0 }}>
@@ -432,7 +457,9 @@ function CourbePoids({
     return (
       <div className="carte">
         <div className="rangee">
-          <div style={{ fontWeight: 800 }}>⚖️ Poids</div>
+          <h2 style={{ fontSize: 19, display: 'flex', alignItems: 'center', gap: 8 }}>
+            <Symbole nom="poids" taille={19} couleur="var(--olive)" /> Poids
+          </h2>
           {dernier && (
             <span className="chiffre">{nombreFr(dernier.poids, 1)} kg</span>
           )}
@@ -462,7 +489,7 @@ function CourbePoids({
         <div style={{ fontWeight: 800 }}>⚖️ Poids</div>
         <span
           className="chiffre mini"
-          style={{ color: ecart <= 0 ? 'var(--menthe-fonce)' : 'var(--corail)' }}
+          style={{ color: ecart <= 0 ? 'var(--argile-fonce)' : 'var(--miel)' }}
         >
           {ecart > 0 ? '+' : ''}
           {nombreFr(ecart, 1)} kg sur la période
@@ -471,17 +498,17 @@ function CourbePoids({
       <svg viewBox={`0 0 ${largeur} ${hauteur}`} width="100%" height={hauteur} style={{ marginTop: 8 }}>
         <defs>
           <linearGradient id="degradeProgres" x1="0" y1="0" x2="0" y2="1">
-            <stop offset="0%" stopColor="#34b795" stopOpacity="0.28" />
-            <stop offset="100%" stopColor="#34b795" stopOpacity="0" />
+            <stop offset="0%" stopColor="#4e5b3c" stopOpacity="0.28" />
+            <stop offset="100%" stopColor="#4e5b3c" stopOpacity="0" />
           </linearGradient>
         </defs>
         <path
           d={`${trace} L ${x(points[points.length - 1].i)} ${hauteur} L ${x(points[0].i)} ${hauteur} Z`}
           fill="url(#degradeProgres)"
         />
-        <path d={trace} fill="none" stroke="#34b795" strokeWidth="2.5" strokeLinecap="round" />
+        <path d={trace} fill="none" stroke="#4e5b3c" strokeWidth="2.5" strokeLinecap="round" />
         {points.map((p) => (
-          <circle key={p.i} cx={x(p.i)} cy={y(p.poids)} r="3.5" fill="#34b795" />
+          <circle key={p.i} cx={x(p.i)} cy={y(p.poids)} r="3.5" fill="#4e5b3c" />
         ))}
       </svg>
       <div className="rangee doux mini">

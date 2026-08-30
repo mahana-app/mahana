@@ -1,6 +1,7 @@
 /* Le cœur du sujet : les rythmes de jeûne, ce qui se passe dans le corps
    au fil des heures, la série de jours et les défis obtenus. */
 
+import type { NomSymbole } from '../composants/Symbole'
 import type { Etat, Jeune } from './stockage'
 import { ajouterJours, clefJour } from './dates'
 
@@ -34,6 +35,8 @@ export type Phase = {
   nom: string
   texte: string
   emoji: string
+  /** Le symbole au trait, dessiné dans composants/Symbole.tsx. */
+  icone: NomSymbole
 }
 
 /* Repères de vulgarisation, pas une promesse médicale : chaque corps a son
@@ -43,36 +46,42 @@ export const PHASES: Phase[] = [
     debut: 0,
     nom: 'Digestion',
     emoji: '🍽️',
+    icone: 'dejeuner',
     texte: "Le dernier repas est en train d'être absorbé. Le corps travaille dessus.",
   },
   {
     debut: 4,
     nom: 'Réserves de sucre',
     emoji: '🔋',
+    icone: 'batterie',
     texte: "La digestion est finie. L'énergie vient maintenant du sucre mis en réserve.",
   },
   {
     debut: 12,
     nom: 'Combustion des graisses',
     emoji: '🔥',
+    icone: 'flamme',
     texte: 'Les réserves de sucre baissent : le corps commence à puiser dans les graisses.',
   },
   {
     debut: 16,
     nom: 'Cétose',
     emoji: '✨',
+    icone: 'etincelle',
     texte: 'Les graisses deviennent le carburant principal. La faim se calme souvent ici.',
   },
   {
     debut: 24,
     nom: 'Autophagie',
     emoji: '🧹',
+    icone: 'renouveau',
     texte: 'Le grand ménage : les cellules recyclent ce qui est usé.',
   },
   {
     debut: 48,
     nom: 'Jeûne long',
     emoji: '⛰️',
+    icone: 'montagne',
     texte: 'Au-delà de deux jours, ne rien faire sans avis médical.',
   },
 ]

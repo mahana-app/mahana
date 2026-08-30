@@ -9,6 +9,7 @@
    repos. Il sert à estimer les calories brûlées, avec le poids de la
    personne — sans capteur, c'est la meilleure approximation possible. */
 
+import type { NomSymbole } from '../composants/Symbole'
 import type { CategorieSport } from './stockage'
 
 export type Exercice = {
@@ -40,6 +41,7 @@ export const FAMILLES: Array<{
   nom: string
   detail: string
   emoji: string
+  icone: NomSymbole
   couleur: string
 }> = [
   {
@@ -47,21 +49,24 @@ export const FAMILLES: Array<{
     nom: 'Cardio',
     detail: 'Faire monter le cœur, brûler',
     emoji: '🔥',
-    couleur: 'var(--corail)',
+    icone: 'coeur',
+    couleur: 'var(--argile)',
   },
   {
     id: 'pilates',
     nom: 'Pilates',
     detail: 'Gainage, posture, souplesse',
     emoji: '🧘‍♀️',
-    couleur: 'var(--lavande)',
+    icone: 'lotus',
+    couleur: 'var(--canard)',
   },
   {
     id: 'muscu',
     nom: 'Musculation',
     detail: 'Garder le muscle en perdant',
     emoji: '💪',
-    couleur: 'var(--menthe)',
+    icone: 'sport',
+    couleur: 'var(--olive)',
   },
 ]
 
@@ -301,15 +306,16 @@ export type TypeSortie = {
   id: string
   nom: string
   emoji: string
+  icone: NomSymbole
   /** Calories par kilo de poids et par kilomètre parcouru. */
   parKgParKm: number
 }
 
 export const SORTIES: TypeSortie[] = [
-  { id: 'marche', nom: 'Marche', emoji: '🚶‍♀️', parKgParKm: 0.5 },
-  { id: 'course', nom: 'Course', emoji: '🏃‍♀️', parKgParKm: 0.95 },
-  { id: 'velo', nom: 'Vélo', emoji: '🚴‍♀️', parKgParKm: 0.28 },
-  { id: 'rando', nom: 'Randonnée', emoji: '🥾', parKgParKm: 0.6 },
+  { id: 'marche', nom: 'Marche', emoji: '🚶‍♀️', icone: 'marche', parKgParKm: 0.5 },
+  { id: 'course', nom: 'Course', emoji: '🏃‍♀️', icone: 'course', parKgParKm: 0.95 },
+  { id: 'velo', nom: 'Vélo', emoji: '🚴‍♀️', icone: 'velo', parKgParKm: 0.28 },
+  { id: 'rando', nom: 'Randonnée', emoji: '🥾', icone: 'montagne', parKgParKm: 0.6 },
 ]
 
 export function caloriesSortie(sortie: TypeSortie, distanceKm: number, poidsKg: number): number {

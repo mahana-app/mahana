@@ -3,6 +3,8 @@
    répondre sans qu'on ait à chercher. */
 
 import JaugeDemi from '../composants/JaugeDemi'
+import Symbole from '../composants/Symbole'
+import type { NomSymbole } from '../composants/Symbole'
 import { IconeFleche } from '../composants/Icones'
 import type { Onglet } from '../composants/BarreOnglets'
 import { clefJour, duree, heuresMinutes, initialeJour, septDerniersJours } from '../lib/dates'
@@ -17,11 +19,17 @@ import { recetteDuJour } from '../lib/recettes'
 import { scoreDuJour } from '../lib/score'
 import type { MomentRepas } from '../lib/stockage'
 
-const REPAS: Array<{ id: MomentRepas; nom: string; emoji: string; fond: string }> = [
-  { id: 'petit-dejeuner', nom: 'Petit-déjeuner', emoji: '🌅', fond: 'var(--menthe-pale)' },
-  { id: 'dejeuner', nom: 'Déjeuner', emoji: '🍽️', fond: 'var(--ambre-pale)' },
-  { id: 'diner', nom: 'Dîner', emoji: '🌙', fond: 'var(--lavande-pale)' },
-  { id: 'encas', nom: 'En-cas', emoji: '🍎', fond: 'var(--corail-pale)' },
+const REPAS: Array<{
+  id: MomentRepas
+  nom: string
+  icone: NomSymbole
+  fond: string
+  couleur: string
+}> = [
+  { id: 'petit-dejeuner', nom: 'Petit-déjeuner', icone: 'petit-dejeuner', fond: 'var(--miel-pale)', couleur: 'var(--miel)' },
+  { id: 'dejeuner', nom: 'Déjeuner', icone: 'dejeuner', fond: 'var(--olive-pale)', couleur: 'var(--olive)' },
+  { id: 'diner', nom: 'Dîner', icone: 'diner', fond: 'var(--canard-pale)', couleur: 'var(--canard)' },
+  { id: 'encas', nom: 'En-cas', icone: 'encas', fond: 'var(--argile-pale)', couleur: 'var(--argile)' },
 ]
 
 export default function Accueil({
@@ -71,35 +79,39 @@ export default function Accueil({
             width: 46,
             height: 46,
             borderRadius: 999,
-            border: '2px solid var(--menthe)',
-            background: 'var(--menthe-pale)',
-            color: 'var(--menthe-fonce)',
-            fontWeight: 800,
-            fontSize: 18,
+            border: '2px solid var(--argile)',
+            background: 'var(--creme)',
+            color: 'var(--argile)',
+            display: 'grid',
+            placeItems: 'center',
             flex: '0 0 auto',
           }}
         >
-          {(prenom[0] ?? '🙂').toUpperCase()}
+          <Symbole nom="soleil" taille={24} epaisseur={1.8} />
         </button>
         <div style={{ flex: 1, minWidth: 0 }}>
           <div className="bonjour">{salut}</div>
           <h1 style={{ fontSize: 20 }}>{prenom || 'Votre journée'}</h1>
         </div>
-        <span className="pilule corail">🔥 {totaux.kcalBrulees}</span>
+        <span className="pilule corail">
+          <Symbole nom="flamme" taille={14} /> {totaux.kcalBrulees}
+        </span>
         <button
           type="button"
           className="pilule menthe"
           style={{ border: 0 }}
           onClick={() => allerA('progres')}
         >
-          ⭐ {score.total}
+          <Symbole nom="score" taille={14} /> {score.total}
         </button>
       </header>
 
       {/* les calories du jour */}
       <div className="carte">
         <div className="rangee" style={{ marginBottom: 6 }}>
-          <div style={{ fontWeight: 800 }}>🔥 Calories</div>
+          <h2 style={{ fontSize: 19, display: 'flex', alignItems: 'center', gap: 8 }}>
+            <Symbole nom="flamme" taille={19} couleur="var(--argile)" /> Calories
+          </h2>
           <button type="button" className="pilule" onClick={() => allerA('repas')}>
             Détail
           </button>
@@ -117,9 +129,9 @@ export default function Accueil({
 
         {macros && (
           <div className="grille3" style={{ marginTop: 10 }}>
-            <Macro nom="Glucides" valeur={totaux.glucides} but={macros.glucides} couleur="var(--ambre)" />
-            <Macro nom="Protéines" valeur={totaux.proteines} but={macros.proteines} couleur="var(--menthe)" />
-            <Macro nom="Lipides" valeur={totaux.lipides} but={macros.lipides} couleur="var(--corail)" />
+            <Macro nom="Glucides" valeur={totaux.glucides} but={macros.glucides} couleur="var(--miel)" />
+            <Macro nom="Protéines" valeur={totaux.proteines} but={macros.proteines} couleur="var(--olive)" />
+            <Macro nom="Lipides" valeur={totaux.lipides} but={macros.lipides} couleur="var(--argile)" />
           </div>
         )}
 
@@ -132,9 +144,9 @@ export default function Accueil({
               style={{ boxShadow: 'none', background: repas.fond, padding: '10px 12px' }}
               onClick={() => ouvrir({ nom: 'ajout', moment: repas.id })}
             >
-              <span style={{ fontSize: 17 }}>{repas.emoji}</span>
+              <Symbole nom={repas.icone} taille={18} couleur={repas.couleur} />
               <span style={{ flex: 1, fontSize: 13 }}>{repas.nom}</span>
-              <span style={{ fontWeight: 800, color: 'var(--menthe-fonce)' }}>+</span>
+              <span style={{ fontWeight: 600, color: repas.couleur }}>+</span>
             </button>
           ))}
         </div>
@@ -143,7 +155,9 @@ export default function Accueil({
       {/* eau et pas, côte à côte */}
       <div className="grille2">
         <div className="carte" style={{ marginBottom: 0 }}>
-          <div style={{ fontWeight: 800 }}>💧 Eau</div>
+          <h2 style={{ fontSize: 17, display: 'flex', alignItems: 'center', gap: 7 }}>
+            <Symbole nom="eau" taille={17} couleur="var(--canard)" /> Eau
+          </h2>
           <div className="chiffre" style={{ fontSize: 26, marginTop: 6 }}>
             {totaux.verres}
             <span className="doux" style={{ fontSize: 14, fontWeight: 700 }}>
@@ -167,7 +181,9 @@ export default function Accueil({
         </div>
 
         <div className="carte" style={{ marginBottom: 0 }}>
-          <div style={{ fontWeight: 800 }}>👟 Pas</div>
+          <h2 style={{ fontSize: 17, display: 'flex', alignItems: 'center', gap: 7 }}>
+            <Symbole nom="pas" taille={17} couleur="var(--miel)" /> Pas
+          </h2>
           <div className="chiffre" style={{ fontSize: 26, marginTop: 6 }}>
             {totaux.pas.toLocaleString('fr-FR')}
           </div>
@@ -196,7 +212,9 @@ export default function Accueil({
       >
         <div className="rangee">
           <div>
-            <div className="kicker">⏳ Minuteur de jeûne</div>
+            <div className="kicker" style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
+              <Symbole nom="jeune" taille={13} /> Minuteur de jeûne
+            </div>
             {enCours ? (
               <>
                 <div className="chiffre" style={{ fontSize: 25 }}>
@@ -214,7 +232,11 @@ export default function Accueil({
             )}
           </div>
           <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
-            {jours > 0 && <span className="pilule corail">🔥 {jours} j</span>}
+            {jours > 0 && (
+              <span className="pilule corail">
+                <Symbole nom="flamme" taille={13} /> {jours} j
+              </span>
+            )}
             <IconeFleche />
           </div>
         </div>
@@ -251,7 +273,9 @@ export default function Accueil({
           <div className="rangee">
             <div>
               <div className="kicker">Défis</div>
-              <div style={{ fontWeight: 700 }}>🎯 Choisir un défi pour la semaine</div>
+              <div style={{ fontWeight: 600, display: 'flex', alignItems: 'center', gap: 8 }}>
+                <Symbole nom="defi" taille={17} couleur="var(--argile)" /> Choisir un défi pour la semaine
+              </div>
               <div className="doux mini">Une règle simple, sept jours</div>
             </div>
             <IconeFleche />
@@ -301,7 +325,9 @@ export default function Accueil({
       <div className="carte">
         <div className="rangee" style={{ alignItems: 'flex-start' }}>
           <div>
-            <div className="kicker">💪 Entraînement</div>
+            <div className="kicker" style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
+              <Symbole nom="sport" taille={13} /> Entraînement
+            </div>
             <div className="chiffre" style={{ fontSize: 26 }}>
               {totaux.minutesSport} min
             </div>
@@ -315,7 +341,7 @@ export default function Accueil({
                     width: 16,
                     height: 34,
                     borderRadius: 6,
-                    background: minutes ? 'var(--degrade-menthe)' : 'var(--piste)',
+                    background: minutes ? 'var(--degrade-argile)' : 'var(--piste)',
                   }}
                 />
                 <div style={{ fontSize: 9, marginTop: 3, color: 'var(--estompe)', fontWeight: 700 }}>
@@ -343,7 +369,9 @@ export default function Accueil({
           style={{ marginBottom: 0, border: 0, textAlign: 'left' }}
           onClick={() => ouvrir({ nom: 'activite' })}
         >
-          <div style={{ fontWeight: 800 }}>🌙 Sommeil</div>
+          <h2 style={{ fontSize: 17, display: 'flex', alignItems: 'center', gap: 7 }}>
+            <Symbole nom="sommeil" taille={17} couleur="var(--sauge)" /> Sommeil
+          </h2>
           {nuit ? (
             <>
               <div className="chiffre" style={{ fontSize: 22, marginTop: 6 }}>
@@ -366,7 +394,9 @@ export default function Accueil({
           style={{ marginBottom: 0, border: 0, textAlign: 'left' }}
           onClick={() => allerA('progres')}
         >
-          <div style={{ fontWeight: 800 }}>⭐ Score</div>
+          <h2 style={{ fontSize: 17, display: 'flex', alignItems: 'center', gap: 7 }}>
+            <Symbole nom="score" taille={17} couleur="var(--argile)" /> Score
+          </h2>
           <div className="chiffre" style={{ fontSize: 22, marginTop: 6 }}>
             {score.total}
             <span className="doux" style={{ fontSize: 13, fontWeight: 700 }}> / 100</span>
@@ -424,14 +454,13 @@ export default function Accueil({
                 width: 52,
                 height: 52,
                 borderRadius: 16,
-                background: 'var(--menthe-pale)',
+                background: 'var(--olive-pale)',
                 display: 'grid',
                 placeItems: 'center',
-                fontSize: 25,
                 flex: '0 0 auto',
               }}
             >
-              {lecon.emoji}
+              <Symbole nom="lecon" taille={24} couleur="var(--olive)" />
             </span>
             <div style={{ flex: 1, minWidth: 0 }}>
               <div className="kicker">Comprendre · {lecon.minutes} min</div>

@@ -11,7 +11,7 @@ export default function JaugeDemi({
   legendeGauche,
   droite,
   legendeDroite,
-  couleurs = ['#34b795', '#f4886c'],
+  couleurs = ['#c0603a', '#4e5b3c'],
 }: {
   /** De 0 à 1. */
   part: number

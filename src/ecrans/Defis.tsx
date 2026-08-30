@@ -51,7 +51,7 @@ export default function Defis({ fermer }: { fermer: () => void }) {
                 border: 0,
                 fontWeight: 700,
                 fontSize: 13.5,
-                background: vue === id ? 'var(--degrade-menthe)' : 'transparent',
+                background: vue === id ? 'var(--degrade-argile)' : 'transparent',
                 color: vue === id ? '#fff' : 'var(--doux)',
               }}
             >
@@ -115,7 +115,7 @@ function PartieDefis() {
                     aspectRatio: '1',
                     borderRadius: 14,
                     border: jour === aujourdhui ? `2px solid ${defi.couleur}` : '2px solid transparent',
-                    background: tenu ? defi.couleur : passe ? 'var(--corail-pale)' : 'var(--piste)',
+                    background: tenu ? defi.couleur : passe ? 'var(--miel-pale)' : 'var(--piste)',
                     color: tenu ? '#fff' : 'var(--estompe)',
                     fontWeight: 800,
                     fontSize: 13,
@@ -154,7 +154,7 @@ function PartieDefis() {
         <button
           type="button"
           className="bouton-fin"
-          style={{ width: '100%', color: 'var(--corail)' }}
+          style={{ width: '100%', color: 'var(--miel)' }}
           onClick={() => {
             if (confirm('Abandonner ce défi ? Il ne comptera pas dans le palmarès.')) arreterDefi()
           }}
@@ -169,7 +169,7 @@ function PartieDefis() {
 
   return (
     <>
-      <div className="carte" style={{ background: 'var(--menthe-pale)' }}>
+      <div className="carte" style={{ background: 'var(--olive-pale)' }}>
         <h2 style={{ fontSize: 17 }}>Un défi, sept jours</h2>
         <p className="doux" style={{ margin: '6px 0 0' }}>
           Sept jours, c'est assez court pour ne pas craquer et assez long pour que l'envie passe.
@@ -307,7 +307,7 @@ function PartieHabitudes() {
         <button
           type="button"
           className="bouton-fin"
-          style={{ width: '100%', color: 'var(--corail)' }}
+          style={{ width: '100%', color: 'var(--miel)' }}
           onClick={() => {
             if (confirm('Abandonner cette habitude ?')) arreterHabitude()
           }}
@@ -320,7 +320,7 @@ function PartieHabitudes() {
 
   return (
     <>
-      <div className="carte" style={{ background: 'var(--lavande-pale)' }}>
+      <div className="carte" style={{ background: 'var(--canard-pale)' }}>
         <h2 style={{ fontSize: 17 }}>Une habitude, vingt et un jours</h2>
         <p className="doux" style={{ margin: '6px 0 0' }}>
           Trois semaines, c'est le temps qu'il faut pour qu'un geste devienne automatique. Une

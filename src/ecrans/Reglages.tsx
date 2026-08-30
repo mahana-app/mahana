@@ -150,7 +150,7 @@ export default function EcranReglages({ fermer }: { fermer: () => void }) {
         </div>
       </div>
 
-      <div className="carte" style={{ background: 'var(--menthe-pale)' }}>
+      <div className="carte" style={{ background: 'var(--olive-pale)' }}>
         <div className="kicker">Ce que ça donne</div>
         <div className="ligne-liste" style={{ borderColor: 'rgba(29,47,56,.1)' }}>
           <span className="doux">Dépense d'une journée</span>
@@ -334,7 +334,7 @@ export default function EcranReglages({ fermer }: { fermer: () => void }) {
       <button
         type="button"
         className="bouton-fin"
-        style={{ width: '100%', color: 'var(--corail)' }}
+        style={{ width: '100%', color: 'var(--miel)' }}
         onClick={() => {
           if (confirm('Tout effacer : jeûnes, repas, séances, pesées, défis et réglages. Sûr ?')) {
             toutEffacer()

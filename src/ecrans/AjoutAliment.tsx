@@ -95,7 +95,7 @@ export default function AjoutAliment({
           </div>
         </div>
 
-        <div className="carte" style={{ background: 'var(--menthe-pale)' }}>
+        <div className="carte" style={{ background: 'var(--olive-pale)' }}>
           <div className="rangee">
             <div>
               <div className="kicker">Ça fait</div>

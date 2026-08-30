@@ -25,7 +25,7 @@ export default function EcranEau({ fermer }: { fermer: () => void }) {
       <Entete kicker="Hydratation" titre="Mon eau du jour" retour={fermer} />
 
       <div style={{ padding: '4px 0 16px' }}>
-        <Anneau progression={bus / but} taille={210} couleurs={['#6aa9f0', '#34b795']}>
+        <Anneau progression={bus / but} taille={210} couleurs={['#386874', '#8b9a79']}>
           <div style={{ fontSize: 30 }}>💧</div>
           <div className="chiffre" style={{ fontSize: 34, marginTop: 2 }}>
             {bus} / {but}
@@ -69,7 +69,7 @@ export default function EcranEau({ fermer }: { fermer: () => void }) {
                 borderRadius: '8px 8px 14px 14px',
                 border: `2px solid ${i < bus ? 'transparent' : 'var(--bord)'}`,
                 background:
-                  i < bus ? 'linear-gradient(160deg, #6aa9f0, #34b795)' : 'var(--piste)',
+                  i < bus ? 'linear-gradient(160deg, #386874, #8b9a79)' : 'var(--piste)',
                 color: '#fff',
                 fontSize: 16,
               }}
@@ -107,7 +107,7 @@ export default function EcranEau({ fermer }: { fermer: () => void }) {
                   borderRadius: 8,
                   background:
                     verres >= but
-                      ? 'linear-gradient(180deg, #6aa9f0, #34b795)'
+                      ? 'linear-gradient(180deg, #386874, #8b9a79)'
                       : 'var(--piste)',
                   marginTop: 4,
                 }}
@@ -117,7 +117,7 @@ export default function EcranEau({ fermer }: { fermer: () => void }) {
                   fontSize: 10,
                   marginTop: 6,
                   fontWeight: 800,
-                  color: clef === aujourdhui ? 'var(--menthe)' : 'var(--estompe)',
+                  color: clef === aujourdhui ? 'var(--argile)' : 'var(--estompe)',
                 }}
               >
                 {clef === aujourdhui ? "auj." : jourCourt(jour).split(' ')[0]}

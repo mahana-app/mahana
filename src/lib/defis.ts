@@ -31,7 +31,7 @@ export const DEFIS: Defi[] = [
     emoji: '🍬',
     promesse: 'Aucun sucre ajouté : ni soda, ni bonbon, ni gâteau, ni sucre dans le café.',
     pourquoi: "Le sucre appelle le sucre. Une semaine suffit à casser l'envie, et l'eau part avec.",
-    couleur: 'var(--corail)',
+    couleur: 'var(--miel)',
   },
   {
     id: 'sans-feculents-soir',
@@ -39,7 +39,7 @@ export const DEFIS: Defi[] = [
     emoji: '🍚',
     promesse: 'Le soir : protéines et légumes. Pas de riz, pain, pâtes, uru ni taro.',
     pourquoi: 'Le corps stocke moins la nuit, et la digestion plus légère fait mieux dormir.',
-    couleur: 'var(--ambre)',
+    couleur: 'var(--miel)',
   },
   {
     id: 'sans-feculents',
@@ -47,7 +47,7 @@ export const DEFIS: Defi[] = [
     emoji: '🥗',
     promesse: 'Aucun féculent de la journée : ni riz, ni pain, ni pâtes, ni uru, ni taro.',
     pourquoi: "Le défi le plus dur de la liste. À ne tenter qu'après avoir réussi celui du soir.",
-    couleur: 'var(--menthe)',
+    couleur: 'var(--argile)',
   },
   {
     id: 'dodo-21h',
@@ -55,7 +55,7 @@ export const DEFIS: Defi[] = [
     emoji: '🌙',
     promesse: 'Couchée avant 21 h, tous les soirs.',
     pourquoi: 'Mal dormir dérègle la faim du lendemain. C’est le levier le plus sous-estimé.',
-    couleur: 'var(--lavande)',
+    couleur: 'var(--canard)',
   },
   {
     id: 'dix-mille-pas',
@@ -63,7 +63,7 @@ export const DEFIS: Defi[] = [
     emoji: '👟',
     promesse: 'Dix mille pas, sept jours de suite.',
     pourquoi: 'La marche brûle sans fatiguer et sans donner faim, contrairement au sport intense.',
-    couleur: 'var(--menthe)',
+    couleur: 'var(--argile)',
   },
   {
     id: 'deux-litres',
@@ -71,7 +71,7 @@ export const DEFIS: Defi[] = [
     emoji: '💧',
     promesse: "Boire son objectif d'eau chaque jour de la semaine.",
     pourquoi: 'On confond souvent la soif et la faim. Boire d’abord, manger ensuite.',
-    couleur: 'var(--bleu)',
+    couleur: 'var(--canard)',
   },
   {
     id: 'sans-grignotage',
@@ -79,7 +79,7 @@ export const DEFIS: Defi[] = [
     emoji: '🚫',
     promesse: 'Trois repas, rien entre les deux. Eau, thé et café noir autorisés.',
     pourquoi: 'Ce sont les grignotages, pas les repas, qui font déborder la journée.',
-    couleur: 'var(--corail)',
+    couleur: 'var(--miel)',
   },
   {
     id: 'sport-30',
@@ -87,7 +87,7 @@ export const DEFIS: Defi[] = [
     emoji: '🏃‍♀️',
     promesse: 'Une demi-heure de mouvement par jour, marche comprise.',
     pourquoi: 'Sept jours d’affilée, c’est ce qui transforme le sport en réflexe.',
-    couleur: 'var(--ambre)',
+    couleur: 'var(--miel)',
   },
   {
     id: 'legumes',
@@ -95,7 +95,7 @@ export const DEFIS: Defi[] = [
     emoji: '🥦',
     promesse: 'Une vraie part de légumes au déjeuner et au dîner.',
     pourquoi: 'On mange moins du reste sans avoir à se priver : le volume remplit.',
-    couleur: 'var(--menthe)',
+    couleur: 'var(--argile)',
   },
   {
     id: 'sans-alcool',
@@ -103,7 +103,7 @@ export const DEFIS: Defi[] = [
     emoji: '🍹',
     promesse: 'Pas une goutte pendant sept jours.',
     pourquoi: "L'alcool est du sucre liquide, et il coupe le sommeil profond.",
-    couleur: 'var(--lavande)',
+    couleur: 'var(--canard)',
   },
   {
     id: 'sans-ecran',
@@ -111,7 +111,7 @@ export const DEFIS: Defi[] = [
     emoji: '📵',
     promesse: 'Téléphone et télé éteints après 21 h.',
     pourquoi: 'La lumière des écrans retarde l’endormissement d’une bonne heure.',
-    couleur: 'var(--bleu)',
+    couleur: 'var(--canard)',
   },
   {
     id: 'jeune-quotidien',
@@ -119,7 +119,7 @@ export const DEFIS: Defi[] = [
     emoji: '⏳',
     promesse: 'Atteindre son objectif de jeûne chaque jour de la semaine.',
     pourquoi: 'C’est la régularité qui fait le résultat, pas la durée d’un seul jeûne.',
-    couleur: 'var(--corail)',
+    couleur: 'var(--miel)',
   },
 ]
 

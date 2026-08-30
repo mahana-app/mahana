@@ -23,7 +23,7 @@ export const HABITUDES: Habitude[] = [
     emoji: '🥛',
     promesse: 'Avant le café, avant le téléphone : un grand verre d’eau.',
     pourquoi: 'On se réveille déshydratée. C’est l’habitude la plus facile à tenir de la liste.',
-    couleur: 'var(--bleu)',
+    couleur: 'var(--canard)',
   },
   {
     id: 'marche-30',
@@ -31,7 +31,7 @@ export const HABITUDES: Habitude[] = [
     emoji: '🚶‍♀️',
     promesse: 'Une demi-heure de marche par jour, en une ou plusieurs fois.',
     pourquoi: 'La marche brûle sans donner faim — c’est ce qui la rend imbattable sur la durée.',
-    couleur: 'var(--menthe)',
+    couleur: 'var(--argile)',
   },
   {
     id: 'legumes-midi-soir',
@@ -47,7 +47,7 @@ export const HABITUDES: Habitude[] = [
     emoji: '🥚',
     promesse: 'Œuf, yaourt, poisson, fromage blanc — quelque chose de solide le matin.',
     pourquoi: 'Un petit-déjeuner sucré affame à 10 h. Un petit-déjeuner protéiné tient jusqu’à midi.',
-    couleur: 'var(--ambre)',
+    couleur: 'var(--miel)',
   },
   {
     id: 'heure-coucher',
@@ -55,7 +55,7 @@ export const HABITUDES: Habitude[] = [
     emoji: '🌙',
     promesse: 'Au lit à la même heure, tous les soirs, week-end compris.',
     pourquoi: 'Le corps règle la faim sur le sommeil. Des horaires stables, une faim stable.',
-    couleur: 'var(--lavande)',
+    couleur: 'var(--canard)',
   },
   {
     id: 'sans-ecran-lit',
@@ -71,7 +71,7 @@ export const HABITUDES: Habitude[] = [
     emoji: '🍽️',
     promesse: 'Poser sa fourchette entre deux bouchées, à chaque repas.',
     pourquoi: 'Le signal de satiété met vingt minutes à arriver. Manger vite, c’est manger trop.',
-    couleur: 'var(--corail)',
+    couleur: 'var(--miel)',
   },
   {
     id: 'etirements',
@@ -79,7 +79,7 @@ export const HABITUDES: Habitude[] = [
     emoji: '🧘‍♀️',
     promesse: 'Dix minutes le soir, avant de dormir.',
     pourquoi: 'Le dos et les jambes récupèrent, et l’endormissement vient plus vite.',
-    couleur: 'var(--menthe-fonce)',
+    couleur: 'var(--argile-fonce)',
   },
 ]
 

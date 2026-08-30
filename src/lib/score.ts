@@ -5,6 +5,7 @@
    à faire pour aller les chercher — un chiffre qui ne dit pas quoi faire ne
    sert à rien. */
 
+import type { NomSymbole } from '../composants/Symbole'
 import { clefJour } from './dates'
 import { objectifAtteint } from './jeune'
 import { objectifCalories } from './profil'
@@ -14,6 +15,7 @@ export type Partie = {
   id: string
   nom: string
   emoji: string
+  icone: NomSymbole
   couleur: string
   points: number
   max: number
@@ -60,7 +62,8 @@ export function scoreDuJour(etat: Etat, jour: string = clefJour()) {
       id: 'jeune',
       nom: 'Jeûne',
       emoji: '⏳',
-      couleur: 'var(--menthe)',
+      icone: 'jeune',
+      couleur: 'var(--argile)',
       points: jeuneReussi ? 20 : 0,
       max: 20,
       restant: jeuneReussi ? '' : `Tenir un jeûne de ${profil.objectifJeuneHeures} h`,
@@ -69,7 +72,8 @@ export function scoreDuJour(etat: Etat, jour: string = clefJour()) {
       id: 'repas',
       nom: 'Alimentation',
       emoji: '🥗',
-      couleur: '#8bc34a',
+      icone: 'legume',
+      couleur: 'var(--olive)',
       points: pointsRepas,
       max: 20,
       restant: restantRepas,
@@ -78,7 +82,8 @@ export function scoreDuJour(etat: Etat, jour: string = clefJour()) {
       id: 'eau',
       nom: 'Eau',
       emoji: '💧',
-      couleur: 'var(--bleu)',
+      icone: 'eau',
+      couleur: 'var(--canard)',
       points: borne((verres / profil.butEau) * 15, 15),
       max: 15,
       restant:
@@ -90,7 +95,8 @@ export function scoreDuJour(etat: Etat, jour: string = clefJour()) {
       id: 'pas',
       nom: 'Pas',
       emoji: '👟',
-      couleur: 'var(--ambre)',
+      icone: 'pas',
+      couleur: 'var(--miel)',
       points: borne((pas / profil.butPas) * 15, 15),
       max: 15,
       restant:
@@ -102,7 +108,8 @@ export function scoreDuJour(etat: Etat, jour: string = clefJour()) {
       id: 'sommeil',
       nom: 'Sommeil',
       emoji: '🌙',
-      couleur: 'var(--lavande)',
+      icone: 'sommeil',
+      couleur: 'var(--sauge)',
       points: nuit ? borne((nuit.minutes / profil.butSommeilMin) * 15, 15) : 0,
       max: 15,
       restant: nuit
@@ -115,7 +122,8 @@ export function scoreDuJour(etat: Etat, jour: string = clefJour()) {
       id: 'sport',
       nom: 'Entraînement',
       emoji: '💪',
-      couleur: 'var(--corail)',
+      icone: 'sport',
+      couleur: 'var(--argile-fonce)',
       points: borne((minutesSport / 30) * 15, 15),
       max: 15,
       restant:

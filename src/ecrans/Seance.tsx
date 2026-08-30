@@ -4,6 +4,7 @@
 import { useEffect, useMemo, useState } from 'react'
 import Anneau from '../composants/Anneau'
 import Entete from '../composants/Entete'
+import Symbole from '../composants/Symbole'
 import { chrono } from '../lib/dates'
 import { useApp } from '../lib/etat'
 import { poidsActuel } from '../lib/profil'
@@ -88,7 +89,15 @@ export default function EcranSeance({ id, fermer }: { id: string; fermer: () => 
       <div className="page">
         <Entete kicker="Terminé" titre="Bravo 🎉" retour={fermer} />
         <div className="carte" style={{ textAlign: 'center' }}>
-          <div style={{ fontSize: 52 }}>{seance.emoji}</div>
+          <div style={{ display: 'flex', justifyContent: 'center', color: 'var(--argile)' }}>
+            <Symbole
+              nom={
+                seance.categorie === 'cardio' ? 'coeur' : seance.categorie === 'pilates' ? 'lotus' : 'sport'
+              }
+              taille={54}
+              epaisseur={1.3}
+            />
+          </div>
           <h2 style={{ fontSize: 21, marginTop: 6 }}>{seance.nom}</h2>
           <div className="rangee" style={{ marginTop: 18 }}>
             <div style={{ flex: 1 }}>
@@ -156,7 +165,7 @@ export default function EcranSeance({ id, fermer }: { id: string; fermer: () => 
         <>
           <Anneau
             progression={dureeEtape ? 1 - restant / dureeEtape : 0}
-            couleurs={['#b09ae6', '#8f74dd']}
+            couleurs={['#386874', '#274c57']}
           >
             <div className="kicker">Repos</div>
             <div className="chiffre" style={{ fontSize: 44 }}>
@@ -176,7 +185,7 @@ export default function EcranSeance({ id, fermer }: { id: string; fermer: () => 
         <>
           <Anneau
             progression={dureeEtape ? 1 - restant / dureeEtape : 0}
-            couleurs={['#34b795', '#1f9a86']}
+            couleurs={['#c96a43', '#a54f2e']}
           >
             {dureeEtape ? (
               <>

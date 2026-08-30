@@ -62,7 +62,7 @@ export default function Activite({ fermer }: { fermer: () => void }) {
           <i
             style={{
               width: `${Math.min(100, ((etat.pas[aujourdhui] ?? 0) / etat.profil.butPas) * 100)}%`,
-              background: 'linear-gradient(120deg, #f6b45e, #f4886c)',
+              background: 'linear-gradient(120deg, #c89a5b, #c0603a)',
             }}
           />
         </div>
@@ -108,7 +108,7 @@ export default function Activite({ fermer }: { fermer: () => void }) {
                   borderRadius: 8,
                   background:
                     nombre >= etat.profil.butPas
-                      ? 'linear-gradient(180deg, #f6b45e, #f4886c)'
+                      ? 'linear-gradient(180deg, #c89a5b, #c0603a)'
                       : 'var(--piste)',
                 }}
               />
@@ -117,7 +117,7 @@ export default function Activite({ fermer }: { fermer: () => void }) {
                   fontSize: 10,
                   marginTop: 6,
                   fontWeight: 700,
-                  color: clef === aujourdhui ? 'var(--menthe)' : 'var(--estompe)',
+                  color: clef === aujourdhui ? 'var(--argile)' : 'var(--estompe)',
                 }}
               >
                 {initialeJour(date)}

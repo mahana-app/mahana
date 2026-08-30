@@ -6,8 +6,17 @@ import { useApp, momentProbable } from '../lib/etat'
 import { jeuneEnCours } from '../lib/jeune'
 import type { Vue } from '../lib/navigation'
 import { IconeCroix } from './Icones'
+import Symbole from './Symbole'
+import type { NomSymbole } from './Symbole'
 
-type Action = { emoji: string; fond: string; nom: string; detail?: string; faire: () => void }
+type Action = {
+  icone: NomSymbole
+  fond: string
+  couleur: string
+  nom: string
+  detail?: string
+  faire: () => void
+}
 
 export default function FeuilleActions({
   fermer,
@@ -27,15 +36,17 @@ export default function FeuilleActions({
 
   const actions: Action[] = [
     {
-      emoji: '🍽️',
-      fond: 'var(--corail-pale)',
+      icone: 'dejeuner',
+      fond: 'var(--olive-pale)',
+      couleur: 'var(--olive)',
       nom: 'Noter un repas',
       detail: 'Chercher un aliment et l’ajouter',
       faire: aller({ nom: 'ajout', moment: momentProbable() }),
     },
     {
-      emoji: '💧',
-      fond: '#e4f0fd',
+      icone: 'eau',
+      fond: 'var(--canard-pale)',
+      couleur: 'var(--canard)',
       nom: 'Un verre d’eau',
       detail: `${verres} sur ${etat.profil.butEau} aujourd’hui`,
       faire: () => {
@@ -45,8 +56,9 @@ export default function FeuilleActions({
     },
     enCours
       ? {
-          emoji: '🏁',
-          fond: 'var(--menthe-pale)',
+          icone: 'renouveau',
+          fond: 'var(--argile-pale)',
+          couleur: 'var(--argile)',
           nom: 'Terminer le jeûne',
           detail: 'Le minuteur s’arrête maintenant',
           faire: () => {
@@ -55,8 +67,9 @@ export default function FeuilleActions({
           },
         }
       : {
-          emoji: '⏳',
-          fond: 'var(--menthe-pale)',
+          icone: 'jeune',
+          fond: 'var(--argile-pale)',
+          couleur: 'var(--argile)',
           nom: 'Commencer le jeûne',
           detail: 'Le minuteur part de maintenant',
           faire: () => {
@@ -65,28 +78,32 @@ export default function FeuilleActions({
           },
         },
     {
-      emoji: '💪',
-      fond: 'var(--lavande-pale)',
+      icone: 'sport',
+      fond: 'var(--canard-pale)',
+      couleur: 'var(--canard)',
       nom: 'Une séance de sport',
       detail: 'Cardio, pilates ou musculation',
       faire: aller({ nom: 'sport' }),
     },
     {
-      emoji: '📍',
-      fond: 'var(--menthe-pale)',
+      icone: 'gps',
+      fond: 'var(--olive-pale)',
+      couleur: 'var(--olive)',
       nom: 'Sortir marcher ou courir',
       detail: 'Chrono et GPS',
       faire: aller({ nom: 'sortie' }),
     },
     {
-      emoji: '⚖️',
-      fond: 'var(--ambre-pale)',
+      icone: 'poids',
+      fond: 'var(--miel-pale)',
+      couleur: 'var(--miel)',
       nom: 'Noter mon poids',
       faire: aller({ nom: 'corps' }),
     },
     {
-      emoji: '👟',
-      fond: 'var(--ambre-pale)',
+      icone: 'pas',
+      fond: 'var(--miel-pale)',
+      couleur: 'var(--miel)',
       nom: 'Mes pas et ma nuit',
       faire: aller({ nom: 'activite' }),
     },
@@ -115,16 +132,16 @@ export default function FeuilleActions({
               className="rond"
               style={{
                 background: action.fond,
-                width: 40,
-                height: 40,
+                color: action.couleur,
+                width: 42,
+                height: 42,
                 borderRadius: 14,
                 display: 'grid',
                 placeItems: 'center',
-                fontSize: 19,
                 flex: '0 0 auto',
               }}
             >
-              {action.emoji}
+              <Symbole nom={action.icone} taille={21} />
             </span>
             <span style={{ flex: 1 }}>
               <span style={{ display: 'block', fontWeight: 700 }}>{action.nom}</span>

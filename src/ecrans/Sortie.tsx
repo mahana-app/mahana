@@ -4,6 +4,7 @@
 
 import { useEffect, useRef, useState } from 'react'
 import Entete from '../composants/Entete'
+import Symbole from '../composants/Symbole'
 import { chrono } from '../lib/dates'
 import { useApp } from '../lib/etat'
 import { useSuiviGps } from '../lib/gps'
@@ -73,7 +74,9 @@ export default function Sortie({ fermer }: { fermer: () => void }) {
       <div className="page">
         <Entete kicker="Sortie terminée" titre="Bien joué 🎉" retour={fermer} />
         <div className="carte" style={{ textAlign: 'center' }}>
-          <div style={{ fontSize: 50 }}>{type.emoji}</div>
+          <div style={{ display: 'flex', justifyContent: 'center', color: 'var(--argile)' }}>
+            <Symbole nom={type.icone} taille={50} epaisseur={1.3} />
+          </div>
           <h2 style={{ fontSize: 21, marginTop: 4 }}>{type.nom}</h2>
           <div className="rangee" style={{ marginTop: 18 }}>
             <Bloc valeur={nombreFr(gps.distanceKm, 2)} legende="km" />
@@ -121,8 +124,8 @@ export default function Sortie({ fermer }: { fermer: () => void }) {
               className={`choix${type.id === s.id ? ' actif' : ''}`}
               onClick={() => setType(s)}
             >
-              <b>
-                {s.emoji} {s.nom}
+              <b style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+                <Symbole nom={s.icone} taille={20} couleur="var(--argile)" /> {s.nom}
               </b>
             </button>
           ))}
@@ -143,7 +146,7 @@ export default function Sortie({ fermer }: { fermer: () => void }) {
       </div>
 
       {gps.erreur && (
-        <div className="carte" style={{ background: 'var(--corail-pale)' }}>
+        <div className="carte" style={{ background: 'var(--miel-pale)' }}>
           <p style={{ margin: 0, fontSize: 14, fontWeight: 600, color: '#b8462a' }}>{gps.erreur}</p>
         </div>
       )}

@@ -21,9 +21,18 @@ reste étrangère à celle-ci.
   explicite de l'utilisatrice.
 - **Mobile d'abord** : tout se consulte sur un téléphone, à une main.
 - Le style tient dans un seul fichier, `src/theme.css` : des variables CSS et
-  des classes utilitaires. Pas de bibliothèque de composants. La charte vient
-  d'une maquette : fond dégradé menthe → pêche, cartes blanches très
-  arrondies, gros chiffres, accents menthe / corail / ambre / lavande.
+  des classes utilitaires. Pas de bibliothèque de composants.
+- **La charte est « bien-être »** : fonds sable et crème, accent **argile**
+  (terre cuite), plus **olive**, **canard**, **sauge** et **miel**. Les titres
+  et les chiffres sont en serif (*Cormorant Garamond*), le texte en *Jost*.
+  Rien de criard : l'app s'ouvre le matin et le soir, elle doit apaiser.
+- **Les symboles sont dessinés au trait**, dans `composants/Symbole.tsx`, tous
+  dans le même esprit que le logo — un cercle, une courbe, rien de plus.
+  Pas d'emoji pour la structure de l'app (titres, cartes, onglets, étapes) :
+  les emoji ne restent que dans le contenu, là où ils sont expressifs (défis,
+  habitudes, recettes, aliments).
+- **Le logo** est le soleil au-dessus de l'eau : *mahana*, c'est le soleil et
+  le jour ; la vague, c'est ici. Il se refabrique avec `npm run icones`.
 - **Aucune promesse médicale.** Les calories, les étapes du jeûne et les
   dépenses sont des estimations : le dire, et garder l'avertissement des
   réglages.

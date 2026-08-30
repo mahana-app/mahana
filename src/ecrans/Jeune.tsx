@@ -6,6 +6,7 @@
 
 import { useState } from 'react'
 import Entete from '../composants/Entete'
+import Symbole from '../composants/Symbole'
 import { IconeCrayon } from '../composants/Icones'
 import {
   chrono,
@@ -152,7 +153,9 @@ export default function EcranJeune({ ouvrir }: { ouvrir: (vue: Vue) => void }) {
 
           <div className="carte">
             <div className="rangee" style={{ alignItems: 'flex-start' }}>
-              <div style={{ fontSize: 28, lineHeight: 1 }}>{phase.emoji}</div>
+              <div style={{ color: 'var(--argile)' }}>
+                <Symbole nom={phase.icone} taille={30} />
+              </div>
               <div style={{ flex: 1 }}>
                 <div className="kicker">Ce qui se passe</div>
                 <h2>{phase.nom}</h2>
@@ -271,7 +274,7 @@ export default function EcranJeune({ ouvrir }: { ouvrir: (vue: Vue) => void }) {
                 fontSize: 30,
               }}
             >
-              {recette.emoji}
+              <Symbole nom="recette" taille={26} couleur="var(--olive)" />
             </div>
             <div style={{ fontWeight: 700, fontSize: 14, marginTop: 8, lineHeight: 1.25 }}>
               {recette.nom}
@@ -334,8 +337,8 @@ function AnneauEtapes({
       <svg width={taille} height={taille} style={{ transform: 'rotate(-90deg)' }} aria-hidden>
         <defs>
           <linearGradient id="degradeJeune" x1="1" y1="0" x2="0" y2="0">
-            <stop offset="0%" stopColor={atteint ? '#f6b45e' : '#34b795'} />
-            <stop offset="100%" stopColor={atteint ? '#f4886c' : '#1f9a86'} />
+            <stop offset="0%" stopColor={atteint ? '#f6b45e' : '#4e5b3c'} />
+            <stop offset="100%" stopColor={atteint ? '#c0603a' : '#8b9a79'} />
           </linearGradient>
         </defs>
         <circle
@@ -377,16 +380,16 @@ function AnneauEtapes({
               width: 34,
               height: 34,
               borderRadius: 999,
-              background: passee ? 'var(--menthe-pale)' : '#fff',
-              border: `2px solid ${passee ? 'var(--menthe)' : 'var(--bord)'}`,
+              background: passee ? 'var(--argile-pale)' : 'var(--creme)',
+              border: `1.5px solid ${passee ? 'var(--argile)' : 'var(--bord)'}`,
               boxShadow: '0 2px 8px rgba(29,47,56,.12)',
               display: 'grid',
               placeItems: 'center',
-              fontSize: 16,
-              opacity: passee ? 1 : 0.5,
+              color: passee ? 'var(--argile-fonce)' : 'var(--estompe)',
+              opacity: passee ? 1 : 0.65,
             }}
           >
-            {phase.emoji}
+            <Symbole nom={phase.icone} taille={17} />
           </div>
         )
       })}

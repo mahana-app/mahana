@@ -1,13 +1,13 @@
 {
-  "name": "Mahana · jeûne intermittent",
+  "name": "Mahana · jeûne, repas et sport",
   "short_name": "Mahana",
-  "description": "Minuteur de jeûne intermittent, suivi de l'eau et du poids.",
+  "description": "Jeûne, repas, sport, pas, sommeil et défis. Tout reste dans le téléphone.",
   "start_url": "/",
   "scope": "/",
   "display": "standalone",
   "orientation": "portrait",
-  "background_color": "#f2f6f9",
-  "theme_color": "#17c3a2",
+  "background_color": "#f2ebdf",
+  "theme_color": "#c0603a",
   "lang": "fr",
   "icons": [
     { "src": "/icon-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any" },

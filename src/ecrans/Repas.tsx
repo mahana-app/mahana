@@ -5,19 +5,28 @@
 import { useState } from 'react'
 import BandeauSemaine from '../composants/BandeauSemaine'
 import Entete from '../composants/Entete'
+import Symbole from '../composants/Symbole'
 import JaugeDemi from '../composants/JaugeDemi'
 import { IconeFleche } from '../composants/Icones'
 import { clefJour, deClefJour, jourCourt } from '../lib/dates'
 import { totauxDuJour, useApp } from '../lib/etat'
+import type { NomSymbole } from '../composants/Symbole'
 import type { Vue } from '../lib/navigation'
 import { objectifCalories, objectifMacros } from '../lib/profil'
 import type { MomentRepas } from '../lib/stockage'
 
-const MOMENTS: Array<{ id: MomentRepas; nom: string; emoji: string; fond: string; part: keyof Repartition }> = [
-  { id: 'petit-dejeuner', nom: 'Petit-déjeuner', emoji: '🌅', fond: 'var(--menthe-pale)', part: 'petitDejeuner' },
-  { id: 'dejeuner', nom: 'Déjeuner', emoji: '🍽️', fond: 'var(--ambre-pale)', part: 'dejeuner' },
-  { id: 'diner', nom: 'Dîner', emoji: '🌙', fond: 'var(--lavande-pale)', part: 'diner' },
-  { id: 'encas', nom: 'En-cas', emoji: '🍎', fond: 'var(--corail-pale)', part: 'encas' },
+const MOMENTS: Array<{
+  id: MomentRepas
+  nom: string
+  icone: NomSymbole
+  fond: string
+  couleur: string
+  part: keyof Repartition
+}> = [
+  { id: 'petit-dejeuner', nom: 'Petit-déjeuner', icone: 'petit-dejeuner', fond: 'var(--miel-pale)', couleur: 'var(--miel)', part: 'petitDejeuner' },
+  { id: 'dejeuner', nom: 'Déjeuner', icone: 'dejeuner', fond: 'var(--olive-pale)', couleur: 'var(--olive)', part: 'dejeuner' },
+  { id: 'diner', nom: 'Dîner', icone: 'diner', fond: 'var(--canard-pale)', couleur: 'var(--canard)', part: 'diner' },
+  { id: 'encas', nom: 'En-cas', icone: 'encas', fond: 'var(--argile-pale)', couleur: 'var(--argile)', part: 'encas' },
 ]
 
 type Repartition = { petitDejeuner: number; dejeuner: number; diner: number; encas: number }
@@ -70,9 +79,9 @@ export default function Repas({ ouvrir }: { ouvrir: (vue: Vue) => void }) {
             />
             {macros && (
               <div className="grille3" style={{ marginTop: 12 }}>
-                <Macro nom="Glucides" valeur={totaux.glucides} but={macros.glucides} couleur="var(--ambre)" />
-                <Macro nom="Protéines" valeur={totaux.proteines} but={macros.proteines} couleur="var(--menthe)" />
-                <Macro nom="Lipides" valeur={totaux.lipides} but={macros.lipides} couleur="var(--corail)" />
+                <Macro nom="Glucides" valeur={totaux.glucides} but={macros.glucides} couleur="var(--miel)" />
+                <Macro nom="Protéines" valeur={totaux.proteines} but={macros.proteines} couleur="var(--olive)" />
+                <Macro nom="Lipides" valeur={totaux.lipides} but={macros.lipides} couleur="var(--argile)" />
               </div>
             )}
           </>
@@ -99,11 +108,11 @@ export default function Repas({ ouvrir }: { ouvrir: (vue: Vue) => void }) {
                   background: moment.fond,
                   display: 'grid',
                   placeItems: 'center',
-                  fontSize: 21,
                   flex: '0 0 auto',
+                  color: moment.couleur,
                 }}
               >
-                {moment.emoji}
+                <Symbole nom={moment.icone} taille={22} />
               </span>
               <div style={{ flex: 1, minWidth: 0 }}>
                 <div style={{ fontWeight: 700 }}>{moment.nom}</div>
@@ -165,7 +174,9 @@ export default function Repas({ ouvrir }: { ouvrir: (vue: Vue) => void }) {
         <div className="rangee">
           <div>
             <div className="kicker">Idées</div>
-            <div style={{ fontWeight: 700 }}>👩‍🍳 Voir les recettes</div>
+            <div style={{ fontWeight: 600, display: 'flex', alignItems: 'center', gap: 8 }}>
+              <Symbole nom="recette" taille={18} couleur="var(--olive)" /> Voir les recettes
+            </div>
             <div className="doux mini">Rapides, légères, riches en protéines</div>
           </div>
           <IconeFleche />

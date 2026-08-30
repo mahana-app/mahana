@@ -4,6 +4,8 @@
 import { useState } from 'react'
 import Entete from '../composants/Entete'
 import { IconeFleche, IconePartage } from '../composants/Icones'
+import Symbole from '../composants/Symbole'
+import type { NomSymbole } from '../composants/Symbole'
 import { useApp } from '../lib/etat'
 import { bilan, serie, serieLaPlusLongue } from '../lib/jeune'
 import type { Vue } from '../lib/navigation'
@@ -62,7 +64,7 @@ export default function Moi({ ouvrir, fermer }: { ouvrir: (vue: Vue) => void; fe
             <div style={{ textAlign: 'right' }}>
               <div
                 className="chiffre"
-                style={{ fontSize: 19, color: ecart <= 0 ? 'var(--menthe-fonce)' : 'var(--corail)' }}
+                style={{ fontSize: 19, color: ecart <= 0 ? 'var(--argile-fonce)' : 'var(--miel)' }}
               >
                 {ecart > 0 ? '+' : ''}
                 {nombreFr(ecart, 1)} kg
@@ -75,7 +77,7 @@ export default function Moi({ ouvrir, fermer }: { ouvrir: (vue: Vue) => void; fe
         <div style={{ display: 'flex', gap: 8, marginTop: 14, flexWrap: 'wrap' }}>
           {profil.poidsBut !== null && poids !== null && (
             <span className="pilule menthe">
-              🎯 {nombreFr(Math.abs(poids - profil.poidsBut), 1)} kg
+              {nombreFr(Math.abs(poids - profil.poidsBut), 1)} kg
               {poids > profil.poidsBut ? ' avant l’objectif' : ' sous l’objectif'}
             </span>
           )}
@@ -89,14 +91,14 @@ export default function Moi({ ouvrir, fermer }: { ouvrir: (vue: Vue) => void; fe
       </div>
 
       <div className="grille2">
-        <Lien emoji="⚖️" fond="var(--ambre-pale)" nom="Mon poids" onClick={() => ouvrir({ nom: 'corps' })} />
-        <Lien emoji="💪" fond="var(--lavande-pale)" nom="Mes séances" onClick={() => ouvrir({ nom: 'sport' })} />
-        <Lien emoji="💧" fond="#e4f0fd" nom="Mon eau" onClick={() => ouvrir({ nom: 'eau' })} />
-        <Lien emoji="👟" fond="var(--menthe-pale)" nom="Pas et sommeil" onClick={() => ouvrir({ nom: 'activite' })} />
-        <Lien emoji="🎯" fond="var(--corail-pale)" nom="Défis et habitudes" onClick={() => ouvrir({ nom: 'defis' })} />
-        <Lien emoji="👩‍🍳" fond="var(--ambre-pale)" nom="Les recettes" onClick={() => ouvrir({ nom: 'recettes' })} />
-        <Lien emoji="🎓" fond="var(--menthe-pale)" nom="Les leçons" onClick={() => ouvrir({ nom: 'lecons' })} />
-        <Lien emoji="⚙️" fond="var(--piste)" nom="Réglages" onClick={() => ouvrir({ nom: 'reglages' })} />
+        <Lien icone="poids" fond="var(--miel-pale)" couleur="var(--miel)" nom="Mon poids" onClick={() => ouvrir({ nom: 'corps' })} />
+        <Lien icone="sport" fond="var(--canard-pale)" couleur="var(--canard)" nom="Mes séances" onClick={() => ouvrir({ nom: 'sport' })} />
+        <Lien icone="eau" fond="var(--canard-pale)" couleur="var(--canard)" nom="Mon eau" onClick={() => ouvrir({ nom: 'eau' })} />
+        <Lien icone="pas" fond="var(--olive-pale)" couleur="var(--olive)" nom="Pas et sommeil" onClick={() => ouvrir({ nom: 'activite' })} />
+        <Lien icone="defi" fond="var(--argile-pale)" couleur="var(--argile)" nom="Défis et habitudes" onClick={() => ouvrir({ nom: 'defis' })} />
+        <Lien icone="recette" fond="var(--miel-pale)" couleur="var(--miel)" nom="Les recettes" onClick={() => ouvrir({ nom: 'recettes' })} />
+        <Lien icone="lecon" fond="var(--olive-pale)" couleur="var(--olive)" nom="Les leçons" onClick={() => ouvrir({ nom: 'lecons' })} />
+        <Lien icone="renouveau" fond="var(--piste)" couleur="var(--doux)" nom="Réglages" onClick={() => ouvrir({ nom: 'reglages' })} />
       </div>
 
       <div className="titre-section">Depuis le début</div>
@@ -143,20 +145,22 @@ export default function Moi({ ouvrir, fermer }: { ouvrir: (vue: Vue) => void; fe
 }
 
 function Lien({
-  emoji,
+  icone,
   fond,
+  couleur,
   nom,
   onClick,
 }: {
-  emoji: string
+  icone: NomSymbole
   fond: string
+  couleur: string
   nom: string
   onClick: () => void
 }) {
   return (
     <button type="button" className="tuile" onClick={onClick}>
-      <span className="rond" style={{ background: fond }}>
-        {emoji}
+      <span className="rond" style={{ background: fond, color: couleur }}>
+        <Symbole nom={icone} taille={19} />
       </span>
       <span style={{ flex: 1 }}>{nom}</span>
       <IconeFleche taille={16} />

@@ -18,7 +18,7 @@ export default function Anneau({
   progression,
   taille = 230,
   epaisseur = 17,
-  couleurs = ['#34b795', '#1f9a86'],
+  couleurs = ['#c96a43', '#a54f2e'],
   children,
 }: Props) {
   const identifiant = useId().replace(/:/g, '')

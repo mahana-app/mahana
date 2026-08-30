@@ -1,35 +1,47 @@
 /* Mahana — l'habillage.
-   Les couleurs sont reprises de la maquette : un fond dégradé vert menthe qui
-   glisse vers la pêche, des cartes blanches très arrondies, de gros chiffres,
-   et trois teintes d'accent (menthe, corail, ambre) qu'on retrouve partout.
-   Un seul thème, clair : c'est celui de la maquette. */
+
+   Direction « bien-être » : des fonds sable et crème, un accent terre cuite,
+   de l'olive et du bleu canard, des titres en serif. Rien de criard : c'est
+   une app qu'on ouvre le matin et le soir, elle doit apaiser, pas exciter. */
 
 :root {
   color-scheme: light;
 
-  --menthe: #2fae8e;
-  --menthe-fonce: #1c8a6f;
-  --menthe-pale: #e3f5ee;
-  --corail: #f4886c;
-  --corail-pale: #fdeae3;
-  --ambre: #f6b45e;
-  --ambre-pale: #fdf1de;
-  --lavande: #b09ae6;
-  --lavande-pale: #f0ebfb;
-  --bleu: #6aa9f0;
+  --sable: #f2ebdf;
+  --lin: #e7ddcd;
+  --creme: #fbf7f0;
 
-  --encre: #1d2f38;
-  --doux: #6f838d;
-  --estompe: #a5b3ba;
+  --argile: #c0603a;
+  --argile-fonce: #a54f2e;
+  --argile-pale: #f3e6dc;
 
-  --carte: #ffffff;
-  --bord: rgba(29, 47, 56, 0.08);
-  --piste: rgba(29, 47, 56, 0.07);
-  --ombre: 0 10px 28px rgba(29, 47, 56, 0.08);
-  --ombre-basse: 0 4px 14px rgba(29, 47, 56, 0.06);
+  --olive: #4e5b3c;
+  --olive-pale: #e6eadd;
 
-  --degrade-menthe: linear-gradient(120deg, #34b795, #1f9a86);
-  --degrade-corail: linear-gradient(120deg, #f8967a, #f2765d);
+  --canard: #2f5a66;
+  --canard-pale: #e1e8e9;
+
+  --sauge: #8b9a79;
+  --sauge-pale: #eaeee3;
+
+  --miel: #c89a5b;
+  --miel-pale: #f5ebdc;
+
+  --encre: #2c2723;
+  --doux: #7c7266;
+  --estompe: #a99e90;
+
+  --bord: rgba(44, 39, 35, 0.1);
+  --piste: rgba(44, 39, 35, 0.08);
+  --ombre: 0 8px 24px rgba(44, 39, 35, 0.07);
+  --ombre-basse: 0 3px 12px rgba(44, 39, 35, 0.05);
+
+  --degrade-argile: linear-gradient(120deg, #c96a43, #b0532f);
+  --degrade-olive: linear-gradient(120deg, #5b6a47, #465335);
+  --degrade-canard: linear-gradient(120deg, #386874, #274c57);
+
+  --serif: 'Cormorant Garamond', Charter, Georgia, 'Times New Roman', serif;
+  --sans: Jost, 'Liberation Sans', system-ui, -apple-system, sans-serif;
 }
 
 * {
@@ -37,29 +49,27 @@
 }
 
 html {
-  background: #eaf4ef;
+  background: var(--sable);
 }
 
 body {
   margin: 0;
   min-height: 100%;
   color: var(--encre);
-  font-family: Poppins, system-ui, -apple-system, 'Segoe UI', sans-serif;
+  font-family: var(--sans);
   font-size: 16px;
   -webkit-font-smoothing: antialiased;
   overscroll-behavior-y: none;
-  /* le dégradé de la maquette : menthe en haut, pêche en bas */
-  background:
-    linear-gradient(170deg, #d7f0e6 0%, #eaf4ef 38%, #f7f0e8 68%, #fce6d7 100%)
-    fixed;
+  background: linear-gradient(178deg, #f4eee4 0%, #f2ebdf 55%, #eae0d0 100%) fixed;
 }
 
 h1,
 h2,
 h3 {
   margin: 0;
-  font-weight: 700;
-  letter-spacing: -0.015em;
+  font-family: var(--serif);
+  font-weight: 600;
+  letter-spacing: 0.005em;
 }
 
 button {
@@ -92,16 +102,16 @@ textarea {
 }
 
 .entete h1 {
-  font-size: 23px;
-  line-height: 1.2;
+  font-size: 27px;
+  line-height: 1.15;
 }
 
 .bonjour {
   color: var(--doux);
-  font-size: 12px;
-  font-weight: 600;
+  font-size: 10.5px;
+  font-weight: 500;
   text-transform: uppercase;
-  letter-spacing: 0.14em;
+  letter-spacing: 0.18em;
 }
 
 .rond-entete {
@@ -110,7 +120,7 @@ textarea {
   flex: 0 0 auto;
   border-radius: 999px;
   border: 1px solid var(--bord);
-  background: var(--carte);
+  background: var(--creme);
   color: var(--doux);
   display: grid;
   place-items: center;
@@ -118,39 +128,40 @@ textarea {
 }
 
 .carte {
-  background: var(--carte);
-  border-radius: 24px;
-  padding: 18px;
+  background: var(--creme);
+  border-radius: 20px;
+  padding: 17px;
   box-shadow: var(--ombre);
-  margin-bottom: 14px;
+  margin-bottom: 13px;
 }
 
 .carte.serree {
-  padding: 14px 16px;
+  padding: 13px 15px;
 }
 
 .carte h2 {
-  font-size: 17px;
+  font-size: 19px;
 }
 
 .kicker {
-  font-size: 11px;
-  font-weight: 700;
+  font-size: 10px;
+  font-weight: 600;
   text-transform: uppercase;
-  letter-spacing: 0.14em;
+  letter-spacing: 0.16em;
   color: var(--estompe);
 }
 
 .titre-section {
-  font-size: 15px;
-  font-weight: 700;
+  font-family: var(--serif);
+  font-size: 21px;
+  font-weight: 600;
   margin: 22px 4px 10px;
 }
 
 .doux {
   color: var(--doux);
   font-size: 14px;
-  line-height: 1.5;
+  line-height: 1.55;
 }
 
 .mini {
@@ -164,9 +175,11 @@ textarea {
   gap: 12px;
 }
 
+/* Les chiffres sont en serif : c'est là que l'app respire. */
 .chiffre {
+  font-family: var(--serif);
   font-variant-numeric: tabular-nums;
-  font-weight: 700;
+  font-weight: 600;
 }
 
 /* ---------- boutons ---------- */
@@ -180,21 +193,26 @@ textarea {
   padding: 15px 20px;
   border: 0;
   border-radius: 999px;
-  background: var(--degrade-menthe);
-  color: #fff;
-  font-weight: 700;
-  font-size: 16px;
-  box-shadow: 0 10px 20px rgba(47, 174, 142, 0.28);
+  background: var(--degrade-argile);
+  color: #fdfaf5;
+  font-weight: 600;
+  font-size: 15.5px;
+  letter-spacing: 0.02em;
+  box-shadow: 0 8px 18px rgba(192, 96, 58, 0.26);
+}
+
+.bouton.olive {
+  background: var(--degrade-olive);
+  box-shadow: 0 8px 18px rgba(78, 91, 60, 0.24);
 }
 
 .bouton.corail {
-  background: var(--degrade-corail);
-  box-shadow: 0 10px 20px rgba(244, 136, 108, 0.3);
+  background: var(--degrade-argile);
 }
 
 .bouton.sombre {
   background: var(--encre);
-  box-shadow: 0 10px 20px rgba(29, 47, 56, 0.22);
+  box-shadow: 0 8px 18px rgba(44, 39, 35, 0.2);
 }
 
 .bouton:active {
@@ -214,37 +232,37 @@ textarea {
   padding: 10px 16px;
   border-radius: 999px;
   border: 1px solid var(--bord);
-  background: var(--carte);
+  background: var(--creme);
   color: var(--doux);
   font-size: 14px;
-  font-weight: 600;
+  font-weight: 500;
 }
 
 .pilule {
   display: inline-flex;
   align-items: center;
   gap: 6px;
-  padding: 6px 12px;
+  padding: 5px 12px;
   border-radius: 999px;
   background: var(--piste);
   color: var(--doux);
   font-size: 12px;
-  font-weight: 700;
+  font-weight: 500;
 }
 
 .pilule.menthe {
-  background: var(--menthe-pale);
-  color: var(--menthe-fonce);
+  background: var(--olive-pale);
+  color: var(--olive);
 }
 
 .pilule.corail {
-  background: var(--corail-pale);
-  color: #d0603f;
+  background: var(--argile-pale);
+  color: var(--argile-fonce);
 }
 
 .pilule.ambre {
-  background: var(--ambre-pale);
-  color: #b57a1c;
+  background: var(--miel-pale);
+  color: #96702f;
 }
 
 /* ---------- champs ---------- */
@@ -252,23 +270,24 @@ textarea {
 .champ {
   width: 100%;
   padding: 13px 15px;
-  border-radius: 16px;
+  border-radius: 14px;
   border: 1px solid var(--bord);
-  background: #f7faf9;
-  font-weight: 600;
+  background: #fdfbf7;
+  font-weight: 500;
 }
 
 .champ:focus {
-  outline: 2px solid var(--menthe);
+  outline: 2px solid var(--argile);
   outline-offset: 1px;
 }
 
 .etiquette {
   display: block;
   margin-bottom: 6px;
-  font-size: 13px;
-  font-weight: 700;
+  font-size: 12.5px;
+  font-weight: 600;
   color: var(--doux);
+  letter-spacing: 0.02em;
 }
 
 /* ---------- barre d'onglets ---------- */
@@ -281,9 +300,10 @@ textarea {
   z-index: 20;
   display: flex;
   justify-content: center;
+  align-items: center;
   gap: 2px;
   padding: 9px 8px calc(9px + env(safe-area-inset-bottom));
-  background: rgba(255, 255, 255, 0.93);
+  background: rgba(251, 247, 240, 0.94);
   backdrop-filter: blur(16px);
   border-top: 1px solid var(--bord);
 }
@@ -294,160 +314,31 @@ textarea {
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 3px;
+  gap: 4px;
   padding: 5px 2px;
   border: 0;
   background: none;
   color: var(--estompe);
-  font-size: 10.5px;
-  font-weight: 700;
+  font-size: 10px;
+  font-weight: 500;
+  letter-spacing: 0.06em;
 }
 
 .onglet.actif {
-  color: var(--menthe);
+  color: var(--argile);
 }
-
-/* ---------- grilles et tuiles ---------- */
-
-.grille2 {
-  display: grid;
-  grid-template-columns: repeat(2, 1fr);
-  gap: 12px;
-}
-
-.grille3 {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 10px;
-}
-
-.tuile {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  padding: 14px;
-  border: 0;
-  border-radius: 18px;
-  background: var(--carte);
-  box-shadow: var(--ombre-basse);
-  text-align: left;
-  font-weight: 600;
-  font-size: 14px;
-}
-
-.tuile .rond {
-  width: 34px;
-  height: 34px;
-  flex: 0 0 auto;
-  border-radius: 12px;
-  display: grid;
-  place-items: center;
-  font-size: 17px;
-}
-
-.choix {
-  text-align: left;
-  padding: 14px;
-  border-radius: 18px;
-  border: 1.5px solid var(--bord);
-  background: var(--carte);
-  width: 100%;
-}
-
-.choix.actif {
-  border-color: var(--menthe);
-  background: var(--menthe-pale);
-}
-
-.choix b {
-  display: block;
-  font-size: 16px;
-}
-
-.choix span {
-  color: var(--doux);
-  font-size: 13px;
-  font-weight: 500;
-}
-
-/* ---------- listes ---------- */
-
-.ligne-liste {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 12px;
-  padding: 12px 0;
-  border-bottom: 1px solid var(--bord);
-}
-
-.ligne-liste:last-child {
-  border-bottom: 0;
-}
-
-.vide {
-  text-align: center;
-  color: var(--doux);
-  padding: 22px 10px;
-  font-size: 14px;
-  line-height: 1.5;
-}
-
-/* ---------- barres de progression ---------- */
-
-.barre {
-  height: 8px;
-  border-radius: 999px;
-  background: var(--piste);
-  overflow: hidden;
-}
-
-.barre > i {
-  display: block;
-  height: 100%;
-  border-radius: 999px;
-  background: var(--degrade-menthe);
-  transition: width 0.5s ease;
-}
-
-/* ---------- apparition ---------- */
-
-@keyframes apparait {
-  from {
-    opacity: 0;
-    transform: translateY(6px);
-  }
-  to {
-    opacity: 1;
-    transform: none;
-  }
-}
-
-.page > * {
-  animation: apparait 0.26s ease both;
-}
-
-@media (prefers-reduced-motion: reduce) {
-  .page > *,
-  .barre > i {
-    animation: none;
-    transition: none;
-  }
-}
-
-/* ---------- le bouton + au centre de la barre ---------- */
 
 .bouton-plus {
-  width: 56px;
-  height: 56px;
-  margin-top: -20px;
+  width: 54px;
+  height: 54px;
+  margin-top: -18px;
   border: 0;
   border-radius: 999px;
-  background: var(--degrade-menthe);
-  color: #fff;
+  background: var(--degrade-argile);
+  color: #fdfaf5;
   display: grid;
   place-items: center;
-  box-shadow: 0 8px 18px rgba(47, 174, 142, 0.4);
+  box-shadow: 0 7px 16px rgba(192, 96, 58, 0.36);
   flex: 0 0 auto;
 }
 
@@ -461,7 +352,7 @@ textarea {
   position: fixed;
   inset: 0;
   z-index: 30;
-  background: rgba(29, 47, 56, 0.35);
+  background: rgba(44, 39, 35, 0.32);
   backdrop-filter: blur(2px);
   animation: fondu 0.2s ease both;
 }
@@ -475,9 +366,9 @@ textarea {
   max-width: 540px;
   margin: 0 auto;
   padding: 10px 16px calc(24px + env(safe-area-inset-bottom));
-  background: var(--carte);
-  border-radius: 28px 28px 0 0;
-  box-shadow: 0 -10px 40px rgba(29, 47, 56, 0.18);
+  background: var(--creme);
+  border-radius: 26px 26px 0 0;
+  box-shadow: 0 -10px 40px rgba(44, 39, 35, 0.16);
   animation: monte 0.26s cubic-bezier(0.2, 0.9, 0.3, 1) both;
 }
 
@@ -512,8 +403,8 @@ textarea {
 .semaine {
   display: flex;
   gap: 4px;
-  background: var(--carte);
-  border-radius: 20px;
+  background: var(--creme);
+  border-radius: 18px;
   padding: 10px 8px;
   box-shadow: var(--ombre-basse);
   margin-bottom: 14px;
@@ -526,8 +417,9 @@ textarea {
   padding: 4px 0 6px;
   border-radius: 14px;
   color: var(--estompe);
-  font-size: 11px;
-  font-weight: 700;
+  font-size: 10px;
+  font-weight: 500;
+  letter-spacing: 0.08em;
 }
 
 .semaine .numero {
@@ -537,13 +429,13 @@ textarea {
   height: 34px;
   margin: 3px auto 2px;
   border-radius: 999px;
-  font-size: 15px;
+  font-size: 16px;
   color: var(--encre);
 }
 
 .semaine button.actif .numero {
-  border: 2px solid var(--menthe);
-  color: var(--menthe-fonce);
+  border: 1.5px solid var(--argile);
+  color: var(--argile-fonce);
 }
 
 .semaine button.futur {
@@ -556,4 +448,142 @@ textarea {
   border-radius: 999px;
   background: var(--estompe);
   margin: 0 auto;
+}
+
+/* ---------- grilles et tuiles ---------- */
+
+.grille2 {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 11px;
+}
+
+.grille3 {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 10px;
+}
+
+.tuile {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 13px;
+  border: 0;
+  border-radius: 16px;
+  background: var(--creme);
+  box-shadow: var(--ombre-basse);
+  text-align: left;
+  font-weight: 500;
+  font-size: 14px;
+}
+
+.tuile .rond {
+  width: 34px;
+  height: 34px;
+  flex: 0 0 auto;
+  border-radius: 12px;
+  display: grid;
+  place-items: center;
+  font-size: 16px;
+}
+
+.choix {
+  text-align: left;
+  padding: 14px;
+  border-radius: 16px;
+  border: 1px solid var(--bord);
+  background: var(--creme);
+  width: 100%;
+}
+
+.choix.actif {
+  border-color: var(--argile);
+  background: var(--argile-pale);
+}
+
+.choix b {
+  display: block;
+  font-family: var(--serif);
+  font-size: 18px;
+  font-weight: 600;
+}
+
+.choix span {
+  color: var(--doux);
+  font-size: 12.5px;
+  font-weight: 400;
+}
+
+/* ---------- listes ---------- */
+
+.ligne-liste {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 12px 0;
+  border-bottom: 1px solid var(--bord);
+}
+
+.ligne-liste:last-child {
+  border-bottom: 0;
+}
+
+.vide {
+  text-align: center;
+  color: var(--doux);
+  padding: 22px 10px;
+  font-size: 14px;
+  line-height: 1.55;
+}
+
+/* ---------- barres de progression ---------- */
+
+.barre {
+  height: 7px;
+  border-radius: 999px;
+  background: var(--piste);
+  overflow: hidden;
+}
+
+.barre > i {
+  display: block;
+  height: 100%;
+  border-radius: 999px;
+  background: var(--degrade-argile);
+  transition: width 0.5s ease;
+}
+
+/* La pastille qui porte un symbole ou un emoji dans les listes. */
+.pastille {
+  display: grid;
+  place-items: center;
+  border-radius: 999px;
+  flex: 0 0 auto;
+}
+
+/* ---------- apparition ---------- */
+
+@keyframes apparait {
+  from {
+    opacity: 0;
+    transform: translateY(6px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+.page > * {
+  animation: apparait 0.26s ease both;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .page > *,
+  .barre > i {
+    animation: none;
+    transition: none;
+  }
 }

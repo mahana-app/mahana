@@ -66,7 +66,7 @@ export default function Bienvenue() {
           <h1 style={{ fontSize: 30, lineHeight: 1.15, marginBottom: 8 }}>
             Mahana
             <br />
-            <span style={{ color: 'var(--menthe-fonce)' }}>votre parcours</span>
+            <span style={{ color: 'var(--argile-fonce)' }}>votre parcours</span>
           </h1>
           <p className="doux" style={{ marginTop: 0, marginBottom: 24 }}>
             Le jeûne, les repas, le sport, les pas, le sommeil et un défi par semaine — dans une
@@ -246,7 +246,7 @@ export default function Bienvenue() {
             ))}
           </div>
 
-          <div className="carte" style={{ background: 'var(--menthe-pale)' }}>
+          <div className="carte" style={{ background: 'var(--olive-pale)' }}>
             <div className="kicker">Votre objectif du jour</div>
             <div className="rangee" style={{ marginTop: 6 }}>
               <div>

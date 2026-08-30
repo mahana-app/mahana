@@ -20,7 +20,7 @@ export function ListeLecons({
     <div className="page">
       <Entete kicker="Comprendre" titre="Les leçons" retour={fermer} />
 
-      <div className="carte" style={{ background: 'var(--menthe-pale)' }}>
+      <div className="carte" style={{ background: 'var(--olive-pale)' }}>
         <div className="rangee">
           <div>
             <h2 style={{ fontSize: 17 }}>Sept leçons de cinq minutes</h2>
@@ -50,7 +50,7 @@ export function ListeLecons({
                   width: 48,
                   height: 48,
                   borderRadius: 16,
-                  background: lue ? 'var(--menthe-pale)' : 'var(--piste)',
+                  background: lue ? 'var(--olive-pale)' : 'var(--piste)',
                   display: 'grid',
                   placeItems: 'center',
                   fontSize: 22,
@@ -93,7 +93,7 @@ export function UneLecon({ id, fermer }: { id: string; fermer: () => void }) {
     <div className="page">
       <Entete kicker={`Leçon ${index + 1} · ${lecon.minutes} min`} titre={lecon.titre} retour={fermer} />
 
-      <div className="carte" style={{ background: 'var(--menthe-pale)', textAlign: 'center' }}>
+      <div className="carte" style={{ background: 'var(--olive-pale)', textAlign: 'center' }}>
         <div style={{ fontSize: 42 }}>{lecon.emoji}</div>
         <p style={{ margin: '8px 0 0', fontWeight: 700, fontSize: 15 }}>{lecon.chapo}</p>
       </div>

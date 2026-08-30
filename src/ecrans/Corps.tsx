@@ -49,7 +49,7 @@ export default function EcranCorps({ fermer }: { fermer: () => void }) {
                 {pesees.length > 1 && (
                   <div
                     className="chiffre"
-                    style={{ color: ecartDepart <= 0 ? 'var(--menthe-fonce)' : 'var(--corail)' }}
+                    style={{ color: ecartDepart <= 0 ? 'var(--argile-fonce)' : 'var(--miel)' }}
                   >
                     {ecartDepart > 0 ? '+' : ''}
                     {nombreFr(ecartDepart, 1)} kg depuis le début
@@ -133,7 +133,7 @@ export default function EcranCorps({ fermer }: { fermer: () => void }) {
                         className="chiffre"
                         style={{
                           fontSize: 13,
-                          color: ecart <= 0 ? 'var(--menthe-fonce)' : 'var(--corail)',
+                          color: ecart <= 0 ? 'var(--argile-fonce)' : 'var(--miel)',
                         }}
                       >
                         {ecart > 0 ? '+' : ''}
@@ -191,8 +191,8 @@ function Courbe() {
       >
         <defs>
           <linearGradient id="degradePoids" x1="0" y1="0" x2="0" y2="1">
-            <stop offset="0%" stopColor="#34b795" stopOpacity="0.28" />
-            <stop offset="100%" stopColor="#34b795" stopOpacity="0" />
+            <stop offset="0%" stopColor="#4e5b3c" stopOpacity="0.28" />
+            <stop offset="100%" stopColor="#4e5b3c" stopOpacity="0" />
           </linearGradient>
         </defs>
         {but !== null && (
@@ -207,9 +207,9 @@ function Courbe() {
           />
         )}
         <path d={surface} fill="url(#degradePoids)" />
-        <path d={trace} fill="none" stroke="#34b795" strokeWidth="2.5" strokeLinecap="round" />
+        <path d={trace} fill="none" stroke="#4e5b3c" strokeWidth="2.5" strokeLinecap="round" />
         {pesees.map((p, i) => (
-          <circle key={p.jour} cx={x(i)} cy={y(p.poids)} r="3" fill="#34b795" />
+          <circle key={p.jour} cx={x(i)} cy={y(p.poids)} r="3" fill="#4e5b3c" />
         ))}
       </svg>
       <div className="rangee doux" style={{ fontSize: 12, marginTop: 4 }}>

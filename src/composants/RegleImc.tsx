@@ -2,10 +2,10 @@
    dessus. Un chiffre seul ne dit rien ; posé sur la règle, il parle. */
 
 const ZONES = [
-  { nom: 'Poids insuffisant', couleur: '#6aa9f0', jusqua: 18.5 },
-  { nom: 'Normal', couleur: '#5cc08a', jusqua: 25 },
-  { nom: 'Surpoids', couleur: '#f6b45e', jusqua: 30 },
-  { nom: 'Obésité', couleur: '#ef6b52', jusqua: 40 },
+  { nom: 'Poids insuffisant', couleur: '#2f5a66', jusqua: 18.5 },
+  { nom: 'Normal', couleur: '#4e5b3c', jusqua: 25 },
+  { nom: 'Surpoids', couleur: '#c89a5b', jusqua: 30 },
+  { nom: 'Obésité', couleur: '#c0603a', jusqua: 40 },
 ]
 
 /* La règle s'arrête à 40 : au-delà, le curseur reste au bout. */
