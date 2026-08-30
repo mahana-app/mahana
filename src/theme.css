@@ -434,3 +434,126 @@ textarea {
     transition: none;
   }
 }
+
+/* ---------- le bouton + au centre de la barre ---------- */
+
+.bouton-plus {
+  width: 56px;
+  height: 56px;
+  margin-top: -20px;
+  border: 0;
+  border-radius: 999px;
+  background: var(--degrade-menthe);
+  color: #fff;
+  display: grid;
+  place-items: center;
+  box-shadow: 0 8px 18px rgba(47, 174, 142, 0.4);
+  flex: 0 0 auto;
+}
+
+.bouton-plus:active {
+  transform: scale(0.94);
+}
+
+/* ---------- la feuille qui monte du bas ---------- */
+
+.voile {
+  position: fixed;
+  inset: 0;
+  z-index: 30;
+  background: rgba(29, 47, 56, 0.35);
+  backdrop-filter: blur(2px);
+  animation: fondu 0.2s ease both;
+}
+
+.feuille {
+  position: fixed;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 31;
+  max-width: 540px;
+  margin: 0 auto;
+  padding: 10px 16px calc(24px + env(safe-area-inset-bottom));
+  background: var(--carte);
+  border-radius: 28px 28px 0 0;
+  box-shadow: 0 -10px 40px rgba(29, 47, 56, 0.18);
+  animation: monte 0.26s cubic-bezier(0.2, 0.9, 0.3, 1) both;
+}
+
+.poignee {
+  width: 42px;
+  height: 4px;
+  border-radius: 999px;
+  background: var(--piste);
+  margin: 0 auto 14px;
+}
+
+@keyframes fondu {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes monte {
+  from {
+    transform: translateY(100%);
+  }
+  to {
+    transform: none;
+  }
+}
+
+/* ---------- le bandeau de la semaine ---------- */
+
+.semaine {
+  display: flex;
+  gap: 4px;
+  background: var(--carte);
+  border-radius: 20px;
+  padding: 10px 8px;
+  box-shadow: var(--ombre-basse);
+  margin-bottom: 14px;
+}
+
+.semaine button {
+  flex: 1;
+  border: 0;
+  background: none;
+  padding: 4px 0 6px;
+  border-radius: 14px;
+  color: var(--estompe);
+  font-size: 11px;
+  font-weight: 700;
+}
+
+.semaine .numero {
+  display: grid;
+  place-items: center;
+  width: 34px;
+  height: 34px;
+  margin: 3px auto 2px;
+  border-radius: 999px;
+  font-size: 15px;
+  color: var(--encre);
+}
+
+.semaine button.actif .numero {
+  border: 2px solid var(--menthe);
+  color: var(--menthe-fonce);
+}
+
+.semaine button.futur {
+  opacity: 0.4;
+}
+
+.semaine .point {
+  width: 5px;
+  height: 5px;
+  border-radius: 999px;
+  background: var(--estompe);
+  margin: 0 auto;
+}

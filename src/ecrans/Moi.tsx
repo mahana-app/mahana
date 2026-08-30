@@ -10,7 +10,7 @@ import type { Vue } from '../lib/navigation'
 import { imc, lectureImc, objectifCalories, poidsActuel } from '../lib/profil'
 import { nombreFr } from '../lib/formats'
 
-export default function Moi({ ouvrir }: { ouvrir: (vue: Vue) => void }) {
+export default function Moi({ ouvrir, fermer }: { ouvrir: (vue: Vue) => void; fermer: () => void }) {
   const { etat } = useApp()
   const [copie, setCopie] = useState(false)
   const profil = etat.profil
@@ -43,6 +43,7 @@ export default function Moi({ ouvrir }: { ouvrir: (vue: Vue) => void }) {
       <Entete
         kicker={profil.prenom || 'Mon suivi'}
         titre="Moi"
+        retour={fermer}
         ouvrirReglages={() => ouvrir({ nom: 'reglages' })}
       />
 
@@ -89,9 +90,13 @@ export default function Moi({ ouvrir }: { ouvrir: (vue: Vue) => void }) {
 
       <div className="grille2">
         <Lien emoji="⚖️" fond="var(--ambre-pale)" nom="Mon poids" onClick={() => ouvrir({ nom: 'corps' })} />
-        <Lien emoji="⏳" fond="var(--corail-pale)" nom="Le jeûne" onClick={() => ouvrir({ nom: 'jeune' })} />
+        <Lien emoji="💪" fond="var(--lavande-pale)" nom="Mes séances" onClick={() => ouvrir({ nom: 'sport' })} />
         <Lien emoji="💧" fond="#e4f0fd" nom="Mon eau" onClick={() => ouvrir({ nom: 'eau' })} />
         <Lien emoji="👟" fond="var(--menthe-pale)" nom="Pas et sommeil" onClick={() => ouvrir({ nom: 'activite' })} />
+        <Lien emoji="🎯" fond="var(--corail-pale)" nom="Défis et habitudes" onClick={() => ouvrir({ nom: 'defis' })} />
+        <Lien emoji="👩‍🍳" fond="var(--ambre-pale)" nom="Les recettes" onClick={() => ouvrir({ nom: 'recettes' })} />
+        <Lien emoji="🎓" fond="var(--menthe-pale)" nom="Les leçons" onClick={() => ouvrir({ nom: 'lecons' })} />
+        <Lien emoji="⚙️" fond="var(--piste)" nom="Réglages" onClick={() => ouvrir({ nom: 'reglages' })} />
       </div>
 
       <div className="titre-section">Depuis le début</div>
@@ -119,6 +124,10 @@ export default function Moi({ ouvrir }: { ouvrir: (vue: Vue) => void }) {
         <div className="ligne-liste">
           <span className="doux">Repas notés</span>
           <span className="chiffre">{etat.repas.length}</span>
+        </div>
+        <div className="ligne-liste">
+          <span className="doux">Leçons lues</span>
+          <span className="chiffre">{etat.leconsLues.length}</span>
         </div>
       </div>
 

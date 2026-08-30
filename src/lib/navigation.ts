@@ -4,7 +4,13 @@
 import type { MomentRepas } from './stockage'
 
 export type Vue =
-  | { nom: 'jeune' }
+  | { nom: 'sport' }
+  | { nom: 'defis' }
+  | { nom: 'moi' }
+  | { nom: 'recettes' }
+  | { nom: 'recette'; id: string }
+  | { nom: 'lecons' }
+  | { nom: 'lecon'; id: string }
   | { nom: 'seance'; id: string }
   | { nom: 'sortie' }
   | { nom: 'ajout'; moment: MomentRepas }

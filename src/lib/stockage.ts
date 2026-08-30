@@ -29,6 +29,18 @@ export type Profil = {
   /** Rythme de jeûne choisi et durée visée. */
   planJeune: string
   objectifJeuneHeures: number
+  /** L'heure à laquelle le prochain jeûne est prévu, « 19:30 ». */
+  heureJeune: string
+  /** Ajouter les calories du sport à ce qu'on peut manger dans la journée. */
+  ajouterKcalBrulees: boolean
+  /**
+   * Comment l'objectif de calories se répartit entre les repas, en parts de 1.
+   * Par défaut : un quart le matin, un tiers à midi, un tiers le soir,
+   * le reste pour les en-cas.
+   */
+  repartition: { petitDejeuner: number; dejeuner: number; diner: number; encas: number }
+  /** Le jeûne mis en pause sans perdre la série — vacances, maladie, fête. */
+  modeVacances: boolean
 }
 
 export type Jeune = {
@@ -91,6 +103,19 @@ export type DefiFini = {
   reussis: number
 }
 
+/** Une habitude s'installe sur vingt et un jours, pas sur sept. */
+export type HabitudeEnCours = {
+  habitudeId: string
+  debut: string
+  coches: string[]
+}
+
+export type HabitudeFinie = {
+  habitudeId: string
+  debut: string
+  reussis: number
+}
+
 export type Etat = {
   version: 2
   demarre: boolean
@@ -106,6 +131,12 @@ export type Etat = {
   pas: Record<string, number>
   defiEnCours: DefiEnCours | null
   defisFinis: DefiFini[]
+  habitudeEnCours: HabitudeEnCours | null
+  habitudesFinies: HabitudeFinie[]
+  /** Les leçons déjà lues, par identifiant. */
+  leconsLues: string[]
+  /** Les recettes mises de côté. */
+  recettesGardees: string[]
 }
 
 export const PROFIL_PAR_DEFAUT: Profil = {
@@ -123,6 +154,10 @@ export const PROFIL_PAR_DEFAUT: Profil = {
   butSommeilMin: 8 * 60,
   planJeune: '16-8',
   objectifJeuneHeures: 16,
+  heureJeune: '20:00',
+  ajouterKcalBrulees: true,
+  repartition: { petitDejeuner: 0.25, dejeuner: 0.35, diner: 0.35, encas: 0.05 },
+  modeVacances: false,
 }
 
 export const ETAT_VIDE: Etat = {
@@ -138,6 +173,10 @@ export const ETAT_VIDE: Etat = {
   pas: {},
   defiEnCours: null,
   defisFinis: [],
+  habitudeEnCours: null,
+  habitudesFinies: [],
+  leconsLues: [],
+  recettesGardees: [],
 }
 
 const CLE = 'mahana.v1'
@@ -203,6 +242,10 @@ export function lireEtat(): Etat {
       pas: lu.pas ?? {},
       defiEnCours: lu.defiEnCours ?? null,
       defisFinis: lu.defisFinis ?? [],
+      habitudeEnCours: lu.habitudeEnCours ?? null,
+      habitudesFinies: lu.habitudesFinies ?? [],
+      leconsLues: lu.leconsLues ?? [],
+      recettesGardees: lu.recettesGardees ?? [],
     }
   } catch {
     return ETAT_VIDE

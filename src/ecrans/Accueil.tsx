@@ -1,18 +1,28 @@
-/* L'écran d'accueil : la journée en un coup d'œil, et les gestes du quotidien
-   à une touche. */
+/* L'écran d'accueil : la journée entière, carte par carte, et chaque geste
+   à une touche. C'est l'écran qu'on ouvre vingt fois par jour — il doit
+   répondre sans qu'on ait à chercher. */
 
-import Anneaux from '../composants/Anneaux'
-import Entete from '../composants/Entete'
+import JaugeDemi from '../composants/JaugeDemi'
 import { IconeFleche } from '../composants/Icones'
-import { clefJour, duree, initialeJour, septDerniersJours } from '../lib/dates'
+import type { Onglet } from '../composants/BarreOnglets'
+import { clefJour, duree, heuresMinutes, initialeJour, septDerniersJours } from '../lib/dates'
 import { defiParId, joursTenus, jourValide } from '../lib/defis'
 import { totauxDuJour, useApp, useHorloge } from '../lib/etat'
+import { habitudeParId, jourNumeroHabitude } from '../lib/habitudes'
 import { dureeMs, jeuneEnCours, serie } from '../lib/jeune'
+import { prochaineLecon } from '../lib/lecons'
 import type { Vue } from '../lib/navigation'
-import { objectifCalories, poidsActuel } from '../lib/profil'
-import type { Onglet } from '../composants/BarreOnglets'
+import { objectifCalories, objectifMacros } from '../lib/profil'
+import { recetteDuJour } from '../lib/recettes'
+import { scoreDuJour } from '../lib/score'
+import type { MomentRepas } from '../lib/stockage'
 
-const HEURE = 3_600_000
+const REPAS: Array<{ id: MomentRepas; nom: string; emoji: string; fond: string }> = [
+  { id: 'petit-dejeuner', nom: 'Petit-déjeuner', emoji: '🌅', fond: 'var(--menthe-pale)' },
+  { id: 'dejeuner', nom: 'Déjeuner', emoji: '🍽️', fond: 'var(--ambre-pale)' },
+  { id: 'diner', nom: 'Dîner', emoji: '🌙', fond: 'var(--lavande-pale)' },
+  { id: 'encas', nom: 'En-cas', emoji: '🍎', fond: 'var(--corail-pale)' },
+]
 
 export default function Accueil({
   ouvrir,
@@ -21,23 +31,29 @@ export default function Accueil({
   ouvrir: (vue: Vue) => void
   allerA: (onglet: Onglet) => void
 }) {
-  const { etat, ajouterVerres, cocherJour } = useApp()
+  const { etat, ajouterVerres, cocherJour, cocherHabitude } = useApp()
   const maintenant = useHorloge()
   const aujourdhui = clefJour()
   const totaux = totauxDuJour(etat, aujourdhui)
-  const butKcal = objectifCalories(etat)
-  const poids = poidsActuel(etat)
+  const but = objectifCalories(etat)
+  const macros = but ? objectifMacros(but) : null
   const enCours = jeuneEnCours(etat)
   const jours = serie(etat)
+  const score = scoreDuJour(etat, aujourdhui)
   const defi = etat.defiEnCours ? defiParId(etat.defiEnCours.defiId) : null
+  const habitude = etat.habitudeEnCours ? habitudeParId(etat.habitudeEnCours.habitudeId) : null
+  const recette = recetteDuJour(aujourdhui)
+  const lecon = prochaineLecon(etat.leconsLues)
+  const nuit = etat.nuits.find((n) => n.jour === aujourdhui)
 
-  const restantes = butKcal ? butKcal - totaux.kcalMangees + totaux.kcalBrulees : null
+  const bonus = etat.profil.ajouterKcalBrulees ? totaux.kcalBrulees : 0
+  const restantes = but ? but - totaux.kcalMangees + bonus : null
+
   const semaine = septDerniersJours().map(({ date, clef }) => ({
     date,
     clef,
     minutes: etat.seances.filter((s) => s.jour === clef).reduce((t, s) => t + s.minutes, 0),
   }))
-  const maxSemaine = Math.max(30, ...semaine.map((j) => j.minutes))
 
   const prenom = etat.profil.prenom
   const heure = new Date(maintenant).getHours()
@@ -45,94 +61,155 @@ export default function Accueil({
 
   return (
     <div className="page">
-      <Entete
-        kicker={`${salut} ${prenom} 👋`.trim()}
-        titre="Votre journée"
-        ouvrirReglages={() => ouvrir({ nom: 'reglages' })}
-      />
+      {/* le bandeau du haut : profil, calories brûlées, score */}
+      <header className="entete">
+        <button
+          type="button"
+          onClick={() => ouvrir({ nom: 'moi' })}
+          aria-label="Mon profil"
+          style={{
+            width: 46,
+            height: 46,
+            borderRadius: 999,
+            border: '2px solid var(--menthe)',
+            background: 'var(--menthe-pale)',
+            color: 'var(--menthe-fonce)',
+            fontWeight: 800,
+            fontSize: 18,
+            flex: '0 0 auto',
+          }}
+        >
+          {(prenom[0] ?? '🙂').toUpperCase()}
+        </button>
+        <div style={{ flex: 1, minWidth: 0 }}>
+          <div className="bonjour">{salut}</div>
+          <h1 style={{ fontSize: 20 }}>{prenom || 'Votre journée'}</h1>
+        </div>
+        <span className="pilule corail">🔥 {totaux.kcalBrulees}</span>
+        <button
+          type="button"
+          className="pilule menthe"
+          style={{ border: 0 }}
+          onClick={() => allerA('progres')}
+        >
+          ⭐ {score.total}
+        </button>
+      </header>
 
-      {/* La journée en trois anneaux : manger, bouger, marcher. */}
+      {/* les calories du jour */}
       <div className="carte">
-        <div className="rangee" style={{ alignItems: 'center', gap: 16 }}>
-          <Anneaux
-            cercles={[
-              {
-                nom: 'calories',
-                part: butKcal ? totaux.kcalMangees / butKcal : 0,
-                couleur: 'var(--corail)',
-              },
-              { nom: 'sport', part: totaux.minutesSport / 30, couleur: 'var(--menthe)' },
-              { nom: 'pas', part: totaux.pas / etat.profil.butPas, couleur: 'var(--ambre)' },
-            ]}
-          />
-          <div style={{ flex: 1, display: 'grid', gap: 10 }}>
-            <Legende
-              couleur="var(--corail)"
-              nom="Calories"
-              valeur={`${totaux.kcalMangees}${butKcal ? ` / ${butKcal}` : ''}`}
-            />
-            <Legende
-              couleur="var(--menthe)"
-              nom="Sport"
-              valeur={totaux.minutesSport ? `${totaux.minutesSport} min` : '—'}
-            />
-            <Legende
-              couleur="var(--ambre)"
-              nom="Pas"
-              valeur={totaux.pas ? totaux.pas.toLocaleString('fr-FR') : '—'}
-            />
-          </div>
+        <div className="rangee" style={{ marginBottom: 6 }}>
+          <div style={{ fontWeight: 800 }}>🔥 Calories</div>
+          <button type="button" className="pilule" onClick={() => allerA('repas')}>
+            Détail
+          </button>
         </div>
 
-        {restantes !== null && (
-          <div
-            style={{
-              marginTop: 14,
-              paddingTop: 14,
-              borderTop: '1px solid var(--bord)',
-              textAlign: 'center',
-            }}
-          >
-            <span className="chiffre" style={{ fontSize: 26 }}>
-              {Math.max(0, restantes)}
-            </span>{' '}
-            <span className="doux" style={{ fontWeight: 600 }}>
-              {restantes >= 0 ? 'kcal encore possibles aujourd’hui' : 'kcal au-dessus'}
-            </span>
+        <JaugeDemi
+          part={but ? totaux.kcalMangees / but : 0}
+          centre={restantes !== null ? String(Math.max(0, restantes)) : '—'}
+          legendeCentre="kcal restantes"
+          gauche={String(totaux.kcalMangees)}
+          legendeGauche="Consommé"
+          droite={String(totaux.kcalBrulees)}
+          legendeDroite="Brûlé"
+        />
+
+        {macros && (
+          <div className="grille3" style={{ marginTop: 10 }}>
+            <Macro nom="Glucides" valeur={totaux.glucides} but={macros.glucides} couleur="var(--ambre)" />
+            <Macro nom="Protéines" valeur={totaux.proteines} but={macros.proteines} couleur="var(--menthe)" />
+            <Macro nom="Lipides" valeur={totaux.lipides} but={macros.lipides} couleur="var(--corail)" />
           </div>
         )}
+
+        <div className="grille2" style={{ marginTop: 14 }}>
+          {REPAS.map((repas) => (
+            <button
+              key={repas.id}
+              type="button"
+              className="tuile"
+              style={{ boxShadow: 'none', background: repas.fond, padding: '10px 12px' }}
+              onClick={() => ouvrir({ nom: 'ajout', moment: repas.id })}
+            >
+              <span style={{ fontSize: 17 }}>{repas.emoji}</span>
+              <span style={{ flex: 1, fontSize: 13 }}>{repas.nom}</span>
+              <span style={{ fontWeight: 800, color: 'var(--menthe-fonce)' }}>+</span>
+            </button>
+          ))}
+        </div>
       </div>
 
-      {/* Le jeûne */}
+      {/* eau et pas, côte à côte */}
+      <div className="grille2">
+        <div className="carte" style={{ marginBottom: 0 }}>
+          <div style={{ fontWeight: 800 }}>💧 Eau</div>
+          <div className="chiffre" style={{ fontSize: 26, marginTop: 6 }}>
+            {totaux.verres}
+            <span className="doux" style={{ fontSize: 14, fontWeight: 700 }}>
+              {' '}
+              / {etat.profil.butEau}
+            </span>
+          </div>
+          <div className="doux mini" style={{ marginBottom: 10 }}>
+            {totaux.verres >= etat.profil.butEau
+              ? 'Objectif atteint 🎉'
+              : `${(totaux.verres * etat.profil.verreMl).toLocaleString('fr-FR')} ml bus`}
+          </div>
+          <button
+            type="button"
+            className="bouton-fin"
+            style={{ width: '100%' }}
+            onClick={() => ajouterVerres(1)}
+          >
+            + Un verre
+          </button>
+        </div>
+
+        <div className="carte" style={{ marginBottom: 0 }}>
+          <div style={{ fontWeight: 800 }}>👟 Pas</div>
+          <div className="chiffre" style={{ fontSize: 26, marginTop: 6 }}>
+            {totaux.pas.toLocaleString('fr-FR')}
+          </div>
+          <div className="doux mini" style={{ marginBottom: 10 }}>
+            {totaux.pas >= etat.profil.butPas
+              ? 'Objectif atteint 🎉'
+              : `sur ${etat.profil.butPas.toLocaleString('fr-FR')}`}
+          </div>
+          <button
+            type="button"
+            className="bouton-fin"
+            style={{ width: '100%' }}
+            onClick={() => ouvrir({ nom: 'activite' })}
+          >
+            Noter mes pas
+          </button>
+        </div>
+      </div>
+
+      {/* le jeûne */}
       <button
         type="button"
         className="carte"
-        style={{ width: '100%', border: 0, textAlign: 'left' }}
-        onClick={() => ouvrir({ nom: 'jeune' })}
+        style={{ width: '100%', border: 0, textAlign: 'left', marginTop: 14 }}
+        onClick={() => allerA('jeune')}
       >
         <div className="rangee">
           <div>
-            <div className="kicker">Jeûne</div>
+            <div className="kicker">⏳ Minuteur de jeûne</div>
             {enCours ? (
               <>
-                <div className="chiffre" style={{ fontSize: 24 }}>
+                <div className="chiffre" style={{ fontSize: 25 }}>
                   {duree(dureeMs(enCours, maintenant))}
                 </div>
-                <div className="doux mini">
-                  sur {enCours.objectifHeures} h ·{' '}
-                  {Math.max(
-                    0,
-                    Math.round(
-                      (enCours.objectifHeures * HEURE - dureeMs(enCours, maintenant)) / 60000,
-                    ),
-                  )}{' '}
-                  min restantes
-                </div>
+                <div className="doux mini">sur {enCours.objectifHeures} h visées</div>
               </>
             ) : (
               <>
-                <div style={{ fontSize: 18, fontWeight: 700 }}>Pas de jeûne en cours</div>
-                <div className="doux mini">Toucher pour lancer le minuteur</div>
+                <div style={{ fontSize: 17, fontWeight: 700 }}>
+                  Prochain jeûne à {etat.profil.heureJeune}
+                </div>
+                <div className="doux mini">Toucher pour démarrer ou décaler</div>
               </>
             )}
           </div>
@@ -143,13 +220,13 @@ export default function Accueil({
         </div>
       </button>
 
-      {/* Le défi de la semaine */}
-      {etat.defiEnCours && defi && (
+      {/* le défi de la semaine */}
+      {etat.defiEnCours && defi ? (
         <div className="carte">
           <div className="rangee">
             <div style={{ minWidth: 0 }}>
-              <div className="kicker">Défi en cours</div>
-              <div style={{ fontWeight: 700, fontSize: 16 }}>
+              <div className="kicker">Défi de la semaine</div>
+              <div style={{ fontWeight: 700 }}>
                 {defi.emoji} {defi.nom}
               </div>
               <div className="doux mini">{joursTenus(etat)} jours tenus sur 7</div>
@@ -160,99 +237,238 @@ export default function Accueil({
               style={{ width: 'auto', padding: '10px 16px', flex: '0 0 auto' }}
               onClick={() => cocherJour(aujourdhui)}
             >
-              {jourValide(etat, aujourdhui) ? '✅ Tenu' : 'Cocher'}
+              {jourValide(etat, aujourdhui) ? '✅' : 'Cocher'}
             </button>
+          </div>
+        </div>
+      ) : (
+        <button
+          type="button"
+          className="carte"
+          style={{ width: '100%', border: 0, textAlign: 'left' }}
+          onClick={() => ouvrir({ nom: 'defis' })}
+        >
+          <div className="rangee">
+            <div>
+              <div className="kicker">Défis</div>
+              <div style={{ fontWeight: 700 }}>🎯 Choisir un défi pour la semaine</div>
+              <div className="doux mini">Une règle simple, sept jours</div>
+            </div>
+            <IconeFleche />
+          </div>
+        </button>
+      )}
+
+      {/* l'habitude en cours */}
+      {etat.habitudeEnCours && habitude && (
+        <div className="carte">
+          <div className="rangee">
+            <div style={{ minWidth: 0 }}>
+              <div className="kicker">Habitude · jour {jourNumeroHabitude(etat.habitudeEnCours.debut)} sur 21</div>
+              <div style={{ fontWeight: 700 }}>
+                {habitude.emoji} {habitude.nom}
+              </div>
+            </div>
+            <button
+              type="button"
+              className={
+                etat.habitudeEnCours.coches.includes(aujourdhui) ? 'bouton-fin' : 'bouton'
+              }
+              style={{ width: 'auto', padding: '10px 16px', flex: '0 0 auto' }}
+              onClick={() => cocherHabitude(aujourdhui)}
+            >
+              {etat.habitudeEnCours.coches.includes(aujourdhui) ? '✅' : 'Cocher'}
+            </button>
+          </div>
+          <div style={{ display: 'flex', gap: 3, marginTop: 12 }}>
+            {Array.from({ length: 21 }, (_, i) => i).map((i) => (
+              <span
+                key={i}
+                style={{
+                  flex: 1,
+                  height: 6,
+                  borderRadius: 999,
+                  background:
+                    i < etat.habitudeEnCours!.coches.length ? habitude.couleur : 'var(--piste)',
+                }}
+              />
+            ))}
           </div>
         </div>
       )}
 
-      {/* Le sport de la semaine */}
+      {/* l'entraînement */}
       <div className="carte">
-        <div className="rangee">
-          <div className="kicker">Sport de la semaine</div>
-          <span className="doux mini">
-            {semaine.reduce((t, j) => t + j.minutes, 0)} min au total
-          </span>
-        </div>
-        <div
-          style={{
-            display: 'flex',
-            alignItems: 'flex-end',
-            gap: 8,
-            height: 92,
-            margin: '14px 0 0',
-          }}
-        >
-          {semaine.map(({ date, clef, minutes }) => (
-            <div key={clef} style={{ flex: 1, textAlign: 'center' }}>
-              <div
-                style={{
-                  height: Math.max(5, (minutes / maxSemaine) * 62),
-                  borderRadius: 8,
-                  background: minutes ? 'var(--degrade-menthe)' : 'var(--piste)',
-                }}
-              />
-              <div
-                style={{
-                  fontSize: 10,
-                  marginTop: 6,
-                  fontWeight: 700,
-                  color: clef === aujourdhui ? 'var(--menthe)' : 'var(--estompe)',
-                }}
-              >
-                {initialeJour(date)}
-              </div>
+        <div className="rangee" style={{ alignItems: 'flex-start' }}>
+          <div>
+            <div className="kicker">💪 Entraînement</div>
+            <div className="chiffre" style={{ fontSize: 26 }}>
+              {totaux.minutesSport} min
             </div>
-          ))}
+            <div className="doux mini">aujourd'hui · 30 min conseillées</div>
+          </div>
+          <div style={{ display: 'flex', gap: 5 }}>
+            {semaine.map(({ date, clef, minutes }) => (
+              <div key={clef} style={{ textAlign: 'center' }}>
+                <div
+                  style={{
+                    width: 16,
+                    height: 34,
+                    borderRadius: 6,
+                    background: minutes ? 'var(--degrade-menthe)' : 'var(--piste)',
+                  }}
+                />
+                <div style={{ fontSize: 9, marginTop: 3, color: 'var(--estompe)', fontWeight: 700 }}>
+                  {initialeJour(date)}
+                </div>
+              </div>
+            ))}
+          </div>
         </div>
+        <button
+          type="button"
+          className="bouton-fin"
+          style={{ width: '100%', marginTop: 12 }}
+          onClick={() => ouvrir({ nom: 'sport' })}
+        >
+          + Commencer une séance
+        </button>
       </div>
 
-      <div className="titre-section">Vite fait</div>
+      {/* sommeil et score */}
       <div className="grille2">
-        <button type="button" className="tuile" onClick={() => allerA('sport')}>
-          <span className="rond" style={{ background: 'var(--menthe-pale)' }}>
-            🏃‍♀️
-          </span>
-          Une séance
+        <button
+          type="button"
+          className="carte"
+          style={{ marginBottom: 0, border: 0, textAlign: 'left' }}
+          onClick={() => ouvrir({ nom: 'activite' })}
+        >
+          <div style={{ fontWeight: 800 }}>🌙 Sommeil</div>
+          {nuit ? (
+            <>
+              <div className="chiffre" style={{ fontSize: 22, marginTop: 6 }}>
+                {heuresMinutes(nuit.minutes)}
+              </div>
+              <div className="doux mini">
+                {nuit.coucher} → {nuit.lever}
+              </div>
+            </>
+          ) : (
+            <p className="doux mini" style={{ margin: '8px 0 0' }}>
+              Rien de noté — bien dormi cette nuit ?
+            </p>
+          )}
         </button>
-        <button type="button" className="tuile" onClick={() => allerA('repas')}>
-          <span className="rond" style={{ background: 'var(--corail-pale)' }}>
-            🍽️
-          </span>
-          Noter un repas
-        </button>
-        <button type="button" className="tuile" onClick={() => ajouterVerres(1)}>
-          <span className="rond" style={{ background: '#e4f0fd' }}>
-            💧
-          </span>
-          Un verre d'eau
-          <span className="doux mini" style={{ marginLeft: 'auto' }}>
-            {totaux.verres}/{etat.profil.butEau}
-          </span>
-        </button>
-        <button type="button" className="tuile" onClick={() => ouvrir({ nom: 'corps' })}>
-          <span className="rond" style={{ background: 'var(--ambre-pale)' }}>
-            ⚖️
-          </span>
-          {poids ? `${poids.toLocaleString('fr-FR', { minimumFractionDigits: 1 })} kg` : 'Mon poids'}
+
+        <button
+          type="button"
+          className="carte"
+          style={{ marginBottom: 0, border: 0, textAlign: 'left' }}
+          onClick={() => allerA('progres')}
+        >
+          <div style={{ fontWeight: 800 }}>⭐ Score</div>
+          <div className="chiffre" style={{ fontSize: 22, marginTop: 6 }}>
+            {score.total}
+            <span className="doux" style={{ fontSize: 13, fontWeight: 700 }}> / 100</span>
+          </div>
+          <div className="doux mini">
+            {score.parties.filter((p) => !p.restant).length} objectifs sur 6
+          </div>
         </button>
       </div>
+
+      {/* la recette du jour */}
+      <button
+        type="button"
+        className="carte"
+        style={{ width: '100%', border: 0, textAlign: 'left', marginTop: 14 }}
+        onClick={() => ouvrir({ nom: 'recette', id: recette.id })}
+      >
+        <div className="rangee">
+          <span
+            style={{
+              width: 52,
+              height: 52,
+              borderRadius: 16,
+              background: recette.couleur,
+              display: 'grid',
+              placeItems: 'center',
+              fontSize: 25,
+              flex: '0 0 auto',
+            }}
+          >
+            {recette.emoji}
+          </span>
+          <div style={{ flex: 1, minWidth: 0 }}>
+            <div className="kicker">Recette du jour</div>
+            <div style={{ fontWeight: 700 }}>{recette.nom}</div>
+            <div className="doux mini">
+              {recette.kcal} kcal · {recette.minutes} min
+            </div>
+          </div>
+          <IconeFleche />
+        </div>
+      </button>
+
+      {/* la leçon suivante */}
+      {lecon && (
+        <button
+          type="button"
+          className="carte"
+          style={{ width: '100%', border: 0, textAlign: 'left' }}
+          onClick={() => ouvrir({ nom: 'lecon', id: lecon.id })}
+        >
+          <div className="rangee">
+            <span
+              style={{
+                width: 52,
+                height: 52,
+                borderRadius: 16,
+                background: 'var(--menthe-pale)',
+                display: 'grid',
+                placeItems: 'center',
+                fontSize: 25,
+                flex: '0 0 auto',
+              }}
+            >
+              {lecon.emoji}
+            </span>
+            <div style={{ flex: 1, minWidth: 0 }}>
+              <div className="kicker">Comprendre · {lecon.minutes} min</div>
+              <div style={{ fontWeight: 700 }}>{lecon.titre}</div>
+              <div className="doux mini">{lecon.chapo}</div>
+            </div>
+            <IconeFleche />
+          </div>
+        </button>
+      )}
     </div>
   )
 }
 
-function Legende({ couleur, nom, valeur }: { couleur: string; nom: string; valeur: string }) {
+function Macro({
+  nom,
+  valeur,
+  but,
+  couleur,
+}: {
+  nom: string
+  valeur: number
+  but: number
+  couleur: string
+}) {
   return (
-    <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-      <span
-        style={{ width: 9, height: 9, borderRadius: 999, background: couleur, flex: '0 0 auto' }}
-      />
-      <span className="doux mini" style={{ flex: 1, fontWeight: 600 }}>
+    <div>
+      <div className="doux mini" style={{ fontWeight: 700 }}>
         {nom}
-      </span>
-      <span className="chiffre" style={{ fontSize: 14, whiteSpace: 'nowrap' }}>
+      </div>
+      <div className="chiffre" style={{ fontSize: 15 }}>
         {valeur}
-      </span>
+        <span className="doux" style={{ fontSize: 11, fontWeight: 600 }}> / {but} g</span>
+      </div>
+      <div className="barre" style={{ height: 5, marginTop: 4 }}>
+        <i style={{ width: `${Math.min(100, (valeur / but) * 100)}%`, background: couleur }} />
+      </div>
     </div>
   )
 }

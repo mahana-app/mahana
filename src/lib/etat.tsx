@@ -5,6 +5,7 @@ import { createContext, useCallback, useContext, useEffect, useMemo, useState } 
 import type { ReactNode } from 'react'
 import { clefJour, minutesEntre } from './dates'
 import { defiTermine, joursTenus } from './defis'
+import { habitudeTerminee } from './habitudes'
 import { jeuneEnCours } from './jeune'
 import type {
   Etat,
@@ -23,6 +24,7 @@ type Actions = {
   abandonner: () => void
   corrigerDebut: (debut: Date) => void
   supprimerJeune: (id: string) => void
+  ajouterJeunePasse: (debut: Date, fin: Date) => void
   /* l'eau */
   ajouterVerres: (nombre: number, jour?: string) => void
   /* le corps */
@@ -38,10 +40,16 @@ type Actions = {
   noterPas: (nombre: number, jour?: string) => void
   noterNuit: (coucher: string, lever: string, jour?: string) => void
   supprimerNuit: (jour: string) => void
-  /* les défis */
+  /* les défis et les habitudes */
   lancerDefi: (defiId: string) => void
   cocherJour: (jour: string) => void
   arreterDefi: () => void
+  lancerHabitude: (habitudeId: string) => void
+  cocherHabitude: (jour: string) => void
+  arreterHabitude: () => void
+  /* le contenu */
+  marquerLeconLue: (leconId: string) => void
+  basculerRecette: (recetteId: string) => void
   /* le reste */
   reglerLe: (changements: Partial<Profil>) => void
   demarrer: () => void
@@ -58,19 +66,38 @@ export function FournisseurEtat({ children }: { children: ReactNode }) {
     ecrireEtat(etat)
   }, [etat])
 
-  // Un défi arrivé à son terme se range tout seul dans le palmarès.
+  // Un défi ou une habitude arrivés à leur terme se rangent tout seuls
+  // dans le palmarès, au premier lancement de la journée.
   useEffect(() => {
     setEtat((precedent) => {
-      const encours = precedent.defiEnCours
-      if (!encours || !defiTermine(encours.debut)) return precedent
-      return {
-        ...precedent,
-        defiEnCours: null,
-        defisFinis: [
-          ...precedent.defisFinis,
-          { defiId: encours.defiId, debut: encours.debut, reussis: joursTenus(precedent) },
-        ],
+      let suite = precedent
+      const defi = suite.defiEnCours
+      if (defi && defiTermine(defi.debut)) {
+        suite = {
+          ...suite,
+          defiEnCours: null,
+          defisFinis: [
+            ...suite.defisFinis,
+            { defiId: defi.defiId, debut: defi.debut, reussis: joursTenus(suite) },
+          ],
+        }
       }
+      const habitude = suite.habitudeEnCours
+      if (habitude && habitudeTerminee(habitude.debut)) {
+        suite = {
+          ...suite,
+          habitudeEnCours: null,
+          habitudesFinies: [
+            ...suite.habitudesFinies,
+            {
+              habitudeId: habitude.habitudeId,
+              debut: habitude.debut,
+              reussis: habitude.coches.length,
+            },
+          ],
+        }
+      }
+      return suite
     })
   }, [])
 
@@ -114,6 +141,22 @@ export function FournisseurEtat({ children }: { children: ReactNode }) {
 
   const supprimerJeune = useCallback((id: string) => {
     setEtat((p) => ({ ...p, jeunes: p.jeunes.filter((j) => j.id !== id) }))
+  }, [])
+
+  /** Un jeûne oublié sur le moment, noté après coup. */
+  const ajouterJeunePasse = useCallback((debut: Date, fin: Date) => {
+    setEtat((p) => ({
+      ...p,
+      jeunes: [
+        {
+          id: nouvelId(),
+          debut: debut.toISOString(),
+          fin: fin.toISOString(),
+          objectifHeures: p.profil.objectifJeuneHeures,
+        },
+        ...p.jeunes,
+      ].sort((a, b) => b.debut.localeCompare(a.debut)),
+    }))
   }, [])
 
   /* ---------- l'eau ---------- */
@@ -219,6 +262,39 @@ export function FournisseurEtat({ children }: { children: ReactNode }) {
     setEtat((p) => ({ ...p, defiEnCours: null }))
   }, [])
 
+  const lancerHabitude = useCallback((habitudeId: string) => {
+    setEtat((p) => ({ ...p, habitudeEnCours: { habitudeId, debut: clefJour(), coches: [] } }))
+  }, [])
+
+  const cocherHabitude = useCallback((jour: string) => {
+    setEtat((p) => {
+      if (!p.habitudeEnCours) return p
+      const coches = p.habitudeEnCours.coches.includes(jour)
+        ? p.habitudeEnCours.coches.filter((c) => c !== jour)
+        : [...p.habitudeEnCours.coches, jour]
+      return { ...p, habitudeEnCours: { ...p.habitudeEnCours, coches } }
+    })
+  }, [])
+
+  const arreterHabitude = useCallback(() => {
+    setEtat((p) => ({ ...p, habitudeEnCours: null }))
+  }, [])
+
+  const marquerLeconLue = useCallback((leconId: string) => {
+    setEtat((p) =>
+      p.leconsLues.includes(leconId) ? p : { ...p, leconsLues: [...p.leconsLues, leconId] },
+    )
+  }, [])
+
+  const basculerRecette = useCallback((recetteId: string) => {
+    setEtat((p) => ({
+      ...p,
+      recettesGardees: p.recettesGardees.includes(recetteId)
+        ? p.recettesGardees.filter((r) => r !== recetteId)
+        : [...p.recettesGardees, recetteId],
+    }))
+  }, [])
+
   /* ---------- le reste ---------- */
 
   const reglerLe = useCallback((changements: Partial<Profil>) => {
@@ -237,6 +313,7 @@ export function FournisseurEtat({ children }: { children: ReactNode }) {
       abandonner,
       corrigerDebut,
       supprimerJeune,
+      ajouterJeunePasse,
       ajouterVerres,
       noterPoids,
       supprimerPesee,
@@ -250,6 +327,11 @@ export function FournisseurEtat({ children }: { children: ReactNode }) {
       lancerDefi,
       cocherJour,
       arreterDefi,
+      lancerHabitude,
+      cocherHabitude,
+      arreterHabitude,
+      marquerLeconLue,
+      basculerRecette,
       reglerLe,
       demarrer,
       remplacerTout,
@@ -262,6 +344,7 @@ export function FournisseurEtat({ children }: { children: ReactNode }) {
       abandonner,
       corrigerDebut,
       supprimerJeune,
+      ajouterJeunePasse,
       ajouterVerres,
       noterPoids,
       supprimerPesee,
@@ -275,6 +358,11 @@ export function FournisseurEtat({ children }: { children: ReactNode }) {
       lancerDefi,
       cocherJour,
       arreterDefi,
+      lancerHabitude,
+      cocherHabitude,
+      arreterHabitude,
+      marquerLeconLue,
+      basculerRecette,
       reglerLe,
       demarrer,
       remplacerTout,

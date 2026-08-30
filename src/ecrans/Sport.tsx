@@ -10,7 +10,7 @@ import { poidsActuel } from '../lib/profil'
 import { FAMILLES, SEANCES, caloriesSeance } from '../lib/sport'
 import { nombreFr } from '../lib/formats'
 
-export default function Sport({ ouvrir }: { ouvrir: (vue: Vue) => void }) {
+export default function Sport({ ouvrir, fermer }: { ouvrir: (vue: Vue) => void; fermer: () => void }) {
   const { etat, supprimerSeance } = useApp()
   const [famille, setFamille] = useState<string>('toutes')
   const poids = poidsActuel(etat) ?? 70
@@ -26,7 +26,7 @@ export default function Sport({ ouvrir }: { ouvrir: (vue: Vue) => void }) {
 
   return (
     <div className="page">
-      <Entete kicker="Bouger" titre="Séances" ouvrirReglages={() => ouvrir({ nom: 'reglages' })} />
+      <Entete kicker="Bouger" titre="Séances" retour={fermer} ouvrirReglages={() => ouvrir({ nom: 'reglages' })} />
 
       <div className="carte" style={{ background: 'var(--menthe-pale)' }}>
         <div className="rangee">

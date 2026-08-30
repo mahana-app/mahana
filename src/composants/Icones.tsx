@@ -122,3 +122,29 @@ export const IconePartage = ({ taille = 20 }: Props) => (
     <path d="M5 13v6.5h14V13" />
   </svg>
 )
+
+export const IconeProgres = ({ taille = 22 }: Props) => (
+  <svg {...trait(taille)}>
+    <path d="M3 17l5.5-5.5 3.5 3.5L21 6" />
+    <path d="M15 6h6v6" />
+  </svg>
+)
+
+export const IconeCroix = ({ taille = 20 }: Props) => (
+  <svg {...trait(taille)}>
+    <path d="M6 6l12 12M18 6L6 18" />
+  </svg>
+)
+
+export const IconeCrayon = ({ taille = 16 }: Props) => (
+  <svg {...trait(taille)}>
+    <path d="M4 20h4l10-10a2.8 2.8 0 0 0-4-4L4 16v4z" />
+  </svg>
+)
+
+export const IconeLivre = ({ taille = 22 }: Props) => (
+  <svg {...trait(taille)}>
+    <path d="M4 4h6a3 3 0 0 1 3 3v13a2.5 2.5 0 0 0-2.5-2.5H4z" />
+    <path d="M20 4h-6a3 3 0 0 0-3 3v13a2.5 2.5 0 0 1 2.5-2.5H20z" />
+  </svg>
+)
