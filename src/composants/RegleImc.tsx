@@ -2,10 +2,10 @@
    dessus. Un chiffre seul ne dit rien ; posé sur la règle, il parle. */
 
 const ZONES = [
-  { nom: 'Poids insuffisant', couleur: '#2f5a66', jusqua: 18.5 },
-  { nom: 'Normal', couleur: '#4e5b3c', jusqua: 25 },
-  { nom: 'Surpoids', couleur: '#c89a5b', jusqua: 30 },
-  { nom: 'Obésité', couleur: '#c0603a', jusqua: 40 },
+  { nom: 'Poids insuffisant', couleur: 'var(--canard)', jusqua: 18.5 },
+  { nom: 'Normal', couleur: 'var(--olive)', jusqua: 25 },
+  { nom: 'Surpoids', couleur: 'var(--miel)', jusqua: 30 },
+  { nom: 'Obésité', couleur: 'var(--argile)', jusqua: 40 },
 ]
 
 /* La règle s'arrête à 40 : au-delà, le curseur reste au bout. */
@@ -55,7 +55,7 @@ export default function RegleImc({ valeur }: { valeur: number }) {
             width: 20,
             height: 20,
             borderRadius: 999,
-            background: '#fff',
+            background: 'var(--carte-fond)',
             border: `3px solid ${zone.couleur}`,
             boxShadow: '0 2px 6px rgba(29,47,56,.2)',
           }}

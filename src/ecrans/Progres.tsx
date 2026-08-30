@@ -127,7 +127,7 @@ export default function Progres({ ouvrir }: { ouvrir: (vue: Vue) => void }) {
           part={score.total / 100}
           centre={String(score.total)}
           legendeCentre="sur 100"
-          couleurs={['#4e5b3c', '#c0603a']}
+          couleurs={['var(--olive)', 'var(--argile)']}
         />
         <div style={{ marginTop: 10 }}>
           {score.parties.map((partie) => (
@@ -175,7 +175,7 @@ export default function Progres({ ouvrir }: { ouvrir: (vue: Vue) => void }) {
                     display: 'grid',
                     placeItems: 'center',
                     background: reussi ? 'var(--degrade-argile)' : 'var(--piste)',
-                    color: reussi ? '#fff' : 'var(--estompe)',
+                    color: reussi ? 'var(--sur-accent)' : 'var(--estompe)',
                     border: clef === clefJour() ? '2px solid var(--argile)' : '2px solid transparent',
                     opacity: futur ? 0.4 : 1,
                     fontWeight: 800,
@@ -227,7 +227,7 @@ export default function Progres({ ouvrir }: { ouvrir: (vue: Vue) => void }) {
                 fontWeight: 700,
                 fontSize: 14,
                 background: type === valeur ? 'var(--degrade-argile)' : 'transparent',
-                color: type === valeur ? '#fff' : 'var(--doux)',
+                color: type === valeur ? 'var(--sur-accent)' : 'var(--doux)',
               }}
             >
               {valeur === 'semaine' ? 'Semaine' : valeur === 'mois' ? 'Mois' : 'Année'}
@@ -290,7 +290,7 @@ export default function Progres({ ouvrir }: { ouvrir: (vue: Vue) => void }) {
             valeur: c.pas,
             couleur:
               c.pas >= etat.profil.butPas
-                ? 'linear-gradient(180deg, #c89a5b, #c0603a)'
+                ? 'linear-gradient(180deg, var(--miel), var(--argile))'
                 : 'var(--piste)',
           }))}
           unite=""
@@ -306,7 +306,7 @@ export default function Progres({ ouvrir }: { ouvrir: (vue: Vue) => void }) {
           cases={totaux.map((c) => ({
             libelle: c.libelle,
             valeur: c.minutesSport,
-            couleur: c.minutesSport ? 'linear-gradient(180deg, #386874, #274c57)' : 'var(--piste)',
+            couleur: c.minutesSport ? 'linear-gradient(180deg, var(--canard-clair), var(--canard-fonce))' : 'var(--piste)',
           }))}
           unite="min"
         />
@@ -500,17 +500,17 @@ function CourbePoids({
       <svg viewBox={`0 0 ${largeur} ${hauteur}`} width="100%" height={hauteur} style={{ marginTop: 8 }}>
         <defs>
           <linearGradient id="degradeProgres" x1="0" y1="0" x2="0" y2="1">
-            <stop offset="0%" stopColor="#4e5b3c" stopOpacity="0.28" />
-            <stop offset="100%" stopColor="#4e5b3c" stopOpacity="0" />
+            <stop offset="0%" stopColor="var(--olive)" stopOpacity="0.28" />
+            <stop offset="100%" stopColor="var(--olive)" stopOpacity="0" />
           </linearGradient>
         </defs>
         <path
           d={`${trace} L ${x(points[points.length - 1].i)} ${hauteur} L ${x(points[0].i)} ${hauteur} Z`}
           fill="url(#degradeProgres)"
         />
-        <path d={trace} fill="none" stroke="#4e5b3c" strokeWidth="2.5" strokeLinecap="round" />
+        <path d={trace} fill="none" stroke="var(--olive)" strokeWidth="2.5" strokeLinecap="round" />
         {points.map((p) => (
-          <circle key={p.i} cx={x(p.i)} cy={y(p.poids)} r="3.5" fill="#4e5b3c" />
+          <circle key={p.i} cx={x(p.i)} cy={y(p.poids)} r="3.5" fill="var(--olive)" />
         ))}
       </svg>
       <div className="rangee doux mini">

@@ -129,8 +129,8 @@ export default function Sport({ ouvrir, fermer }: { ouvrir: (vue: Vue) => void; 
           width: '100%',
           border: 0,
           textAlign: 'left',
-          background: 'linear-gradient(120deg, #386874, #274c57)',
-          color: '#fff',
+          background: 'linear-gradient(120deg, var(--canard-clair), var(--canard-fonce))',
+          color: 'var(--sur-accent)',
         }}
         onClick={() => ouvrir({ nom: 'sortie' })}
       >
@@ -156,7 +156,7 @@ export default function Sport({ ouvrir, fermer }: { ouvrir: (vue: Vue) => void; 
             className="pilule"
             style={
               famille === f.id
-                ? { background: 'var(--encre)', color: '#fff', flex: '0 0 auto' }
+                ? { background: 'var(--actif-fond)', color: 'var(--actif-texte)', flex: '0 0 auto' }
                 : { flex: '0 0 auto' }
             }
             onClick={() => setFamille(f.id)}

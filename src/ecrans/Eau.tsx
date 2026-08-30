@@ -25,7 +25,7 @@ export default function EcranEau({ fermer }: { fermer: () => void }) {
       <Entete kicker="Hydratation" titre="Mon eau du jour" retour={fermer} />
 
       <div style={{ padding: '4px 0 16px' }}>
-        <Anneau progression={bus / but} taille={210} couleurs={['#386874', '#8b9a79']}>
+        <Anneau progression={bus / but} taille={210} couleurs={['var(--canard-clair)', 'var(--sauge)']}>
           <div style={{ fontSize: 30 }}>💧</div>
           <div className="chiffre" style={{ fontSize: 34, marginTop: 2 }}>
             {bus} / {but}
@@ -69,8 +69,8 @@ export default function EcranEau({ fermer }: { fermer: () => void }) {
                 borderRadius: '8px 8px 14px 14px',
                 border: `2px solid ${i < bus ? 'transparent' : 'var(--bord)'}`,
                 background:
-                  i < bus ? 'linear-gradient(160deg, #386874, #8b9a79)' : 'var(--piste)',
-                color: '#fff',
+                  i < bus ? 'linear-gradient(160deg, var(--canard-clair), var(--sauge))' : 'var(--piste)',
+                color: 'var(--sur-accent)',
                 fontSize: 16,
               }}
             >
@@ -107,7 +107,7 @@ export default function EcranEau({ fermer }: { fermer: () => void }) {
                   borderRadius: 8,
                   background:
                     verres >= but
-                      ? 'linear-gradient(180deg, #386874, #8b9a79)'
+                      ? 'linear-gradient(180deg, var(--canard-clair), var(--sauge))'
                       : 'var(--piste)',
                   marginTop: 4,
                 }}

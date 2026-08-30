@@ -62,7 +62,7 @@ export default function Activite({ fermer }: { fermer: () => void }) {
           <i
             style={{
               width: `${Math.min(100, ((etat.pas[aujourdhui] ?? 0) / etat.profil.butPas) * 100)}%`,
-              background: 'linear-gradient(120deg, #c89a5b, #c0603a)',
+              background: 'linear-gradient(120deg, var(--miel), var(--argile))',
             }}
           />
         </div>
@@ -108,7 +108,7 @@ export default function Activite({ fermer }: { fermer: () => void }) {
                   borderRadius: 8,
                   background:
                     nombre >= etat.profil.butPas
-                      ? 'linear-gradient(180deg, #c89a5b, #c0603a)'
+                      ? 'linear-gradient(180deg, var(--miel), var(--argile))'
                       : 'var(--piste)',
                 }}
               />

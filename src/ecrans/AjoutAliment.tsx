@@ -212,7 +212,7 @@ export default function AjoutAliment({
               className="pilule"
               style={
                 categorie === c
-                  ? { background: 'var(--encre)', color: '#fff', flex: '0 0 auto' }
+                  ? { background: 'var(--actif-fond)', color: 'var(--actif-texte)', flex: '0 0 auto' }
                   : { flex: '0 0 auto' }
               }
               onClick={() => setCategorie(c)}

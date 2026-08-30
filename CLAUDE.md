@@ -22,10 +22,32 @@ reste étrangère à celle-ci.
 - **Mobile d'abord** : tout se consulte sur un téléphone, à une main.
 - Le style tient dans un seul fichier, `src/theme.css` : des variables CSS et
   des classes utilitaires. Pas de bibliothèque de composants.
-- **La charte est « bien-être »** : fonds sable et crème, accent **argile**
-  (terre cuite), plus **olive**, **canard**, **sauge** et **miel**. Les titres
-  et les chiffres sont en serif (*Cormorant Garamond*), le texte en *Jost*.
-  Rien de criard : l'app s'ouvre le matin et le soir, elle doit apaiser.
+- **Deux thèmes, un seul jeu de variables.** Toutes les couleurs vivent dans
+  `src/theme.css`. Les noms sont des **rôles**, pas des teintes : `--argile`
+  est l'accent principal, `--olive` le vert de la réussite, `--canard` le bleu
+  frais, `--miel` l'ambre des avertissements. Le thème « argile » (clair,
+  terre cuite, serif *Cormorant Garamond*) et le thème « néon » (fond noir,
+  cyan et vert électriques, grotesque *Space Grotesk*) leur donnent d'autres
+  valeurs, jamais d'autres emplois.
+- **Aucune couleur en dur, nulle part.** Pas dans un `.tsx`, pas dans une
+  donnée de `src/lib/*.ts` (recettes, défis, habitudes portent des
+  `var(--…)`). Un `#f5ebdc` oublié reste clair quand tout passe au noir — et
+  ça ne se voit que sur l'autre thème. Le contrôle :
+
+  ```bash
+  grep -rn "#[0-9a-fA-F]\{3,6\}" src --include=*.ts --include=*.tsx
+  ```
+
+  Seules exceptions légitimes : `theme.css` lui-même et la couleur de la barre
+  du téléphone dans `etat.tsx`.
+- **Texte posé sur une couleur : `var(--sur-accent)`**, jamais du blanc. En
+  clair c'est un crème ; en néon un bleu très sombre, parce qu'un aplat cyan
+  ne porte pas du blanc. Pour l'onglet ou la pilule sélectionnés, la paire
+  `--actif-fond` / `--actif-texte`.
+- Le choix se garde dans `profil.theme` et se pose sur
+  `document.documentElement.dataset.theme`. Une vignette d'aperçu porte son
+  propre `data-theme` : elle est peinte avec les vraies variables du thème
+  qu'elle propose (`ChoixTheme.tsx`).
 - **Les symboles sont dessinés au trait**, dans `composants/Symbole.tsx`, tous
   dans le même esprit que le logo — un cercle, une courbe, rien de plus.
   Pas d'emoji pour la structure de l'app (titres, cartes, onglets, étapes) :

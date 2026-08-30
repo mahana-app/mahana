@@ -18,7 +18,7 @@ export default function Anneau({
   progression,
   taille = 230,
   epaisseur = 17,
-  couleurs = ['#c96a43', '#a54f2e'],
+  couleurs = ['var(--argile-clair)', 'var(--argile-fonce)'],
   children,
 }: Props) {
   const identifiant = useId().replace(/:/g, '')

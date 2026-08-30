@@ -147,7 +147,7 @@ export default function Sortie({ fermer }: { fermer: () => void }) {
 
       {gps.erreur && (
         <div className="carte" style={{ background: 'var(--miel-pale)' }}>
-          <p style={{ margin: 0, fontSize: 14, fontWeight: 600, color: '#b8462a' }}>{gps.erreur}</p>
+          <p style={{ margin: 0, fontSize: 14, fontWeight: 600, color: 'var(--alerte)' }}>{gps.erreur}</p>
         </div>
       )}
 

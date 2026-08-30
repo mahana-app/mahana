@@ -3,6 +3,7 @@
    changer de téléphone, et le suivi disparaît. D'où le fichier à exporter. */
 
 import { useRef } from 'react'
+import ChoixTheme from '../composants/ChoixTheme'
 import Entete from '../composants/Entete'
 import { clefJour } from '../lib/dates'
 import { useApp } from '../lib/etat'
@@ -48,6 +49,14 @@ export default function EcranReglages({ fermer }: { fermer: () => void }) {
   return (
     <div className="page">
       <Entete kicker="Mahana" titre="Réglages" retour={fermer} />
+
+      <div className="carte">
+        <div className="kicker">L'habillage</div>
+        <p className="doux mini" style={{ margin: '6px 0 0' }}>
+          Deux façons de voir l'app. Le changement est immédiat, et ne touche à aucune donnée.
+        </p>
+        <ChoixTheme />
+      </div>
 
       <div className="carte">
         <div className="kicker">Moi</div>

@@ -52,7 +52,7 @@ export default function Defis({ fermer }: { fermer: () => void }) {
                 fontWeight: 700,
                 fontSize: 13.5,
                 background: vue === id ? 'var(--degrade-argile)' : 'transparent',
-                color: vue === id ? '#fff' : 'var(--doux)',
+                color: vue === id ? 'var(--sur-accent)' : 'var(--doux)',
               }}
             >
               {nom}
@@ -116,7 +116,7 @@ function PartieDefis() {
                     borderRadius: 14,
                     border: jour === aujourdhui ? `2px solid ${defi.couleur}` : '2px solid transparent',
                     background: tenu ? defi.couleur : passe ? 'var(--miel-pale)' : 'var(--piste)',
-                    color: tenu ? '#fff' : 'var(--estompe)',
+                    color: tenu ? 'var(--sur-accent)' : 'var(--estompe)',
                     fontWeight: 800,
                     fontSize: 13,
                     opacity: futur ? 0.55 : 1,
@@ -273,7 +273,7 @@ function PartieHabitudes() {
                     border:
                       jour === aujourdhui ? `2px solid ${habitude.couleur}` : '2px solid transparent',
                     background: tenu ? habitude.couleur : 'var(--piste)',
-                    color: tenu ? '#fff' : 'var(--estompe)',
+                    color: tenu ? 'var(--sur-accent)' : 'var(--estompe)',
                     fontWeight: 800,
                     fontSize: 11,
                     opacity: futur ? 0.45 : 1,

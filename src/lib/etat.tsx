@@ -75,6 +75,16 @@ export function FournisseurEtat({ children }: { children: ReactNode }) {
     ecrireEtat(etat)
   }, [etat])
 
+  // L'habillage se pose sur la racine du document : tout le CSS en découle.
+  // La couleur de la barre du téléphone suit, sinon un liseré clair reste
+  // en haut de l'écran quand l'app passe au noir.
+  useEffect(() => {
+    const theme = etat.profil.theme ?? 'argile'
+    document.documentElement.dataset.theme = theme
+    const balise = document.querySelector('meta[name="theme-color"]')
+    if (balise) balise.setAttribute('content', theme === 'neon' ? '#0a0c12' : '#f2ebdf')
+  }, [etat.profil.theme])
+
   // Un défi ou une habitude arrivés à leur terme se rangent tout seuls
   // dans le palmarès, au premier lancement de la journée.
   useEffect(() => {

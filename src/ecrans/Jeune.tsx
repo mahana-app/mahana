@@ -337,8 +337,8 @@ function AnneauEtapes({
       <svg width={taille} height={taille} style={{ transform: 'rotate(-90deg)' }} aria-hidden>
         <defs>
           <linearGradient id="degradeJeune" x1="1" y1="0" x2="0" y2="0">
-            <stop offset="0%" stopColor={atteint ? '#f6b45e' : '#4e5b3c'} />
-            <stop offset="100%" stopColor={atteint ? '#c0603a' : '#8b9a79'} />
+            <stop offset="0%" stopColor={atteint ? 'var(--miel-clair)' : 'var(--olive)'} />
+            <stop offset="100%" stopColor={atteint ? 'var(--argile)' : 'var(--sauge)'} />
           </linearGradient>
         </defs>
         <circle

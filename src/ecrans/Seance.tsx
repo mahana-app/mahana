@@ -159,7 +159,7 @@ export default function EcranSeance({ id, fermer }: { id: string; fermer: () => 
         <>
           <Anneau
             progression={dureeEtape ? 1 - restant / dureeEtape : 0}
-            couleurs={['#386874', '#274c57']}
+            couleurs={['var(--canard-clair)', 'var(--canard-fonce)']}
           >
             <div className="kicker">Repos</div>
             <div className="chiffre" style={{ fontSize: 44 }}>
@@ -179,7 +179,7 @@ export default function EcranSeance({ id, fermer }: { id: string; fermer: () => 
         <>
           <Anneau
             progression={dureeEtape ? 1 - restant / dureeEtape : 0}
-            couleurs={['#c96a43', '#a54f2e']}
+            couleurs={['var(--argile-clair)', 'var(--argile-fonce)']}
           >
             {dureeEtape ? (
               <>

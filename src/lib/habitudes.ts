@@ -39,7 +39,7 @@ export const HABITUDES: Habitude[] = [
     emoji: '🥦',
     promesse: 'Une vraie part de légumes dans les deux repas principaux.',
     pourquoi: 'Le volume remplit l’estomac pour presque rien en calories.',
-    couleur: '#8bc34a',
+    couleur: 'var(--sauge)',
   },
   {
     id: 'proteines-matin',
@@ -63,7 +63,7 @@ export const HABITUDES: Habitude[] = [
     emoji: '📵',
     promesse: 'Le téléphone reste hors de la chambre, ou face contre la table.',
     pourquoi: 'La lumière et le défilement repoussent l’endormissement d’une heure sans qu’on s’en aperçoive.',
-    couleur: '#7e8ea6',
+    couleur: 'var(--canard)',
   },
   {
     id: 'macher',

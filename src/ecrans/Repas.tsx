@@ -49,7 +49,7 @@ export default function Repas({ ouvrir }: { ouvrir: (vue: Vue) => void }) {
       <Entete kicker="Manger" titre="Mes repas" ouvrirReglages={() => ouvrir({ nom: 'reglages' })} />
 
       <div style={{ display: 'flex', gap: 8, marginBottom: 12 }}>
-        <span className="pilule" style={{ background: 'var(--encre)', color: '#fff' }}>
+        <span className="pilule" style={{ background: 'var(--actif-fond)', color: 'var(--actif-texte)' }}>
           Repas
         </span>
         <button type="button" className="pilule" onClick={() => ouvrir({ nom: 'recettes' })}>

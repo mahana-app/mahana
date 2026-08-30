@@ -123,7 +123,7 @@ export default function EcranProgramme({
                   border:
                     numero === suivant ? '1.5px solid var(--argile)' : '1.5px solid transparent',
                   background: fait ? 'var(--argile)' : 'var(--piste)',
-                  color: fait ? '#fdfaf5' : 'var(--estompe)',
+                  color: fait ? 'var(--sur-accent)' : 'var(--estompe)',
                   fontWeight: 600,
                   fontSize: 12,
                 }}

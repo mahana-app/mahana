@@ -141,7 +141,7 @@ export default function NoterSeance({
                 className="pilule"
                 style={
                   choisie
-                    ? { background: 'var(--argile)', color: '#fdfaf5', fontWeight: 600 }
+                    ? { background: 'var(--argile)', color: 'var(--sur-accent)', fontWeight: 600 }
                     : undefined
                 }
                 onClick={() => basculerPartie(partie)}

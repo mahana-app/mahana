@@ -3,6 +3,7 @@
    veuille dire quelque chose. Tout se change ensuite dans les réglages. */
 
 import { useState } from 'react'
+import ChoixTheme from '../composants/ChoixTheme'
 import { useApp } from '../lib/etat'
 import { PLANS } from '../lib/jeune'
 import { NIVEAUX, OBJECTIFS, objectifCalories } from '../lib/profil'
@@ -260,6 +261,16 @@ export default function Bienvenue() {
             <p className="doux mini" style={{ margin: '8px 0 0' }}>
               Calculé sur votre profil. Modifiable à tout moment, et recalculé à chaque pesée.
             </p>
+          </div>
+
+          {/* Le choix de l'habillage se fait tout de suite : c'est la première
+              chose qu'on voit de l'app, autant que ce soit la bonne. */}
+          <div className="carte">
+            <div className="kicker">Et l'allure de l'app</div>
+            <p className="doux mini" style={{ margin: '6px 0 0' }}>
+              Ça se change quand vous voulez, dans les réglages.
+            </p>
+            <ChoixTheme />
           </div>
 
           <button type="button" className="bouton" onClick={terminer}>

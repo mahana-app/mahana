@@ -1,10 +1,23 @@
 /* Mahana — l'habillage.
 
-   Direction « bien-être » : des fonds sable et crème, un accent terre cuite,
-   de l'olive et du bleu canard, des titres en serif. Rien de criard : c'est
-   une app qu'on ouvre le matin et le soir, elle doit apaiser, pas exciter. */
+   Deux thèmes, et un seul jeu de variables. Chaque couleur de l'app passe par
+   une variable définie ici : aucun écran n'écrit une couleur en dur, sans quoi
+   il resterait en clair quand tout le reste passe en sombre.
 
-:root {
+   Les noms sont des rôles, pas des teintes. « argile » est l'accent principal,
+   « olive » le vert de la réussite, « canard » le bleu frais, « miel » l'ambre
+   des avertissements, « sauge » le vert secondaire. Le thème néon leur donne
+   d'autres valeurs, jamais d'autres emplois.
+
+   — Argile : sable, crème, terre cuite, olive, canard. Rien de criard : une
+     app qu'on ouvre le matin et le soir, elle doit apaiser.
+   — Néon : fond noir et couleurs électriques, pour qui préfère. */
+
+/* Le thème argile est aussi nommé explicitement : c'est ce qui permet de
+   montrer un aperçu d'un thème depuis l'autre, en posant simplement
+   « data-theme » sur la vignette. */
+:root,
+[data-theme='argile'] {
   color-scheme: light;
 
   --sable: #f2ebdf;
@@ -12,6 +25,7 @@
   --creme: #fbf7f0;
 
   --argile: #c0603a;
+  --argile-clair: #c96a43;
   --argile-fonce: #a54f2e;
   --argile-pale: #f3e6dc;
 
@@ -19,22 +33,46 @@
   --olive-pale: #e6eadd;
 
   --canard: #2f5a66;
+  --canard-clair: #386874;
+  --canard-fonce: #274c57;
   --canard-pale: #e1e8e9;
 
   --sauge: #8b9a79;
   --sauge-pale: #eaeee3;
 
   --miel: #c89a5b;
+  --miel-clair: #f6b45e;
   --miel-pale: #f5ebdc;
+  --miel-texte: #96702f;
+
+  --alerte: #b8462a;
 
   --encre: #2c2723;
   --doux: #7c7266;
   --estompe: #a99e90;
 
+  /* Le fond de la page, celui des cartes, et le texte posé sur un aplat
+     de couleur — les trois changent du tout au tout d'un thème à l'autre. */
+  --fond-page: linear-gradient(178deg, #f4eee4 0%, #f2ebdf 55%, #eae0d0 100%);
+  --carte-fond: var(--creme);
+  --champ-fond: #fdfbf7;
+  --barre-fond: rgba(251, 247, 240, 0.94);
+  --voile-fond: rgba(44, 39, 35, 0.32);
+  --sur-accent: #fdfaf5;
+  /* L'onglet ou la pilule sélectionnés. En clair c'est l'encre, presque noire ;
+     en néon ce serait un aplat blanc éblouissant, alors c'est l'accent. */
+  --actif-fond: var(--encre);
+  --actif-texte: var(--carte-fond);
+
   --bord: rgba(44, 39, 35, 0.1);
   --piste: rgba(44, 39, 35, 0.08);
   --ombre: 0 8px 24px rgba(44, 39, 35, 0.07);
   --ombre-basse: 0 3px 12px rgba(44, 39, 35, 0.05);
+  --ombre-argile: 0 8px 18px rgba(192, 96, 58, 0.26);
+  --ombre-olive: 0 8px 18px rgba(78, 91, 60, 0.24);
+  --ombre-encre: 0 8px 18px rgba(44, 39, 35, 0.2);
+  --ombre-plus: 0 7px 16px rgba(192, 96, 58, 0.36);
+  --ombre-feuille: 0 -10px 40px rgba(44, 39, 35, 0.16);
 
   --degrade-argile: linear-gradient(120deg, #c96a43, #b0532f);
   --degrade-olive: linear-gradient(120deg, #5b6a47, #465335);
@@ -42,6 +80,89 @@
 
   --serif: 'Cormorant Garamond', Charter, Georgia, 'Times New Roman', serif;
   --sans: Jost, 'Liberation Sans', system-ui, -apple-system, sans-serif;
+}
+
+/* ---------- le thème néon : fond noir et couleurs électriques ----------
+
+   Sur un fond noir, une couleur vive doit porter du texte sombre, jamais du
+   blanc : c'est l'inverse du thème clair, d'où « --sur-accent ». Les ombres
+   deviennent des halos de la couleur du bouton — c'est ce qui fait « néon »
+   plutôt que « clair inversé ». */
+
+[data-theme='neon'] {
+  color-scheme: dark;
+
+  --sable: #0a0c12;
+  --lin: #1e2434;
+  --creme: #151926;
+
+  --argile: #2ee6ff;
+  --argile-clair: #5cf0ff;
+  --argile-fonce: #13c9e6;
+  --argile-pale: rgba(46, 230, 255, 0.15);
+
+  --olive: #7cff5a;
+  --olive-pale: rgba(124, 255, 90, 0.14);
+
+  --canard: #6a95ff;
+  --canard-clair: #7ea6ff;
+  --canard-fonce: #3d5ff0;
+  --canard-pale: rgba(106, 149, 255, 0.16);
+
+  --sauge: #39d98a;
+  --sauge-pale: rgba(57, 217, 138, 0.14);
+
+  --miel: #ffc93c;
+  --miel-clair: #ffe07a;
+  --miel-pale: rgba(255, 201, 60, 0.15);
+  --miel-texte: #ffc93c;
+
+  --alerte: #ff4d6d;
+
+  --encre: #eef2f8;
+  --doux: #99a3b8;
+  --estompe: #626c80;
+
+  --fond-page: linear-gradient(178deg, #10141f 0%, #0a0c12 55%, #06070d 100%);
+  --carte-fond: #151926;
+  --champ-fond: #10141f;
+  --barre-fond: rgba(10, 12, 18, 0.94);
+  --voile-fond: rgba(0, 0, 0, 0.62);
+  --sur-accent: #04121a;
+  --actif-fond: var(--degrade-argile);
+  --actif-texte: var(--sur-accent);
+
+  --bord: rgba(255, 255, 255, 0.09);
+  --piste: rgba(255, 255, 255, 0.07);
+  --ombre: 0 8px 26px rgba(0, 0, 0, 0.55);
+  --ombre-basse: 0 3px 12px rgba(0, 0, 0, 0.45);
+  --ombre-argile: 0 6px 22px rgba(46, 230, 255, 0.34);
+  --ombre-olive: 0 6px 22px rgba(124, 255, 90, 0.3);
+  --ombre-encre: 0 6px 22px rgba(0, 0, 0, 0.6);
+  --ombre-plus: 0 6px 20px rgba(46, 230, 255, 0.45);
+  --ombre-feuille: 0 -10px 40px rgba(0, 0, 0, 0.6);
+
+  --degrade-argile: linear-gradient(120deg, #46ecff, #12b6e8);
+  --degrade-olive: linear-gradient(120deg, #8dff6e, #35c94a);
+  --degrade-canard: linear-gradient(120deg, #7ea6ff, #3d5ff0);
+
+  /* Pas de serif ici : les titres passent en grotesque, c'est ce qui change
+     l'allure de l'app autant que les couleurs. */
+  --serif: 'Space Grotesk', Jost, 'Liberation Sans', system-ui, sans-serif;
+  --sans: Jost, 'Liberation Sans', system-ui, -apple-system, sans-serif;
+}
+
+[data-theme='neon'] h1,
+[data-theme='neon'] h2,
+[data-theme='neon'] h3 {
+  font-weight: 700;
+  letter-spacing: -0.015em;
+}
+
+/* Un bouton néon porte du texte sombre : il est lumineux, pas coloré. */
+[data-theme='neon'] .bouton.sombre {
+  background: var(--lin);
+  color: var(--encre);
 }
 
 * {
@@ -52,6 +173,12 @@ html {
   background: var(--sable);
 }
 
+/* La barre de défilement du navigateur suit le thème, sinon elle reste
+   blanche au milieu d'un écran noir. */
+[data-theme='neon'] {
+  scrollbar-color: var(--estompe) var(--sable);
+}
+
 body {
   margin: 0;
   min-height: 100%;
@@ -60,7 +187,7 @@ body {
   font-size: 16px;
   -webkit-font-smoothing: antialiased;
   overscroll-behavior-y: none;
-  background: linear-gradient(178deg, #f4eee4 0%, #f2ebdf 55%, #eae0d0 100%) fixed;
+  background: var(--fond-page) fixed;
 }
 
 h1,
@@ -128,7 +255,7 @@ textarea {
 }
 
 .carte {
-  background: var(--creme);
+  background: var(--carte-fond);
   border-radius: 20px;
   padding: 17px;
   box-shadow: var(--ombre);
@@ -194,16 +321,16 @@ textarea {
   border: 0;
   border-radius: 999px;
   background: var(--degrade-argile);
-  color: #fdfaf5;
+  color: var(--sur-accent);
   font-weight: 600;
   font-size: 15.5px;
   letter-spacing: 0.02em;
-  box-shadow: 0 8px 18px rgba(192, 96, 58, 0.26);
+  box-shadow: var(--ombre-argile);
 }
 
 .bouton.olive {
   background: var(--degrade-olive);
-  box-shadow: 0 8px 18px rgba(78, 91, 60, 0.24);
+  box-shadow: var(--ombre-olive);
 }
 
 .bouton.corail {
@@ -212,7 +339,8 @@ textarea {
 
 .bouton.sombre {
   background: var(--encre);
-  box-shadow: 0 8px 18px rgba(44, 39, 35, 0.2);
+  color: var(--carte-fond);
+  box-shadow: var(--ombre-encre);
 }
 
 .bouton:active {
@@ -262,7 +390,7 @@ textarea {
 
 .pilule.ambre {
   background: var(--miel-pale);
-  color: #96702f;
+  color: var(--miel-texte);
 }
 
 /* ---------- champs ---------- */
@@ -272,7 +400,7 @@ textarea {
   padding: 13px 15px;
   border-radius: 14px;
   border: 1px solid var(--bord);
-  background: #fdfbf7;
+  background: var(--champ-fond);
   font-weight: 500;
 }
 
@@ -303,7 +431,7 @@ textarea {
   align-items: center;
   gap: 2px;
   padding: 9px 8px calc(9px + env(safe-area-inset-bottom));
-  background: rgba(251, 247, 240, 0.94);
+  background: var(--barre-fond);
   backdrop-filter: blur(16px);
   border-top: 1px solid var(--bord);
 }
@@ -335,10 +463,10 @@ textarea {
   border: 0;
   border-radius: 999px;
   background: var(--degrade-argile);
-  color: #fdfaf5;
+  color: var(--sur-accent);
   display: grid;
   place-items: center;
-  box-shadow: 0 7px 16px rgba(192, 96, 58, 0.36);
+  box-shadow: var(--ombre-plus);
   flex: 0 0 auto;
 }
 
@@ -352,7 +480,7 @@ textarea {
   position: fixed;
   inset: 0;
   z-index: 30;
-  background: rgba(44, 39, 35, 0.32);
+  background: var(--voile-fond);
   backdrop-filter: blur(2px);
   animation: fondu 0.2s ease both;
 }
@@ -368,7 +496,7 @@ textarea {
   padding: 10px 16px calc(24px + env(safe-area-inset-bottom));
   background: var(--creme);
   border-radius: 26px 26px 0 0;
-  box-shadow: 0 -10px 40px rgba(44, 39, 35, 0.16);
+  box-shadow: var(--ombre-feuille);
   animation: monte 0.26s cubic-bezier(0.2, 0.9, 0.3, 1) both;
 }
 

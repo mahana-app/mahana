@@ -116,6 +116,25 @@ semaines sans rien, des semaines à deux kilos. Et elle prévient quand le rythm
 dépasse un kilo par semaine, ou quand l'objectif de poids descend sous un IMC
 de 18,5.
 
+## Deux habillages
+
+Le même app, deux allures — le choix se fait au premier lancement et se change
+à tout moment dans les réglages, sans toucher à aucune donnée :
+
+- **Argile** — sable, crème, terre cuite, olive et canard, titres en serif
+  (*Cormorant Garamond*). Doux et clair, l'habillage d'origine.
+- **Néon** — fond noir, cyan et vert électriques, jaune et bleu, titres en
+  grotesque (*Space Grotesk*). Franc et sportif.
+
+Les deux vignettes du sélecteur portent chacune leur propre `data-theme` :
+l'aperçu est peint avec les vraies couleurs du thème qu'il propose, pas avec
+une image. Ce qu'on voit est exactement ce qu'on aura.
+
+Techniquement, toutes les couleurs de l'app passent par une variable CSS de
+`src/theme.css`, y compris celles des recettes et des défis. Les noms sont des
+rôles — `--argile` est l'accent principal, `--olive` le vert de la réussite —
+et chaque thème leur donne d'autres valeurs, jamais d'autres emplois.
+
 ## Le score du jour
 
 Une note sur 100, composée de six ingrédients : le jeûne (20), l'alimentation

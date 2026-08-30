@@ -11,6 +11,9 @@ export type Niveau = 'sedentaire' | 'leger' | 'modere' | 'actif' | 'intense'
 /** Le rythme visé : perdre, se maintenir, ou reprendre la forme sans régime. */
 export type Objectif = 'perte-douce' | 'perte' | 'maintien'
 
+/** L'habillage : « argile » (clair, terre cuite) ou « neon » (fond noir). */
+export type Theme = 'argile' | 'neon'
+
 export type Profil = {
   prenom: string
   sexe: Sexe
@@ -41,6 +44,8 @@ export type Profil = {
   repartition: { petitDejeuner: number; dejeuner: number; diner: number; encas: number }
   /** Le jeûne mis en pause sans perdre la série — vacances, maladie, fête. */
   modeVacances: boolean
+  /** L'habillage choisi. Les anciennes sauvegardes n'en ont pas : argile. */
+  theme: Theme
 }
 
 export type Jeune = {
@@ -201,6 +206,7 @@ export const PROFIL_PAR_DEFAUT: Profil = {
   ajouterKcalBrulees: true,
   repartition: { petitDejeuner: 0.25, dejeuner: 0.35, diner: 0.35, encas: 0.05 },
   modeVacances: false,
+  theme: 'argile',
 }
 
 export const ETAT_VIDE: Etat = {
