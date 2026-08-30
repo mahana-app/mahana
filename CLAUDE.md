@@ -3,9 +3,10 @@
 Application personnelle de **jeûne intermittent** (minuteur, eau, poids,
 séries, défis), dans l'esprit de Fastic. React + TypeScript + Vite, en PWA.
 
-**Aucun rapport avec Sodi's App** (l'application RH de la Roulotte SODI). Rien
-ne doit être partagé entre les deux : pas de base commune, pas de compte
-commun, pas de code recopié d'un dépôt à l'autre.
+**Cette application est seule au monde.** Elle ne partage rien avec aucun
+autre projet : pas de base commune, pas de compte commun, pas de code
+recopié depuis un autre dépôt. Si une autre application appartient à la
+même personne, elle reste étrangère à celle-ci.
 
 ## Les règles
 

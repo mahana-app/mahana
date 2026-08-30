@@ -4,9 +4,9 @@ Une petite application de jeûne intermittent, dans l'esprit de Fastic :
 un minuteur en anneau, les étapes que traverse le corps, l'eau du jour,
 le poids, une série de jours et des défis.
 
-Application personnelle et indépendante : elle n'a **aucun rapport** avec
-Sodi's App — son propre dépôt, sa propre mise en ligne, aucune base de
-données partagée, aucun compte commun.
+Application personnelle et indépendante : son propre dépôt, sa propre mise
+en ligne, aucune base de données, aucun compte. Elle ne partage rien avec
+quoi que ce soit d'autre.
 
 ## Ce qu'elle sait faire
 
