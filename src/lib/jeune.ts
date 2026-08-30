@@ -155,61 +155,7 @@ export function bilan(etat: Etat): Bilan {
   }
 }
 
-/* ---------- les défis ---------- */
-
-export type Defi = {
-  id: string
-  nom: string
-  emoji: string
-  comment: string
-  obtenu: boolean
-}
-
-export function defis(etat: Etat): Defi[] {
-  const b = bilan(etat)
-  const plusLongueSerie = serieLaPlusLongue(etat)
-  const joursEauAtteints = Object.entries(etat.eau).filter(
-    ([, verres]) => verres >= etat.reglages.butEau,
-  ).length
-
-  const liste: Array<[string, string, string, boolean]> = [
-    ['premier', '🌱', 'Le premier', b.termines >= 1],
-    ['dix', '🔟', 'Dix jeûnes bouclés', b.termines >= 10],
-    ['cinquante', '🏅', 'Cinquante jeûnes', b.termines >= 50],
-    ['seize', '🔥', 'Un jeûne de 16 h', b.plusLong >= 16],
-    ['vingtquatre', '🧹', 'Un jeûne de 24 h', b.plusLong >= 24],
-    ['serie3', '⚡', '3 jours de suite', plusLongueSerie >= 3],
-    ['serie7', '📅', 'Une semaine entière', plusLongueSerie >= 7],
-    ['serie30', '👑', 'Un mois entier', plusLongueSerie >= 30],
-    ['eau', '💧', "Une journée d'eau complète", joursEauAtteints >= 1],
-    ['eau7', '🌊', "Sept journées d'eau complètes", joursEauAtteints >= 7],
-    ['poids', '⚖️', 'Un premier poids noté', etat.pesees.length >= 1],
-  ]
-
-  const commentaires: Record<string, string> = {
-    premier: 'Terminer un jeûne',
-    dix: 'Terminer 10 jeûnes',
-    cinquante: 'Terminer 50 jeûnes',
-    seize: 'Tenir 16 heures',
-    vingtquatre: 'Tenir 24 heures',
-    serie3: '3 objectifs atteints de suite',
-    serie7: '7 objectifs atteints de suite',
-    serie30: '30 objectifs atteints de suite',
-    eau: "Boire son objectif d'eau un jour",
-    eau7: "Atteindre l'objectif d'eau 7 jours",
-    poids: 'Noter son poids une fois',
-  }
-
-  return liste.map(([id, emoji, nom, obtenu]) => ({
-    id,
-    emoji,
-    nom,
-    comment: commentaires[id],
-    obtenu,
-  }))
-}
-
-/** La plus longue série jamais tenue — celle qui débloque les défis. */
+/** La plus longue série jamais tenue. */
 export function serieLaPlusLongue(etat: Etat): number {
   const jours = [...new Set(etat.jeunes.filter(objectifAtteint).map(jourDuJeune))].sort()
   let meilleure = 0

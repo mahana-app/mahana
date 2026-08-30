@@ -6,12 +6,12 @@ import Entete from '../composants/Entete'
 import { ajouterJours, clefJour, jourCourt } from '../lib/dates'
 import { useApp } from '../lib/etat'
 
-export default function EcranEau({ ouvrirReglages }: { ouvrirReglages: () => void }) {
+export default function EcranEau({ fermer }: { fermer: () => void }) {
   const { etat, ajouterVerres } = useApp()
   const aujourdhui = clefJour()
   const bus = etat.eau[aujourdhui] ?? 0
-  const but = etat.reglages.butEau
-  const ml = etat.reglages.verreMl
+  const but = etat.profil.butEau
+  const ml = etat.profil.verreMl
 
   // Les sept derniers jours, du plus ancien au plus récent.
   const semaine = Array.from({ length: 7 }, (_, i) => {
@@ -22,10 +22,10 @@ export default function EcranEau({ ouvrirReglages }: { ouvrirReglages: () => voi
 
   return (
     <div className="page">
-      <Entete kicker="Hydratation" titre="Mon eau du jour" ouvrirReglages={ouvrirReglages} />
+      <Entete kicker="Hydratation" titre="Mon eau du jour" retour={fermer} />
 
       <div style={{ padding: '4px 0 16px' }}>
-        <Anneau progression={bus / but} taille={210} couleurs={['#4a7dff', '#17c3a2']}>
+        <Anneau progression={bus / but} taille={210} couleurs={['#6aa9f0', '#34b795']}>
           <div style={{ fontSize: 30 }}>💧</div>
           <div className="chiffre" style={{ fontSize: 34, marginTop: 2 }}>
             {bus} / {but}
@@ -69,7 +69,7 @@ export default function EcranEau({ ouvrirReglages }: { ouvrirReglages: () => voi
                 borderRadius: '8px 8px 14px 14px',
                 border: `2px solid ${i < bus ? 'transparent' : 'var(--bord)'}`,
                 background:
-                  i < bus ? 'linear-gradient(160deg, #4a7dff, #17c3a2)' : 'var(--piste)',
+                  i < bus ? 'linear-gradient(160deg, #6aa9f0, #34b795)' : 'var(--piste)',
                 color: '#fff',
                 fontSize: 16,
               }}
@@ -107,7 +107,7 @@ export default function EcranEau({ ouvrirReglages }: { ouvrirReglages: () => voi
                   borderRadius: 8,
                   background:
                     verres >= but
-                      ? 'linear-gradient(180deg, #4a7dff, #17c3a2)'
+                      ? 'linear-gradient(180deg, #6aa9f0, #34b795)'
                       : 'var(--piste)',
                   marginTop: 4,
                 }}

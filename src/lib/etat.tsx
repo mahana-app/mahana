@@ -3,27 +3,53 @@
 
 import { createContext, useCallback, useContext, useEffect, useMemo, useState } from 'react'
 import type { ReactNode } from 'react'
-import { clefJour } from './dates'
+import { clefJour, minutesEntre } from './dates'
+import { defiTermine, joursTenus } from './defis'
 import { jeuneEnCours } from './jeune'
-import type { Etat, Reglages } from './stockage'
+import type {
+  Etat,
+  LigneRepas,
+  MomentRepas,
+  Nuit,
+  Profil,
+  SeanceFaite,
+} from './stockage'
 import { ETAT_VIDE, ecrireEtat, lireEtat, nouvelId } from './stockage'
 
 type Actions = {
+  /* le jeûne */
   commencer: (debut?: Date) => void
   terminer: () => void
   abandonner: () => void
   corrigerDebut: (debut: Date) => void
   supprimerJeune: (id: string) => void
+  /* l'eau */
   ajouterVerres: (nombre: number, jour?: string) => void
+  /* le corps */
   noterPoids: (poids: number, jour?: string) => void
   supprimerPesee: (jour: string) => void
-  reglerLes: (changements: Partial<Reglages>) => void
+  /* les repas */
+  ajouterRepas: (ligne: Omit<LigneRepas, 'id' | 'jour'> & { jour?: string }) => void
+  supprimerRepas: (id: string) => void
+  /* le sport */
+  noterSeance: (seance: Omit<SeanceFaite, 'id' | 'jour'> & { jour?: string }) => void
+  supprimerSeance: (id: string) => void
+  /* les pas et les nuits */
+  noterPas: (nombre: number, jour?: string) => void
+  noterNuit: (coucher: string, lever: string, jour?: string) => void
+  supprimerNuit: (jour: string) => void
+  /* les défis */
+  lancerDefi: (defiId: string) => void
+  cocherJour: (jour: string) => void
+  arreterDefi: () => void
+  /* le reste */
+  reglerLe: (changements: Partial<Profil>) => void
   demarrer: () => void
   remplacerTout: (etat: Etat) => void
   toutEffacer: () => void
 }
 
-const Contexte = createContext<{ etat: Etat } & Actions | null>(null)
+const Contexte = createContext<({ etat: Etat } & Actions) | null>(null)
 
 export function FournisseurEtat({ children }: { children: ReactNode }) {
   const [etat, setEtat] = useState<Etat>(() => lireEtat())
@@ -31,6 +57,24 @@ export function FournisseurEtat({ children }: { children: ReactNode }) {
   useEffect(() => {
     ecrireEtat(etat)
   }, [etat])
+
+  // Un défi arrivé à son terme se range tout seul dans le palmarès.
+  useEffect(() => {
+    setEtat((precedent) => {
+      const encours = precedent.defiEnCours
+      if (!encours || !defiTermine(encours.debut)) return precedent
+      return {
+        ...precedent,
+        defiEnCours: null,
+        defisFinis: [
+          ...precedent.defisFinis,
+          { defiId: encours.defiId, debut: encours.debut, reussis: joursTenus(precedent) },
+        ],
+      }
+    })
+  }, [])
+
+  /* ---------- le jeûne ---------- */
 
   const commencer = useCallback((debut?: Date) => {
     setEtat((precedent) => {
@@ -42,7 +86,7 @@ export function FournisseurEtat({ children }: { children: ReactNode }) {
             id: nouvelId(),
             debut: (debut ?? new Date()).toISOString(),
             fin: null,
-            objectifHeures: precedent.reglages.objectifHeures,
+            objectifHeures: precedent.profil.objectifJeuneHeures,
           },
           ...precedent.jeunes,
         ],
@@ -51,76 +95,138 @@ export function FournisseurEtat({ children }: { children: ReactNode }) {
   }, [])
 
   const terminer = useCallback(() => {
-    setEtat((precedent) => ({
-      ...precedent,
-      jeunes: precedent.jeunes.map((j) =>
-        j.fin === null ? { ...j, fin: new Date().toISOString() } : j,
-      ),
+    setEtat((p) => ({
+      ...p,
+      jeunes: p.jeunes.map((j) => (j.fin === null ? { ...j, fin: new Date().toISOString() } : j)),
     }))
   }, [])
 
   const abandonner = useCallback(() => {
-    setEtat((precedent) => ({
-      ...precedent,
-      jeunes: precedent.jeunes.filter((j) => j.fin !== null),
-    }))
+    setEtat((p) => ({ ...p, jeunes: p.jeunes.filter((j) => j.fin !== null) }))
   }, [])
 
   const corrigerDebut = useCallback((debut: Date) => {
-    setEtat((precedent) => ({
-      ...precedent,
-      jeunes: precedent.jeunes.map((j) =>
-        j.fin === null ? { ...j, debut: debut.toISOString() } : j,
-      ),
+    setEtat((p) => ({
+      ...p,
+      jeunes: p.jeunes.map((j) => (j.fin === null ? { ...j, debut: debut.toISOString() } : j)),
     }))
   }, [])
 
   const supprimerJeune = useCallback((id: string) => {
-    setEtat((precedent) => ({
-      ...precedent,
-      jeunes: precedent.jeunes.filter((j) => j.id !== id),
-    }))
+    setEtat((p) => ({ ...p, jeunes: p.jeunes.filter((j) => j.id !== id) }))
   }, [])
+
+  /* ---------- l'eau ---------- */
 
   const ajouterVerres = useCallback((nombre: number, jour?: string) => {
     const clef = jour ?? clefJour()
-    setEtat((precedent) => ({
-      ...precedent,
-      eau: { ...precedent.eau, [clef]: Math.max(0, (precedent.eau[clef] ?? 0) + nombre) },
+    setEtat((p) => ({
+      ...p,
+      eau: { ...p.eau, [clef]: Math.max(0, (p.eau[clef] ?? 0) + nombre) },
     }))
   }, [])
 
+  /* ---------- le corps ---------- */
+
   const noterPoids = useCallback((poids: number, jour?: string) => {
     const clef = jour ?? clefJour()
-    setEtat((precedent) => ({
-      ...precedent,
+    setEtat((p) => ({
+      ...p,
       // Une seule pesée par jour : la dernière remplace la précédente.
-      pesees: [...precedent.pesees.filter((p) => p.jour !== clef), { jour: clef, poids }].sort(
-        (a, b) => a.jour.localeCompare(b.jour),
+      pesees: [...p.pesees.filter((x) => x.jour !== clef), { jour: clef, poids }].sort((a, b) =>
+        a.jour.localeCompare(b.jour),
       ),
     }))
   }, [])
 
   const supprimerPesee = useCallback((jour: string) => {
-    setEtat((precedent) => ({
-      ...precedent,
-      pesees: precedent.pesees.filter((p) => p.jour !== jour),
+    setEtat((p) => ({ ...p, pesees: p.pesees.filter((x) => x.jour !== jour) }))
+  }, [])
+
+  /* ---------- les repas ---------- */
+
+  const ajouterRepas = useCallback(
+    (ligne: Omit<LigneRepas, 'id' | 'jour'> & { jour?: string }) => {
+      const { jour, ...reste } = ligne
+      setEtat((p) => ({
+        ...p,
+        repas: [...p.repas, { ...reste, id: nouvelId(), jour: jour ?? clefJour() }],
+      }))
+    },
+    [],
+  )
+
+  const supprimerRepas = useCallback((id: string) => {
+    setEtat((p) => ({ ...p, repas: p.repas.filter((r) => r.id !== id) }))
+  }, [])
+
+  /* ---------- le sport ---------- */
+
+  const noterSeance = useCallback(
+    (seance: Omit<SeanceFaite, 'id' | 'jour'> & { jour?: string }) => {
+      const { jour, ...reste } = seance
+      setEtat((p) => ({
+        ...p,
+        seances: [...p.seances, { ...reste, id: nouvelId(), jour: jour ?? clefJour() }],
+      }))
+    },
+    [],
+  )
+
+  const supprimerSeance = useCallback((id: string) => {
+    setEtat((p) => ({ ...p, seances: p.seances.filter((s) => s.id !== id) }))
+  }, [])
+
+  /* ---------- les pas et les nuits ---------- */
+
+  const noterPas = useCallback((nombre: number, jour?: string) => {
+    const clef = jour ?? clefJour()
+    setEtat((p) => ({ ...p, pas: { ...p.pas, [clef]: Math.max(0, Math.round(nombre)) } }))
+  }, [])
+
+  const noterNuit = useCallback((coucher: string, lever: string, jour?: string) => {
+    const clef = jour ?? clefJour()
+    const nuit: Nuit = { jour: clef, coucher, lever, minutes: minutesEntre(coucher, lever) }
+    setEtat((p) => ({
+      ...p,
+      nuits: [...p.nuits.filter((n) => n.jour !== clef), nuit].sort((a, b) =>
+        a.jour.localeCompare(b.jour),
+      ),
     }))
   }, [])
 
-  const reglerLes = useCallback((changements: Partial<Reglages>) => {
-    setEtat((precedent) => ({
-      ...precedent,
-      reglages: { ...precedent.reglages, ...changements },
-    }))
+  const supprimerNuit = useCallback((jour: string) => {
+    setEtat((p) => ({ ...p, nuits: p.nuits.filter((n) => n.jour !== jour) }))
   }, [])
 
-  const demarrer = useCallback(() => {
-    setEtat((precedent) => ({ ...precedent, demarre: true }))
+  /* ---------- les défis ---------- */
+
+  const lancerDefi = useCallback((defiId: string) => {
+    setEtat((p) => ({ ...p, defiEnCours: { defiId, debut: clefJour(), coches: [] } }))
   }, [])
 
+  const cocherJour = useCallback((jour: string) => {
+    setEtat((p) => {
+      if (!p.defiEnCours) return p
+      const coches = p.defiEnCours.coches.includes(jour)
+        ? p.defiEnCours.coches.filter((c) => c !== jour)
+        : [...p.defiEnCours.coches, jour]
+      return { ...p, defiEnCours: { ...p.defiEnCours, coches } }
+    })
+  }, [])
+
+  const arreterDefi = useCallback(() => {
+    setEtat((p) => ({ ...p, defiEnCours: null }))
+  }, [])
+
+  /* ---------- le reste ---------- */
+
+  const reglerLe = useCallback((changements: Partial<Profil>) => {
+    setEtat((p) => ({ ...p, profil: { ...p.profil, ...changements } }))
+  }, [])
+
+  const demarrer = useCallback(() => setEtat((p) => ({ ...p, demarre: true })), [])
   const remplacerTout = useCallback((nouveau: Etat) => setEtat(nouveau), [])
-
   const toutEffacer = useCallback(() => setEtat(ETAT_VIDE), [])
 
   const valeur = useMemo(
@@ -134,7 +240,17 @@ export function FournisseurEtat({ children }: { children: ReactNode }) {
       ajouterVerres,
       noterPoids,
       supprimerPesee,
-      reglerLes,
+      ajouterRepas,
+      supprimerRepas,
+      noterSeance,
+      supprimerSeance,
+      noterPas,
+      noterNuit,
+      supprimerNuit,
+      lancerDefi,
+      cocherJour,
+      arreterDefi,
+      reglerLe,
       demarrer,
       remplacerTout,
       toutEffacer,
@@ -149,7 +265,17 @@ export function FournisseurEtat({ children }: { children: ReactNode }) {
       ajouterVerres,
       noterPoids,
       supprimerPesee,
-      reglerLes,
+      ajouterRepas,
+      supprimerRepas,
+      noterSeance,
+      supprimerSeance,
+      noterPas,
+      noterNuit,
+      supprimerNuit,
+      lancerDefi,
+      cocherJour,
+      arreterDefi,
+      reglerLe,
       demarrer,
       remplacerTout,
       toutEffacer,
@@ -166,7 +292,7 @@ export function useApp() {
 }
 
 /**
- * Une horloge qui bat toutes les secondes : le minuteur s'y accroche.
+ * Une horloge qui bat toutes les secondes : les minuteurs s'y accrochent.
  * Elle donne l'heure « maintenant » à l'écran qui l'appelle, pour que
  * l'affichage se recalcule tout seul sans jamais lire l'heure en plein rendu.
  */
@@ -174,7 +300,6 @@ export function useHorloge(): number {
   const [maintenant, setMaintenant] = useState(() => Date.now())
   useEffect(() => {
     const battement = setInterval(() => setMaintenant(Date.now()), 1000)
-    // Au retour d'un écran verrouillé, l'affichage doit se remettre à l'heure.
     const reveil = () => setMaintenant(Date.now())
     document.addEventListener('visibilitychange', reveil)
     return () => {
@@ -183,4 +308,29 @@ export function useHorloge(): number {
     }
   }, [])
   return maintenant
+}
+
+/** Les totaux d'une journée : ce que tous les écrans affichent en haut. */
+export function totauxDuJour(etat: Etat, jour: string) {
+  const repas = etat.repas.filter((r) => r.jour === jour)
+  const seances = etat.seances.filter((s) => s.jour === jour)
+  return {
+    kcalMangees: Math.round(repas.reduce((t, r) => t + r.kcal, 0)),
+    glucides: Math.round(repas.reduce((t, r) => t + r.glucides, 0)),
+    proteines: Math.round(repas.reduce((t, r) => t + r.proteines, 0)),
+    lipides: Math.round(repas.reduce((t, r) => t + r.lipides, 0)),
+    kcalBrulees: Math.round(seances.reduce((t, s) => t + s.kcal, 0)),
+    minutesSport: seances.reduce((t, s) => t + s.minutes, 0),
+    pas: etat.pas[jour] ?? 0,
+    verres: etat.eau[jour] ?? 0,
+  }
+}
+
+/** Le moment de la journée, pour proposer le bon repas par défaut. */
+export function momentProbable(): MomentRepas {
+  const heure = new Date().getHours()
+  if (heure < 10) return 'petit-dejeuner'
+  if (heure < 15) return 'dejeuner'
+  if (heure < 18) return 'encas'
+  return 'diner'
 }

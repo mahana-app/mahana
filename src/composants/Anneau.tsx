@@ -1,5 +1,5 @@
-/* Le grand anneau de progression — la pièce centrale de l'écran d'accueil.
-   Il sert aussi, en plus petit, pour l'eau et pour les journées passées. */
+/* L'anneau de progression — la pièce qu'on retrouve sur presque tous les
+   écrans : le jeûne, l'eau, les calories, la journée. */
 
 import type { ReactNode } from 'react'
 import { useId } from 'react'
@@ -16,12 +16,12 @@ type Props = {
 
 export default function Anneau({
   progression,
-  taille = 250,
-  epaisseur = 18,
-  couleurs = ['#17c3a2', '#4a7dff'],
+  taille = 230,
+  epaisseur = 17,
+  couleurs = ['#34b795', '#1f9a86'],
   children,
 }: Props) {
-  const identifiant = useId()
+  const identifiant = useId().replace(/:/g, '')
   const rayon = (taille - epaisseur) / 2
   const tour = 2 * Math.PI * rayon
   const part = Math.min(1, Math.max(0, progression))
@@ -67,7 +67,7 @@ export default function Anneau({
           alignItems: 'center',
           justifyContent: 'center',
           textAlign: 'center',
-          padding: epaisseur + 8,
+          padding: epaisseur + 10,
         }}
       >
         {children}

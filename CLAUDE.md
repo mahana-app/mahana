@@ -1,12 +1,13 @@
 # Mahana — consignes de travail
 
-Application personnelle de **jeûne intermittent** (minuteur, eau, poids,
-séries, défis), dans l'esprit de Fastic. React + TypeScript + Vite, en PWA.
+Application personnelle de **perte de poids** : jeûne intermittent, repas et
+calories, sport, pas, sommeil, défis hebdomadaires. React + TypeScript + Vite,
+en PWA, mise en ligne sur Netlify.
 
-**Cette application est seule au monde.** Elle ne partage rien avec aucun
-autre projet : pas de base commune, pas de compte commun, pas de code
-recopié depuis un autre dépôt. Si une autre application appartient à la
-même personne, elle reste étrangère à celle-ci.
+**Cette application est seule au monde.** Elle ne partage rien avec aucun autre
+projet : pas de base commune, pas de compte commun, pas de code recopié depuis
+un autre dépôt. Si une autre application appartient à la même personne, elle
+reste étrangère à celle-ci.
 
 ## Les règles
 
@@ -15,14 +16,27 @@ même personne, elle reste étrangère à celle-ci.
 - Les commentaires expliquent **le pourquoi**, pas la syntaxe.
 - **Aucune donnée ne sort du téléphone.** Tout tient dans le `localStorage`
   (clé `mahana.v1`, voir `src/lib/stockage.ts`). Pas de compte, pas de serveur,
-  pas de mouchard, pas d'appel réseau — la seule exception est la police
-  Google chargée par `index.html`. Si un jour une synchronisation est ajoutée,
-  ce sera un choix explicite de l'utilisatrice, dans son propre projet.
+  pas de mouchard — la seule exception est la police Google chargée par
+  `index.html`. Si une synchronisation est ajoutée un jour, ce sera un choix
+  explicite de l'utilisatrice.
 - **Mobile d'abord** : tout se consulte sur un téléphone, à une main.
-- Le style tient dans un seul fichier, `src/theme.css` : des variables CSS,
-  un thème clair et un thème sombre. Pas de bibliothèque de composants.
-- Aucune promesse médicale : les étapes du corps sont des repères de
-  vulgarisation, et l'avertissement des réglages doit rester.
+- Le style tient dans un seul fichier, `src/theme.css` : des variables CSS et
+  des classes utilitaires. Pas de bibliothèque de composants. La charte vient
+  d'une maquette : fond dégradé menthe → pêche, cartes blanches très
+  arrondies, gros chiffres, accents menthe / corail / ambre / lavande.
+- **Aucune promesse médicale.** Les calories, les étapes du jeûne et les
+  dépenses sont des estimations : le dire, et garder l'avertissement des
+  réglages.
+- **Ne pas inventer de capacité que le web n'a pas.** Un site ne compte pas les
+  pas en arrière-plan et ne suit pas le GPS écran éteint : l'app le dit
+  franchement plutôt que de faire semblant.
+
+## Le modèle de données
+
+Tout est décrit dans `src/lib/stockage.ts`. Une sauvegarde ancienne doit
+toujours pouvoir être relue : `lireEtat()` recolle sur l'état vide et reprend
+les versions précédentes (`reprendreV1`). **Ne jamais casser cette reprise** —
+c'est le seul filet de l'utilisatrice.
 
 ## Avant de pousser
 

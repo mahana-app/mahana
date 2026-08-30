@@ -58,8 +58,8 @@ function encoderPng(largeur, hauteur, pixels /* RGBA */) {
 
 /* ---- dessin ---- */
 
-const MENTHE = [23, 195, 162]
-const BLEU = [74, 125, 255]
+const MENTHE = [47, 174, 142]
+const PECHE = [244, 136, 108]
 const BLANC = [255, 255, 255]
 
 const borne = (v, min, max) => (v < min ? min : v > max ? max : v)
@@ -104,7 +104,7 @@ function dessiner(taille, { arrondi = 0.22, echelle = 1 } = {}) {
         : -1
       const alphaFond = arrondi ? bordDoux(dFond) : 1
       const t = borne((px + py) / (taille * 2), 0, 1)
-      let couleur = melange(MENTHE, BLEU, t)
+      let couleur = melange(MENTHE, PECHE, t)
       let alpha = alphaFond
 
       // l'anneau

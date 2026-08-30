@@ -68,3 +68,33 @@ export function depuisChampHeure(jour: Date, valeur: string): Date {
   resultat.setHours(heures || 0, minutes || 0, 0, 0)
   return resultat
 }
+
+/** Les sept derniers jours, du plus ancien à aujourd'hui. */
+export function septDerniersJours(): Array<{ date: Date; clef: string }> {
+  return Array.from({ length: 7 }, (_, i) => {
+    const date = ajouterJours(new Date(), i - 6)
+    return { date, clef: clefJour(date) }
+  })
+}
+
+/** « lun. », « mar. »… la première lettre suffit sur les graphiques. */
+export function initialeJour(date: Date): string {
+  return date.toLocaleDateString('fr-FR', { weekday: 'narrow' }).toUpperCase()
+}
+
+/** Minutes écoulées entre deux heures « HH:MM », en passant minuit si besoin. */
+export function minutesEntre(depart: string, arrivee: string): number {
+  const [hd, md] = depart.split(':').map(Number)
+  const [ha, ma] = arrivee.split(':').map(Number)
+  let minutes = ha * 60 + ma - (hd * 60 + md)
+  if (minutes <= 0) minutes += 24 * 60 // on a dormi en passant minuit
+  return minutes
+}
+
+/** « 7 h 30 » à partir d'un nombre de minutes. */
+export function heuresMinutes(minutes: number): string {
+  const h = Math.floor(minutes / 60)
+  const m = Math.round(minutes % 60)
+  if (h === 0) return `${m} min`
+  return `${h} h ${String(m).padStart(2, '0')}`
+}

@@ -1,64 +1,65 @@
-/* Mahana — habillage général.
-   Une seule feuille de style : l'app est petite, et tout se lit d'un coup.
-   Clair le jour, sombre la nuit (le téléphone décide tout seul). */
+/* Mahana — l'habillage.
+   Les couleurs sont reprises de la maquette : un fond dégradé vert menthe qui
+   glisse vers la pêche, des cartes blanches très arrondies, de gros chiffres,
+   et trois teintes d'accent (menthe, corail, ambre) qu'on retrouve partout.
+   Un seul thème, clair : c'est celui de la maquette. */
 
 :root {
-  --fond: #f2f6f9;
-  --carte: #ffffff;
-  --encre: #10222e;
-  --doux: #647c8c;
-  --estompe: #9aabb6;
-  --menthe: #17c3a2;
-  --menthe-sombre: #0f9c81;
-  --bleu: #4a7dff;
-  --corail: #ff7a59;
-  --or: #f7b731;
-  --bord: rgba(16, 34, 46, 0.09);
-  --piste: rgba(16, 34, 46, 0.07);
-  --ombre: 0 6px 22px rgba(16, 34, 46, 0.07);
-  --barre: rgba(255, 255, 255, 0.92);
-}
+  color-scheme: light;
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --fond: #0d151e;
-    --carte: #16202b;
-    --encre: #eaf2f7;
-    --doux: #93a8b6;
-    --estompe: #6c828f;
-    --bord: rgba(255, 255, 255, 0.1);
-    --piste: rgba(255, 255, 255, 0.09);
-    --ombre: 0 6px 22px rgba(0, 0, 0, 0.35);
-    --barre: rgba(22, 32, 43, 0.94);
-  }
+  --menthe: #2fae8e;
+  --menthe-fonce: #1c8a6f;
+  --menthe-pale: #e3f5ee;
+  --corail: #f4886c;
+  --corail-pale: #fdeae3;
+  --ambre: #f6b45e;
+  --ambre-pale: #fdf1de;
+  --lavande: #b09ae6;
+  --lavande-pale: #f0ebfb;
+  --bleu: #6aa9f0;
+
+  --encre: #1d2f38;
+  --doux: #6f838d;
+  --estompe: #a5b3ba;
+
+  --carte: #ffffff;
+  --bord: rgba(29, 47, 56, 0.08);
+  --piste: rgba(29, 47, 56, 0.07);
+  --ombre: 0 10px 28px rgba(29, 47, 56, 0.08);
+  --ombre-basse: 0 4px 14px rgba(29, 47, 56, 0.06);
+
+  --degrade-menthe: linear-gradient(120deg, #34b795, #1f9a86);
+  --degrade-corail: linear-gradient(120deg, #f8967a, #f2765d);
 }
 
 * {
   box-sizing: border-box;
 }
 
-html,
-body,
-#root {
-  height: 100%;
+html {
+  background: #eaf4ef;
 }
 
 body {
   margin: 0;
-  background: var(--fond);
+  min-height: 100%;
   color: var(--encre);
-  font-family: Nunito, system-ui, -apple-system, 'Segoe UI', sans-serif;
+  font-family: Poppins, system-ui, -apple-system, 'Segoe UI', sans-serif;
   font-size: 16px;
   -webkit-font-smoothing: antialiased;
   overscroll-behavior-y: none;
+  /* le dégradé de la maquette : menthe en haut, pêche en bas */
+  background:
+    linear-gradient(170deg, #d7f0e6 0%, #eaf4ef 38%, #f7f0e8 68%, #fce6d7 100%)
+    fixed;
 }
 
 h1,
 h2,
 h3 {
   margin: 0;
-  font-weight: 800;
-  letter-spacing: -0.01em;
+  font-weight: 700;
+  letter-spacing: -0.015em;
 }
 
 button {
@@ -68,17 +69,18 @@ button {
 }
 
 input,
-select {
+select,
+textarea {
   font: inherit;
   color: inherit;
 }
 
-/* ---------- structure ---------- */
+/* ---------- ossature ---------- */
 
 .page {
-  max-width: 520px;
+  max-width: 540px;
   margin: 0 auto;
-  padding: 14px 16px calc(96px + env(safe-area-inset-bottom));
+  padding: 14px 16px calc(104px + env(safe-area-inset-bottom));
 }
 
 .entete {
@@ -86,58 +88,73 @@ select {
   align-items: center;
   justify-content: space-between;
   gap: 12px;
-  padding: 8px 2px 14px;
+  padding: 10px 2px 16px;
 }
 
 .entete h1 {
-  font-size: 24px;
+  font-size: 23px;
+  line-height: 1.2;
 }
 
 .bonjour {
   color: var(--doux);
-  font-size: 13px;
-  font-weight: 700;
+  font-size: 12px;
+  font-weight: 600;
   text-transform: uppercase;
-  letter-spacing: 0.12em;
+  letter-spacing: 0.14em;
 }
 
 .rond-entete {
-  width: 40px;
-  height: 40px;
+  width: 42px;
+  height: 42px;
+  flex: 0 0 auto;
   border-radius: 999px;
   border: 1px solid var(--bord);
   background: var(--carte);
+  color: var(--doux);
   display: grid;
   place-items: center;
-  box-shadow: var(--ombre);
+  box-shadow: var(--ombre-basse);
 }
 
 .carte {
   background: var(--carte);
-  border: 1px solid var(--bord);
-  border-radius: 20px;
-  padding: 16px;
+  border-radius: 24px;
+  padding: 18px;
   box-shadow: var(--ombre);
   margin-bottom: 14px;
 }
 
+.carte.serree {
+  padding: 14px 16px;
+}
+
 .carte h2 {
-  font-size: 16px;
-  margin-bottom: 4px;
+  font-size: 17px;
 }
 
 .kicker {
   font-size: 11px;
-  font-weight: 800;
+  font-weight: 700;
   text-transform: uppercase;
-  letter-spacing: 0.16em;
+  letter-spacing: 0.14em;
   color: var(--estompe);
+}
+
+.titre-section {
+  font-size: 15px;
+  font-weight: 700;
+  margin: 22px 4px 10px;
 }
 
 .doux {
   color: var(--doux);
   font-size: 14px;
-  line-height: 1.45;
+  line-height: 1.5;
+}
+
+.mini {
+  font-size: 12px;
 }
 
 .rangee {
@@ -149,7 +166,7 @@ select {
 
 .chiffre {
   font-variant-numeric: tabular-nums;
-  font-weight: 800;
+  font-weight: 700;
 }
 
 /* ---------- boutons ---------- */
@@ -163,33 +180,44 @@ select {
   padding: 15px 20px;
   border: 0;
   border-radius: 999px;
-  background: linear-gradient(120deg, var(--menthe), var(--bleu));
+  background: var(--degrade-menthe);
   color: #fff;
-  font-weight: 800;
+  font-weight: 700;
   font-size: 16px;
-  box-shadow: 0 8px 18px rgba(23, 195, 162, 0.28);
+  box-shadow: 0 10px 20px rgba(47, 174, 142, 0.28);
 }
 
-.bouton.chaud {
-  background: linear-gradient(120deg, var(--corail), var(--or));
-  box-shadow: 0 8px 18px rgba(255, 122, 89, 0.28);
+.bouton.corail {
+  background: var(--degrade-corail);
+  box-shadow: 0 10px 20px rgba(244, 136, 108, 0.3);
+}
+
+.bouton.sombre {
+  background: var(--encre);
+  box-shadow: 0 10px 20px rgba(29, 47, 56, 0.22);
 }
 
 .bouton:active {
   transform: translateY(1px);
 }
 
+.bouton:disabled {
+  opacity: 0.45;
+  box-shadow: none;
+}
+
 .bouton-fin {
   display: inline-flex;
   align-items: center;
+  justify-content: center;
   gap: 6px;
-  padding: 9px 14px;
+  padding: 10px 16px;
   border-radius: 999px;
   border: 1px solid var(--bord);
-  background: transparent;
+  background: var(--carte);
   color: var(--doux);
   font-size: 14px;
-  font-weight: 700;
+  font-weight: 600;
 }
 
 .pilule {
@@ -200,26 +228,46 @@ select {
   border-radius: 999px;
   background: var(--piste);
   color: var(--doux);
-  font-size: 13px;
-  font-weight: 800;
+  font-size: 12px;
+  font-weight: 700;
+}
+
+.pilule.menthe {
+  background: var(--menthe-pale);
+  color: var(--menthe-fonce);
+}
+
+.pilule.corail {
+  background: var(--corail-pale);
+  color: #d0603f;
+}
+
+.pilule.ambre {
+  background: var(--ambre-pale);
+  color: #b57a1c;
 }
 
 /* ---------- champs ---------- */
 
 .champ {
   width: 100%;
-  padding: 12px 14px;
-  border-radius: 14px;
+  padding: 13px 15px;
+  border-radius: 16px;
   border: 1px solid var(--bord);
-  background: var(--fond);
-  font-weight: 700;
+  background: #f7faf9;
+  font-weight: 600;
+}
+
+.champ:focus {
+  outline: 2px solid var(--menthe);
+  outline-offset: 1px;
 }
 
 .etiquette {
   display: block;
   margin-bottom: 6px;
   font-size: 13px;
-  font-weight: 800;
+  font-weight: 700;
   color: var(--doux);
 }
 
@@ -230,66 +278,99 @@ select {
   left: 0;
   right: 0;
   bottom: 0;
-  z-index: 5;
+  z-index: 20;
   display: flex;
   justify-content: center;
-  gap: 4px;
-  padding: 8px 8px calc(8px + env(safe-area-inset-bottom));
-  background: var(--barre);
-  backdrop-filter: blur(14px);
+  gap: 2px;
+  padding: 9px 8px calc(9px + env(safe-area-inset-bottom));
+  background: rgba(255, 255, 255, 0.93);
+  backdrop-filter: blur(16px);
   border-top: 1px solid var(--bord);
 }
 
 .onglet {
   flex: 1 1 0;
-  max-width: 120px;
+  max-width: 108px;
   display: flex;
   flex-direction: column;
   align-items: center;
   gap: 3px;
-  padding: 6px 4px;
+  padding: 5px 2px;
   border: 0;
   background: none;
   color: var(--estompe);
-  font-size: 11px;
-  font-weight: 800;
+  font-size: 10.5px;
+  font-weight: 700;
 }
 
 .onglet.actif {
   color: var(--menthe);
 }
 
-/* ---------- divers ---------- */
+/* ---------- grilles et tuiles ---------- */
 
-.grille-plans {
+.grille2 {
   display: grid;
   grid-template-columns: repeat(2, 1fr);
+  gap: 12px;
+}
+
+.grille3 {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
   gap: 10px;
+}
+
+.tuile {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 14px;
+  border: 0;
+  border-radius: 18px;
+  background: var(--carte);
+  box-shadow: var(--ombre-basse);
+  text-align: left;
+  font-weight: 600;
+  font-size: 14px;
+}
+
+.tuile .rond {
+  width: 34px;
+  height: 34px;
+  flex: 0 0 auto;
+  border-radius: 12px;
+  display: grid;
+  place-items: center;
+  font-size: 17px;
 }
 
 .choix {
   text-align: left;
   padding: 14px;
-  border-radius: 16px;
+  border-radius: 18px;
   border: 1.5px solid var(--bord);
   background: var(--carte);
+  width: 100%;
 }
 
 .choix.actif {
   border-color: var(--menthe);
-  background: rgba(23, 195, 162, 0.08);
+  background: var(--menthe-pale);
 }
 
 .choix b {
   display: block;
-  font-size: 17px;
+  font-size: 16px;
 }
 
 .choix span {
   color: var(--doux);
   font-size: 13px;
-  font-weight: 600;
+  font-weight: 500;
 }
+
+/* ---------- listes ---------- */
 
 .ligne-liste {
   display: flex;
@@ -307,10 +388,29 @@ select {
 .vide {
   text-align: center;
   color: var(--doux);
-  padding: 26px 10px;
+  padding: 22px 10px;
   font-size: 14px;
   line-height: 1.5;
 }
+
+/* ---------- barres de progression ---------- */
+
+.barre {
+  height: 8px;
+  border-radius: 999px;
+  background: var(--piste);
+  overflow: hidden;
+}
+
+.barre > i {
+  display: block;
+  height: 100%;
+  border-radius: 999px;
+  background: var(--degrade-menthe);
+  transition: width 0.5s ease;
+}
+
+/* ---------- apparition ---------- */
 
 @keyframes apparait {
   from {
@@ -324,11 +424,13 @@ select {
 }
 
 .page > * {
-  animation: apparait 0.28s ease both;
+  animation: apparait 0.26s ease both;
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .page > * {
+  .page > *,
+  .barre > i {
     animation: none;
+    transition: none;
   }
 }

@@ -1,33 +1,60 @@
-# Mahana — jeûne intermittent
+# Mahana
 
-Une petite application de jeûne intermittent, dans l'esprit de Fastic :
-un minuteur en anneau, les étapes que traverse le corps, l'eau du jour,
-le poids, une série de jours et des défis.
+Une application de perte de poids, complète et personnelle : le jeûne
+intermittent, les repas et les calories, le sport, les pas, le sommeil, et un
+défi par semaine. Tout dans un seul endroit, sur le téléphone.
 
-Application personnelle et indépendante : son propre dépôt, sa propre mise
-en ligne, aucune base de données, aucun compte. Elle ne partage rien avec
-quoi que ce soit d'autre.
+Application indépendante : son propre dépôt, sa propre mise en ligne, aucune
+base de données. Elle ne partage rien avec quoi que ce soit d'autre.
 
-## Ce qu'elle sait faire
+## Les cinq onglets
 
-| Écran | Ce qu'on y fait |
+| Onglet | Ce qu'on y fait |
 |---|---|
-| **Jeûne** | Lancer le minuteur, voir le temps écoulé et ce qu'il reste, corriger l'heure du dernier repas, terminer. La carte « ce qui se passe » suit les étapes : digestion → réserves de sucre → combustion des graisses → cétose → autophagie. |
-| **Eau** | Cocher les verres bus, voir les sept derniers jours. |
-| **Corps** | Noter le poids (une pesée par jour), voir la courbe, l'écart au départ, l'objectif, l'IMC. |
-| **Journal** | La série de jours d'affilée, le calendrier des cinq dernières semaines, les statistiques et les défis obtenus. |
-| **Réglages** | Le rythme (12:12 → 23:1), l'objectif d'eau, le poids visé, la sauvegarde. |
+| **Accueil** | La journée en trois anneaux — calories, sport, pas —, ce qu'il reste à manger, le jeûne en cours, le défi de la semaine, le sport des sept derniers jours, et quatre gestes rapides. |
+| **Sport** | Trois programmes (**cardio**, **pilates**, **musculation**), douze séances guidées exercice par exercice avec minuteur de série et de repos. Plus les **sorties dehors** suivies au GPS : distance, allure, calories. |
+| **Repas** | Objectif de calories calculé sur le profil, répartition glucides / protéines / lipides, journal des quatre repas, base d'aliments — y compris les plats d'ici (uru, taro, fafa, poisson cru, chao men, firi firi…) — et saisie libre pour le reste. |
+| **Défis** | Un défi par semaine, sept jours à cocher : sans sucre, sans féculents le soir, au lit avant 21 h, 10 000 pas, 2 litres d'eau… Certains se cochent tout seuls, avec ce que l'app sait déjà. Palmarès à la clé. |
+| **Moi** | Le poids et sa courbe, l'IMC, le jeûne, l'eau, les pas et le sommeil, les totaux depuis le début, et le bouton pour partager l'app. |
+
+## Comment les calories sont calculées
+
+Formule de **Mifflin-St Jeor** : le métabolisme de base à partir du sexe, de
+l'âge, de la taille et du poids ; multiplié par le niveau d'activité de la
+journée ; moins le déficit choisi (250 g ou 500 g par semaine). Un plancher
+empêche de descendre trop bas — 1 200 kcal chez la femme, 1 500 chez l'homme.
+
+Les calories du sport viennent du **MET** de chaque séance (son coût
+énergétique) multiplié par le poids et la durée. Pour les sorties dehors,
+c'est la distance qui compte.
+
+Tout cela reste une **estimation**. Le vrai juge, c'est la courbe de poids sur
+trois semaines.
 
 ## Où sont les données
 
-**Dans le téléphone, nulle part ailleurs.** Pas de compte, pas de serveur,
-pas de base de données : tout est rangé dans le `localStorage` du navigateur,
-sous la clé `mahana.v1`.
+**Dans le téléphone, nulle part ailleurs.** Pas de compte, pas de serveur, pas
+de base de données : tout est rangé dans le `localStorage` du navigateur, sous
+la clé `mahana.v1`.
 
-La conséquence à connaître : vider les données du navigateur, ou changer de
-téléphone, efface le suivi. D'où le bouton **« Exporter mes données »** dans
-les réglages, qui enregistre un fichier `mahana-2026-08-27.json` — et
-« Importer une sauvegarde » pour le relire ailleurs.
+Vider les données du navigateur ou changer de téléphone efface le suivi. D'où
+le bouton **« Exporter mes données »** dans les réglages, qui enregistre un
+fichier `mahana-2026-08-30.json` — et « Importer une sauvegarde » pour le
+relire ailleurs.
+
+**Partager l'app**, c'est partager l'adresse : chacune l'installe de son côté
+et garde son suivi chez elle. Rien ne circule entre les téléphones.
+
+## Ce que l'app ne peut pas faire
+
+**Compter les pas toute seule.** Aucun site web n'a le droit de lire le
+podomètre en arrière-plan — c'est réservé aux applications installées depuis un
+magasin. On note donc le chiffre relevé sur *Santé* (iPhone) ou *Google Fit*
+(Android), et l'app s'en sert pour le reste.
+
+**Suivre une sortie écran éteint.** Le GPS s'arrête quand le téléphone se
+verrouille. L'app demande la permission de garder l'écran allumé pendant
+l'effort, quand le navigateur l'autorise.
 
 ## Travailler dessus
 
@@ -46,33 +73,35 @@ npm run icones   # refabrique les icônes PNG (seulement si le logo change)
 ```
 index.html                 titre, polices, couleur de la barre du téléphone
 outils/icones.mjs          fabrique les PNG de l'icône, sans dépendance
-public/                    icônes, manifeste PWA, service worker (mode hors ligne)
+public/                    icônes, manifeste PWA, service worker (hors ligne)
 src/
-  theme.css                toutes les couleurs et tous les styles, clair et sombre
-  App.tsx                  l'aiguillage entre les cinq écrans
+  theme.css                toutes les couleurs et tous les styles
+  App.tsx                  l'aiguillage entre les onglets et les écrans
   lib/
     stockage.ts            ce qui est retenu, et comment c'est rangé
-    etat.tsx               l'état partagé + l'horloge du minuteur
-    jeune.ts               rythmes, étapes du corps, séries, défis
-    dates.ts               les formats de date et de durée
-  composants/              l'anneau, l'en-tête, la barre du bas, les icônes
-  ecrans/                  Bienvenue, Jeûne, Eau, Corps, Journal, Réglages
+    etat.tsx               l'état partagé, les actions, l'horloge
+    profil.ts              métabolisme, dépense, objectif de calories, IMC
+    aliments.ts            la base d'aliments et la recherche
+    sport.ts               programmes, séances, exercices, calories
+    defis.ts               les défis de la semaine et leur vérification
+    gps.ts                 le suivi d'une sortie (haversine, filtrage)
+    jeune.ts               rythmes, étapes du corps, séries
+    dates.ts               formats de date et de durée
+  composants/              anneaux, en-tête, barre du bas, icônes
+  ecrans/                  Bienvenue, Accueil, Sport, Séance, Sortie, Repas,
+                           AjoutAliment, Défis, Moi, Jeûne, Corps, Eau,
+                           Activité, Réglages
 ```
 
-## La mettre en ligne
+## La mise en ligne
 
-1. https://vercel.com → **Add New… → Project** → importer le dépôt `mahana`.
-2. Ne rien changer : **Root Directory** reste la racine, le framework **Vite**
-   est détecté tout seul, et il n'y a **aucune variable d'environnement** à
-   remplir puisqu'il n'y a pas de base de données.
-3. **Deploy**, puis ouvrir l'adresse sur le téléphone et
-   « Ajouter à l'écran d'accueil » : elle s'installe comme une vraie appli et
-   fonctionne sans réseau.
+Le dépôt est relié à **Netlify** : chaque poussée sur `main` remet le site à
+jour tout seul (construction `npm run build`, dossier `dist`). Rien à régler,
+il n'y a pas de variable d'environnement.
 
-Chaque poussée sur `main` remet l'app en ligne toute seule.
+## Avertissement
 
-## Ce que l'app n'est pas
-
-Les étapes affichées pendant le jeûne sont des repères de vulgarisation, pas
-un avis médical. Le jeûne est déconseillé en cas de grossesse, d'allaitement,
-de diabète, de troubles alimentaires ou de traitement en cours.
+Les calories, les étapes du jeûne et les dépenses affichées sont des repères,
+pas des mesures. Le jeûne et les régimes restrictifs sont déconseillés en cas
+de grossesse, d'allaitement, de diabète, de troubles alimentaires ou de
+traitement en cours.

@@ -1,14 +1,21 @@
-/* La barre du bas : quatre écrans, toujours à portée de pouce. */
+/* La barre du bas : cinq écrans, toujours à portée de pouce. */
 
-import { IconeCorps, IconeEau, IconeJeune, IconeJournal } from './Icones'
+import {
+  IconeAccueil,
+  IconeDefi,
+  IconeMoi,
+  IconeRepas,
+  IconeSport,
+} from './Icones'
 
-export type Onglet = 'jeune' | 'eau' | 'corps' | 'journal'
+export type Onglet = 'accueil' | 'sport' | 'repas' | 'defis' | 'moi'
 
-const ONGLETS: Array<{ id: Onglet; nom: string; Icone: typeof IconeJeune }> = [
-  { id: 'jeune', nom: 'Jeûne', Icone: IconeJeune },
-  { id: 'eau', nom: 'Eau', Icone: IconeEau },
-  { id: 'corps', nom: 'Corps', Icone: IconeCorps },
-  { id: 'journal', nom: 'Journal', Icone: IconeJournal },
+const ONGLETS: Array<{ id: Onglet; nom: string; Icone: typeof IconeAccueil }> = [
+  { id: 'accueil', nom: 'Accueil', Icone: IconeAccueil },
+  { id: 'sport', nom: 'Sport', Icone: IconeSport },
+  { id: 'repas', nom: 'Repas', Icone: IconeRepas },
+  { id: 'defis', nom: 'Défis', Icone: IconeDefi },
+  { id: 'moi', nom: 'Moi', Icone: IconeMoi },
 ]
 
 export default function BarreOnglets({

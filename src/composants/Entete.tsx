@@ -1,30 +1,40 @@
-/* Le haut de chaque écran : où l'on est, et le bouton des réglages. */
+/* Le haut de chaque écran. Avec, selon les cas, un bouton retour à gauche
+   et le bouton des réglages à droite. */
 
-import { IconeReglages } from './Icones'
+import { IconeReglages, IconeRetour } from './Icones'
 
 export default function Entete({
   kicker,
   titre,
+  retour,
   ouvrirReglages,
 }: {
   kicker: string
   titre: string
-  ouvrirReglages: () => void
+  retour?: () => void
+  ouvrirReglages?: () => void
 }) {
   return (
     <header className="entete">
-      <div>
+      {retour && (
+        <button type="button" className="rond-entete" aria-label="Retour" onClick={retour}>
+          <IconeRetour />
+        </button>
+      )}
+      <div style={{ flex: 1, minWidth: 0 }}>
         <div className="bonjour">{kicker}</div>
         <h1>{titre}</h1>
       </div>
-      <button
-        type="button"
-        className="rond-entete"
-        aria-label="Réglages"
-        onClick={ouvrirReglages}
-      >
-        <IconeReglages />
-      </button>
+      {ouvrirReglages && (
+        <button
+          type="button"
+          className="rond-entete"
+          aria-label="Réglages"
+          onClick={ouvrirReglages}
+        >
+          <IconeReglages />
+        </button>
+      )}
     </header>
   )
 }

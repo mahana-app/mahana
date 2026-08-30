@@ -7,17 +7,26 @@ import Anneau from '../composants/Anneau'
 import Entete from '../composants/Entete'
 import { useApp, useHorloge } from '../lib/etat'
 import { chrono, duree, heureCourte, jourRelatif } from '../lib/dates'
-import { dureeMs, jeuneEnCours, phaseA, phaseSuivante, planParId, serie } from '../lib/jeune'
+import {
+  dureeMs,
+  jeuneEnCours,
+  jeunesTermines,
+  objectifAtteint,
+  phaseA,
+  phaseSuivante,
+  planParId,
+  serie,
+} from '../lib/jeune'
 
 const HEURE = 3_600_000
 
-export default function EcranJeune({ ouvrirReglages }: { ouvrirReglages: () => void }) {
+export default function EcranJeune({ fermer }: { fermer: () => void }) {
   const { etat, commencer, terminer, abandonner, corrigerDebut } = useApp()
   const enCours = jeuneEnCours(etat)
   const maintenant = useHorloge()
   const [corrige, setCorrige] = useState(false)
 
-  const objectifHeures = enCours?.objectifHeures ?? etat.reglages.objectifHeures
+  const objectifHeures = enCours?.objectifHeures ?? etat.profil.objectifJeuneHeures
   const objectifMs = objectifHeures * HEURE
   const ecoule = enCours ? dureeMs(enCours, maintenant) : 0
   const reste = objectifMs - ecoule
@@ -25,22 +34,22 @@ export default function EcranJeune({ ouvrirReglages }: { ouvrirReglages: () => v
   const heuresEcoulees = ecoule / HEURE
   const phase = phaseA(heuresEcoulees)
   const suivante = phaseSuivante(heuresEcoulees)
-  const plan = planParId(etat.reglages.plan)
+  const plan = planParId(etat.profil.planJeune)
   const jours = serie(etat)
 
   const debut = enCours ? new Date(enCours.debut) : null
   const finPrevue = debut ? new Date(debut.getTime() + objectifMs) : null
   const finSiOnCommenceMaintenant = new Date(maintenant + objectifMs)
 
-  const prenom = etat.reglages.prenom
-  const bonjour = prenom ? `Bonjour ${prenom}` : 'Bonjour'
+  const prenom = etat.profil.prenom
+  const bonjour = prenom ? `${prenom}, votre jeûne` : 'Votre jeûne'
 
   return (
     <div className="page">
       <Entete
         kicker={bonjour}
         titre={enCours ? 'Jeûne en cours' : 'Prêt·e à jeûner'}
-        ouvrirReglages={ouvrirReglages}
+        retour={fermer}
       />
 
       {jours > 0 && (
@@ -54,7 +63,7 @@ export default function EcranJeune({ ouvrirReglages }: { ouvrirReglages: () => v
       <div style={{ padding: '10px 0 18px' }}>
         <Anneau
           progression={enCours ? ecoule / objectifMs : 0}
-          couleurs={atteint ? ['#f7b731', '#ff7a59'] : ['#17c3a2', '#4a7dff']}
+          couleurs={atteint ? ['#f6b45e', '#f4886c'] : ['#34b795', '#1f9a86']}
         >
           {enCours ? (
             <>
@@ -193,6 +202,8 @@ export default function EcranJeune({ ouvrirReglages }: { ouvrirReglages: () => v
           </div>
         </>
       )}
+
+      <HistoriqueJeunes />
     </div>
   )
 }
@@ -203,5 +214,42 @@ function champDateHeure(date: Date): string {
   return (
     `${date.getFullYear()}-${deuxChiffres(date.getMonth() + 1)}-${deuxChiffres(date.getDate())}` +
     `T${deuxChiffres(date.getHours())}:${deuxChiffres(date.getMinutes())}`
+  )
+}
+
+/** Les derniers jeûnes terminés — de quoi voir si la régularité tient. */
+function HistoriqueJeunes() {
+  const { etat, supprimerJeune } = useApp()
+  const finis = jeunesTermines(etat).slice(0, 8)
+  if (finis.length === 0) return null
+  return (
+    <div className="carte" style={{ marginTop: 14 }}>
+      <div className="kicker">Les derniers jeûnes</div>
+      <div style={{ marginTop: 4 }}>
+        {finis.map((jeune) => (
+          <div key={jeune.id} className="ligne-liste">
+            <div>
+              <div style={{ fontWeight: 700 }}>
+                {objectifAtteint(jeune) ? '✅' : '⏸️'} {duree(dureeMs(jeune))}
+                <span className="doux" style={{ fontWeight: 500 }}> / {jeune.objectifHeures} h</span>
+              </div>
+              <div className="doux mini">
+                {jourRelatif(new Date(jeune.fin as string))} · fini à{' '}
+                {heureCourte(new Date(jeune.fin as string))}
+              </div>
+            </div>
+            <button
+              type="button"
+              className="bouton-fin"
+              style={{ padding: '4px 10px' }}
+              aria-label="Supprimer ce jeûne"
+              onClick={() => supprimerJeune(jeune.id)}
+            >
+              ✕
+            </button>
+          </div>
+        ))}
+      </div>
+    </div>
   )
 }

@@ -6,15 +6,15 @@ import Entete from '../composants/Entete'
 import { clefJour, deClefJour, jourCourt } from '../lib/dates'
 import { useApp } from '../lib/etat'
 
-export default function EcranCorps({ ouvrirReglages }: { ouvrirReglages: () => void }) {
+export default function EcranCorps({ fermer }: { fermer: () => void }) {
   const { etat, noterPoids, supprimerPesee } = useApp()
   const pesees = etat.pesees
   const derniere = pesees.at(-1) ?? null
   const premiere = pesees[0] ?? null
   const [saisie, setSaisie] = useState('')
 
-  const but = etat.reglages.poidsBut
-  const taille = etat.reglages.tailleCm
+  const but = etat.profil.poidsBut
+  const taille = etat.profil.tailleCm
   const imc = derniere && taille ? derniere.poids / (taille / 100) ** 2 : null
   const ecartDepart = derniere && premiere ? derniere.poids - premiere.poids : 0
   const resteAFaire = derniere && but !== null ? derniere.poids - but : null
@@ -28,7 +28,7 @@ export default function EcranCorps({ ouvrirReglages }: { ouvrirReglages: () => v
 
   return (
     <div className="page">
-      <Entete kicker="Suivi" titre="Mon corps" ouvrirReglages={ouvrirReglages} />
+      <Entete kicker="Suivi" titre="Mon poids" retour={fermer} />
 
       <div className="carte">
         <div className="kicker">Dernière pesée</div>
@@ -48,7 +48,7 @@ export default function EcranCorps({ ouvrirReglages }: { ouvrirReglages: () => v
                 {pesees.length > 1 && (
                   <div
                     className="chiffre"
-                    style={{ color: ecartDepart <= 0 ? 'var(--menthe)' : 'var(--corail)' }}
+                    style={{ color: ecartDepart <= 0 ? 'var(--menthe-fonce)' : 'var(--corail)' }}
                   >
                     {ecartDepart > 0 ? '+' : ''}
                     {ecartDepart.toFixed(1)} kg depuis le début
@@ -132,7 +132,7 @@ export default function EcranCorps({ ouvrirReglages }: { ouvrirReglages: () => v
                         className="chiffre"
                         style={{
                           fontSize: 13,
-                          color: ecart <= 0 ? 'var(--menthe)' : 'var(--corail)',
+                          color: ecart <= 0 ? 'var(--menthe-fonce)' : 'var(--corail)',
                         }}
                       >
                         {ecart > 0 ? '+' : ''}
@@ -163,7 +163,7 @@ export default function EcranCorps({ ouvrirReglages }: { ouvrirReglages: () => v
 function Courbe() {
   const { etat } = useApp()
   const pesees = etat.pesees.slice(-30)
-  const but = etat.reglages.poidsBut
+  const but = etat.profil.poidsBut
 
   const largeur = 320
   const hauteur = 140
@@ -190,8 +190,8 @@ function Courbe() {
       >
         <defs>
           <linearGradient id="degradePoids" x1="0" y1="0" x2="0" y2="1">
-            <stop offset="0%" stopColor="#17c3a2" stopOpacity="0.28" />
-            <stop offset="100%" stopColor="#17c3a2" stopOpacity="0" />
+            <stop offset="0%" stopColor="#34b795" stopOpacity="0.28" />
+            <stop offset="100%" stopColor="#34b795" stopOpacity="0" />
           </linearGradient>
         </defs>
         {but !== null && (
@@ -206,9 +206,9 @@ function Courbe() {
           />
         )}
         <path d={surface} fill="url(#degradePoids)" />
-        <path d={trace} fill="none" stroke="#17c3a2" strokeWidth="2.5" strokeLinecap="round" />
+        <path d={trace} fill="none" stroke="#34b795" strokeWidth="2.5" strokeLinecap="round" />
         {pesees.map((p, i) => (
-          <circle key={p.jour} cx={x(i)} cy={y(p.poids)} r="3" fill="#17c3a2" />
+          <circle key={p.jour} cx={x(i)} cy={y(p.poids)} r="3" fill="#34b795" />
         ))}
       </svg>
       <div className="rangee doux" style={{ fontSize: 12, marginTop: 4 }}>
