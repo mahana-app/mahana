@@ -9,7 +9,7 @@ import { chrono } from '../lib/dates'
 import { useApp } from '../lib/etat'
 import { poidsActuel } from '../lib/profil'
 import type { Exercice } from '../lib/sport'
-import { caloriesSeance, seanceParId } from '../lib/sport'
+import { caloriesSeance, seanceParId, symboleFamille } from '../lib/sport'
 
 type Etape =
   | { type: 'travail'; exercice: Exercice; serie: number; total: number }
@@ -90,13 +90,7 @@ export default function EcranSeance({ id, fermer }: { id: string; fermer: () => 
         <Entete kicker="Terminé" titre="Bravo 🎉" retour={fermer} />
         <div className="carte" style={{ textAlign: 'center' }}>
           <div style={{ display: 'flex', justifyContent: 'center', color: 'var(--argile)' }}>
-            <Symbole
-              nom={
-                seance.categorie === 'cardio' ? 'coeur' : seance.categorie === 'pilates' ? 'lotus' : 'sport'
-              }
-              taille={54}
-              epaisseur={1.3}
-            />
+            <Symbole nom={symboleFamille(seance.categorie)} taille={54} epaisseur={1.3} />
           </div>
           <h2 style={{ fontSize: 21, marginTop: 6 }}>{seance.nom}</h2>
           <div className="rangee" style={{ marginTop: 18 }}>

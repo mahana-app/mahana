@@ -1,9 +1,14 @@
 /* Les programmes de sport.
 
-   Trois familles — cardio, pilates, musculation — et pour chacune quatre
-   séances complètes, faisables à la maison sans matériel (une chaise et un
-   tapis suffisent). Chaque exercice porte sa consigne : c'est elle qui évite
+   Quatre familles — cardio, pilates, musculation, jiu-jitsu — et pour chacune
+   quatre séances complètes, faisables à la maison sans matériel (une chaise et
+   un tapis suffisent). Chaque exercice porte sa consigne : c'est elle qui évite
    de se faire mal, surtout au début.
+
+   Le jiu-jitsu se pratique au club, à deux : ce que l'app propose ici, ce sont
+   les séances qu'on fait seule entre deux entraînements — les déplacements au
+   sol, les hanches, le cardio du tapis. Et bien sûr on note son cours du soir
+   comme n'importe quelle autre séance.
 
    Le « MET » est le coût énergétique de l'effort : 1 MET, c'est le corps au
    repos. Il sert à estimer les calories brûlées, avec le poids de la
@@ -67,6 +72,14 @@ export const FAMILLES: Array<{
     emoji: '💪',
     icone: 'sport',
     couleur: 'var(--olive)',
+  },
+  {
+    id: 'jiujitsu',
+    nom: 'Jiu-jitsu',
+    detail: 'Déplacements, hanches, cardio du tapis',
+    emoji: '🥋',
+    icone: 'ceinture',
+    couleur: 'var(--miel)',
   },
 ]
 
@@ -283,7 +296,86 @@ export const SEANCES: Seance[] = [
       { nom: 'Relevé de jambes', series: 3, reps: 12, repos: 30, consigne: 'Mains sous les fesses, descente lente.' },
     ],
   },
+
+  /* ---------------- jiu-jitsu ---------------- */
+  {
+    id: 'jjb-deplacements',
+    categorie: 'jiujitsu',
+    nom: 'Déplacements au sol',
+    sousTitre: 'La base : bouger sans forcer sur les bras',
+    minutes: 20,
+    niveau: 'Débutant',
+    met: 5,
+    emoji: '🥋',
+    exercices: [
+      { nom: 'Échauffement cou et hanches', secondes: 180, repos: 20, consigne: 'Rotations lentes. Le cou travaille beaucoup au sol, on le prépare.' },
+      { nom: 'Crevette (shrimp)', series: 3, reps: 10, repos: 40, consigne: 'On pousse sur le pied posé pour dégager la hanche — jamais sur les épaules.' },
+      { nom: 'Pont (upa)', series: 3, reps: 12, repos: 40, consigne: 'On pousse dans les talons, une épaule reste au sol, le bassin monte haut.' },
+      { nom: 'Relevé technique', series: 3, reps: 10, repos: 40, consigne: 'La main au sol reste derrière soi, jamais devant : devant, on la donne.' },
+      { nom: 'Roulade sur l’épaule', series: 3, reps: 8, repos: 45, consigne: 'On roule d’une épaule à la hanche opposée. Jamais sur la nuque.' },
+      { nom: 'Sprawl', series: 3, reps: 10, repos: 45, consigne: 'Les hanches tombent d’un coup, les jambes partent loin derrière.' },
+      { nom: 'Étirement des hanches', secondes: 120, repos: 0, consigne: 'Papillon puis pigeon, sans forcer.' },
+    ],
+  },
+  {
+    id: 'jjb-hanches',
+    categorie: 'jiujitsu',
+    nom: 'Hanches et garde',
+    sousTitre: 'La souplesse qui fait tenir la garde',
+    minutes: 15,
+    niveau: 'Débutant',
+    met: 2.5,
+    emoji: '🪷',
+    exercices: [
+      { nom: 'Papillon', secondes: 90, repos: 15, consigne: 'Assise, plantes de pieds jointes, les coudes poussent doucement les genoux.' },
+      { nom: 'Pigeon', series: 2, secondes: 60, repos: 15, consigne: '60 secondes de chaque côté. C’est là que la garde se gagne.' },
+      { nom: 'Grenouille', secondes: 90, repos: 20, consigne: 'À quatre pattes, genoux écartés, on recule le bassin très lentement.' },
+      { nom: 'Fente basse avec rotation', series: 2, secondes: 45, repos: 20, consigne: 'Chaque côté. Le bras s’ouvre vers le plafond, le regard suit.' },
+      { nom: 'Cobra', secondes: 60, repos: 15, consigne: 'Sur le ventre, on ouvre la poitrine. Contrepoids de tout ce qui se passe en boule.' },
+      { nom: 'Cou en douceur', secondes: 90, repos: 0, consigne: 'Oreille vers l’épaule, puis l’autre. Jamais de cercle complet.' },
+    ],
+  },
+  {
+    id: 'jjb-prepa',
+    categorie: 'jiujitsu',
+    nom: 'Préparation physique du tapis',
+    sousTitre: 'La poigne, le gainage, les jambes',
+    minutes: 25,
+    niveau: 'Intermédiaire',
+    met: 6.5,
+    emoji: '💪',
+    exercices: [
+      { nom: 'Échauffement complet', secondes: 180, repos: 30, consigne: 'Cercles de bras, quelques squats à vide, deux ponts.' },
+      { nom: 'Tirage à la serviette', series: 4, reps: 8, repos: 60, consigne: 'Une serviette passée sur une barre : c’est la prise du kimono qu’on travaille.' },
+      { nom: 'Suspension ou serrage', series: 3, secondes: 25, repos: 45, consigne: 'Tenir le plus longtemps possible. Au jiu-jitsu, les mains lâchent avant le reste.' },
+      { nom: 'Pont fessier une jambe', series: 3, reps: 12, repos: 45, consigne: '12 par jambe. C’est le pont du tapis, en plus fort.' },
+      { nom: 'Squat gobelet', series: 4, reps: 12, repos: 60, consigne: 'Une charge contre la poitrine, dos droit, on descend bas.' },
+      { nom: 'Gainage avec rotation', series: 3, secondes: 40, repos: 40, consigne: 'En planche, on tourne le bassin d’un côté puis de l’autre.' },
+      { nom: 'Étirements', secondes: 120, repos: 0, consigne: 'Hanches, dos, avant-bras.' },
+    ],
+  },
+  {
+    id: 'jjb-rounds',
+    categorie: 'jiujitsu',
+    nom: 'Rounds à vide',
+    sousTitre: 'Le cardio qui manque en premier',
+    minutes: 20,
+    niveau: 'Confirmé',
+    met: 8.5,
+    emoji: '⏱️',
+    exercices: [
+      { nom: 'Échauffement', secondes: 180, repos: 30, consigne: 'Déplacements lents : crevettes, ponts, relevés.' },
+      { nom: 'Round enchaîné', series: 4, secondes: 180, repos: 60, consigne: 'Crevette, pont, relevé, sprawl, sans jamais s’arrêter. Comme un combat : trois minutes, une minute de repos.' },
+      { nom: 'Retour au calme', secondes: 120, repos: 0, consigne: 'On marche, on respire, on étire les hanches.' },
+    ],
+  },
 ]
+
+/* Le symbole d'un sport, celui de sa famille. « Dehors » n'en a pas : une
+   sortie reste un entraînement, on lui laisse l'icône générique. */
+export function symboleFamille(categorie: CategorieSport): NomSymbole {
+  return FAMILLES.find((f) => f.id === categorie)?.icone ?? 'sport'
+}
 
 export const seanceParId = (id: string) => SEANCES.find((s) => s.id === id) ?? null
 
@@ -340,6 +432,7 @@ export const PARTIES_CORPS = [
   'Bas du corps',
   'Abdos et gainage',
   'Fessiers',
+  'Hanches',
   'Dos',
   'Bras',
   'Jambes',
@@ -361,6 +454,9 @@ const MET: Record<string, Record<Intensite, number>> = {
   cardio: { douce: 4.5, moderee: 7, intense: 9.5 },
   pilates: { douce: 2.5, moderee: 3.5, intense: 4.5 },
   muscu: { douce: 3.5, moderee: 5, intense: 6.5 },
+  /* Le jiu-jitsu est l'un des sports les plus coûteux qui soient : un round
+     de combat monte aussi haut qu'une course rapide. */
+  jiujitsu: { douce: 5, moderee: 7.5, intense: 10.3 },
   exterieur: { douce: 3.5, moderee: 5.5, intense: 8 },
 }
 

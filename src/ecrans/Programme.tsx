@@ -9,11 +9,8 @@ import Symbole from '../composants/Symbole'
 import { deClefJour, jourCourt, jourRelatif } from '../lib/dates'
 import { useApp } from '../lib/etat'
 import type { Vue } from '../lib/navigation'
-import { FAMILLES, joursFaits, prochainJour } from '../lib/sport'
+import { FAMILLES, joursFaits, prochainJour, symboleFamille } from '../lib/sport'
 import type { CategorieSport, Programme } from '../lib/stockage'
-
-const symbolePour = (categorie: CategorieSport) =>
-  categorie === 'cardio' ? 'coeur' : categorie === 'pilates' ? 'lotus' : 'sport'
 
 export default function EcranProgramme({
   id,
@@ -57,7 +54,7 @@ export default function EcranProgramme({
               className="pastille"
               style={{ width: 46, height: 46, background: 'var(--piste)', color: famille?.couleur }}
             >
-              <Symbole nom={symbolePour(programme.categorie)} taille={23} />
+              <Symbole nom={symboleFamille(programme.categorie)} taille={23} />
             </span>
             <div style={{ minWidth: 0 }}>
               <div className="kicker">{famille?.nom ?? 'Sport'}</div>
@@ -259,7 +256,7 @@ export function NouveauProgramme({ fermer }: { fermer: () => void }) {
         <label className="etiquette" style={{ marginTop: 14 }}>
           Quel sport
         </label>
-        <div className="grille3">
+        <div className="grille2">
           {FAMILLES.map((f) => (
             <button
               key={f.id}

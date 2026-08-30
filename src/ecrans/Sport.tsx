@@ -8,7 +8,7 @@ import { ajouterJours, clefJour, jourRelatif } from '../lib/dates'
 import { useApp } from '../lib/etat'
 import type { Vue } from '../lib/navigation'
 import { poidsActuel } from '../lib/profil'
-import { FAMILLES, SEANCES, caloriesSeance, joursFaits, prochainJour } from '../lib/sport'
+import { FAMILLES, SEANCES, caloriesSeance, joursFaits, prochainJour, symboleFamille } from '../lib/sport'
 import { nombreFr } from '../lib/formats'
 
 export default function Sport({ ouvrir, fermer }: { ouvrir: (vue: Vue) => void; fermer: () => void }) {
@@ -100,16 +100,7 @@ export default function Sport({ ouvrir, fermer }: { ouvrir: (vue: Vue) => void; 
                   className="pastille"
                   style={{ width: 44, height: 44, background: 'var(--piste)', color: famille?.couleur }}
                 >
-                  <Symbole
-                    nom={
-                      programme.categorie === 'cardio'
-                        ? 'coeur'
-                        : programme.categorie === 'pilates'
-                          ? 'lotus'
-                          : 'sport'
-                    }
-                    taille={21}
-                  />
+                  <Symbole nom={symboleFamille(programme.categorie)} taille={21} />
                 </span>
                 <div style={{ flex: 1, minWidth: 0 }}>
                   <div style={{ fontWeight: 600 }}>{programme.nom}</div>
@@ -206,16 +197,7 @@ export default function Sport({ ouvrir, fermer }: { ouvrir: (vue: Vue) => void; 
                       color: 'var(--doux)',
                     }}
                   >
-                    <Symbole
-                      nom={
-                        seance.categorie === 'cardio'
-                          ? 'coeur'
-                          : seance.categorie === 'pilates'
-                            ? 'lotus'
-                            : 'sport'
-                      }
-                      taille={22}
-                    />
+                    <Symbole nom={f.icone} taille={22} />
                   </div>
                   <div style={{ flex: 1, minWidth: 0 }}>
                     <div style={{ fontWeight: 700 }}>{seance.nom}</div>

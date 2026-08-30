@@ -37,6 +37,7 @@ export type NomSymbole =
   | 'renouveau'
   | 'medaille'
   | 'photo'
+  | 'ceinture'
 
 const TRACES: Record<NomSymbole, JSX.Element> = {
   /* le logo : le soleil sur l'eau */
@@ -205,6 +206,14 @@ const TRACES: Record<NomSymbole, JSX.Element> = {
     <>
       <circle cx="12" cy="14.4" r="5.6" />
       <path d="M8.6 9.4L6.2 3.4h11.6l-2.4 6" />
+    </>
+  ),
+  /* la ceinture nouée du jiu-jitsu : les deux brins, le nœud, les deux pans */
+  ceinture: (
+    <>
+      <rect x="2.6" y="8.6" width="18.8" height="4.2" rx="2.1" />
+      <path d="M9.6 8.6v4.2M14.4 8.6v4.2" />
+      <path d="M10.6 12.8L9.4 19.6M13.4 12.8l1.2 6.8" />
     </>
   ),
   /* l'appareil photo : le boîtier et l'objectif */

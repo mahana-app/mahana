@@ -27,9 +27,15 @@ réglages.
 
 Trois façons de s'y prendre :
 
-**Les séances guidées** — cardio, pilates, musculation : douze séances menées
-exercice par exercice, avec minuteur de série et de repos, la consigne de
-chaque mouvement et les calories estimées.
+**Les séances guidées** — cardio, pilates, musculation, jiu-jitsu : seize
+séances menées exercice par exercice, avec minuteur de série et de repos, la
+consigne de chaque mouvement et les calories estimées.
+
+Le jiu-jitsu se pratique au club, à deux : ce que l'app propose, ce sont les
+séances qu'on fait **seule entre deux entraînements** — les déplacements au sol
+(crevette, pont, relevé technique), les hanches et la garde, la préparation
+physique du tapis, et des rounds à vide pour le cardio. Le cours du soir, lui,
+se note comme n'importe quelle autre séance.
 
 **Les séances notées à la main** — une vidéo suivie sur YouTube, un cours, la
 salle. On met le nom, la durée, ce qui a travaillé (corps entier, fessiers,

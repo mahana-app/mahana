@@ -82,7 +82,7 @@ export type LigneRepas = {
   estime?: boolean
 }
 
-export type CategorieSport = 'cardio' | 'pilates' | 'muscu' | 'exterieur'
+export type CategorieSport = 'cardio' | 'pilates' | 'muscu' | 'jiujitsu' | 'exterieur'
 
 export type SeanceFaite = {
   id: string
