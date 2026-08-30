@@ -39,6 +39,7 @@ type Actions = {
   supprimerSeance: (id: string) => void
   /* les programmes suivis */
   ajouterProgramme: (programme: Omit<Programme, 'id' | 'debut' | 'termine'>) => void
+  modifierProgramme: (id: string, changements: Partial<Omit<Programme, 'id'>>) => void
   terminerProgramme: (id: string) => void
   supprimerProgramme: (id: string) => void
   /* les pas et les nuits */
@@ -238,6 +239,16 @@ export function FournisseurEtat({ children }: { children: ReactNode }) {
     [],
   )
 
+  const modifierProgramme = useCallback(
+    (id: string, changements: Partial<Omit<Programme, 'id'>>) => {
+      setEtat((p) => ({
+        ...p,
+        programmes: p.programmes.map((x) => (x.id === id ? { ...x, ...changements } : x)),
+      }))
+    },
+    [],
+  )
+
   const terminerProgramme = useCallback((id: string) => {
     setEtat((p) => ({
       ...p,
@@ -352,6 +363,7 @@ export function FournisseurEtat({ children }: { children: ReactNode }) {
       noterSeance,
       supprimerSeance,
       ajouterProgramme,
+      modifierProgramme,
       terminerProgramme,
       supprimerProgramme,
       noterPas,
@@ -386,6 +398,7 @@ export function FournisseurEtat({ children }: { children: ReactNode }) {
       noterSeance,
       supprimerSeance,
       ajouterProgramme,
+      modifierProgramme,
       terminerProgramme,
       supprimerProgramme,
       noterPas,

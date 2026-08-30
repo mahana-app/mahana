@@ -4,12 +4,13 @@
 
 import { useState } from 'react'
 import Entete from '../composants/Entete'
+import { IconeCrayon } from '../composants/Icones'
 import Symbole from '../composants/Symbole'
 import { deClefJour, jourCourt, jourRelatif } from '../lib/dates'
 import { useApp } from '../lib/etat'
 import type { Vue } from '../lib/navigation'
 import { FAMILLES, joursFaits, prochainJour } from '../lib/sport'
-import type { CategorieSport } from '../lib/stockage'
+import type { CategorieSport, Programme } from '../lib/stockage'
 
 const symbolePour = (categorie: CategorieSport) =>
   categorie === 'cardio' ? 'coeur' : categorie === 'pilates' ? 'lotus' : 'sport'
@@ -23,7 +24,9 @@ export default function EcranProgramme({
   fermer: () => void
   ouvrir: (vue: Vue) => void
 }) {
-  const { etat, supprimerSeance, terminerProgramme, supprimerProgramme } = useApp()
+  const { etat, supprimerSeance, modifierProgramme, terminerProgramme, supprimerProgramme } =
+    useApp()
+  const [modifie, setModifie] = useState(false)
   const programme = etat.programmes.find((p) => p.id === id)
 
   if (!programme) {
@@ -68,6 +71,14 @@ export default function EcranProgramme({
               {programme.avec && <div className="doux mini">avec {programme.avec}</div>}
             </div>
           </div>
+          <button
+            type="button"
+            className="bouton-fin"
+            style={{ padding: '7px 12px' }}
+            onClick={() => setModifie(!modifie)}
+          >
+            <IconeCrayon /> Modifier
+          </button>
         </div>
 
         <div className="barre" style={{ margin: '14px 0 6px' }}>
@@ -78,6 +89,18 @@ export default function EcranProgramme({
           {minutes} min · {kcal} kcal · commencé le {jourCourt(deClefJour(programme.debut))}
         </div>
       </div>
+
+      {modifie && (
+        <FormulaireProgramme
+          programme={programme}
+          minimumJours={Math.max(1, ...[...faits, 1])}
+          enregistrer={(changements) => {
+            modifierProgramme(programme.id, changements)
+            setModifie(false)
+          }}
+          annuler={() => setModifie(false)}
+        />
+      )}
 
       {/* la grille des jours : on touche un jour pour le noter */}
       <div className="carte">
@@ -309,6 +332,112 @@ export function NouveauProgramme({ fermer }: { fermer: () => void }) {
         }}
       >
         Créer le programme
+      </button>
+    </div>
+  )
+}
+
+/* ---------- corriger un programme ---------- */
+
+function FormulaireProgramme({
+  programme,
+  minimumJours,
+  enregistrer,
+  annuler,
+}: {
+  programme: Programme
+  /** On ne peut pas raccourcir un programme en dessous du dernier jour noté. */
+  minimumJours: number
+  enregistrer: (changements: Partial<Omit<Programme, 'id'>>) => void
+  annuler: () => void
+}) {
+  const [nom, setNom] = useState(programme.nom)
+  const [jours, setJours] = useState(String(programme.jours))
+  const [avec, setAvec] = useState(programme.avec ?? '')
+  const [lien, setLien] = useState(programme.lien ?? '')
+
+  const nombre = Math.max(minimumJours, Math.min(365, Number(jours) || programme.jours))
+
+  return (
+    <div className="carte">
+      <div className="kicker">Corriger le programme</div>
+
+      <label className="etiquette" style={{ marginTop: 12 }} htmlFor="edit-nom">
+        Le nom
+      </label>
+      <input
+        id="edit-nom"
+        className="champ"
+        autoFocus
+        value={nom}
+        onChange={(e) => setNom(e.target.value)}
+      />
+
+      <div className="grille2" style={{ marginTop: 12 }}>
+        <div>
+          <label className="etiquette" htmlFor="edit-jours">
+            Nombre de jours
+          </label>
+          <input
+            id="edit-jours"
+            className="champ"
+            inputMode="numeric"
+            value={jours}
+            onChange={(e) => setJours(e.target.value)}
+          />
+        </div>
+        <div>
+          <label className="etiquette" htmlFor="edit-avec">
+            Avec qui
+          </label>
+          <input
+            id="edit-avec"
+            className="champ"
+            placeholder="facultatif"
+            value={avec}
+            onChange={(e) => setAvec(e.target.value)}
+          />
+        </div>
+      </div>
+
+      <label className="etiquette" style={{ marginTop: 12 }} htmlFor="edit-lien">
+        Le lien des vidéos
+      </label>
+      <input
+        id="edit-lien"
+        className="champ"
+        inputMode="url"
+        placeholder="facultatif"
+        value={lien}
+        onChange={(e) => setLien(e.target.value)}
+      />
+
+      {minimumJours > 1 && (
+        <p className="doux mini" style={{ margin: '10px 0 0' }}>
+          Le programme ne peut pas descendre en dessous de {minimumJours} jours : c'est le dernier
+          jour que vous avez noté.
+        </p>
+      )}
+
+      <div style={{ height: 14 }} />
+      <button
+        type="button"
+        className="bouton"
+        disabled={!nom.trim()}
+        onClick={() =>
+          enregistrer({
+            nom: nom.trim(),
+            jours: nombre,
+            avec: avec.trim() || undefined,
+            lien: lien.trim() || undefined,
+          })
+        }
+      >
+        Enregistrer
+      </button>
+      <div style={{ height: 10 }} />
+      <button type="button" className="bouton-fin" style={{ width: '100%' }} onClick={annuler}>
+        Annuler
       </button>
     </div>
   )
