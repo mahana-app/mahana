@@ -76,6 +76,10 @@ export type LigneRepas = {
   glucides: number
   proteines: number
   lipides: number
+  /** La clé de la photo du repas, gardée à part dans la réserve d'images. */
+  photoId?: string
+  /** Vrai quand les calories viennent d'une estimation guidée, pas d'une pesée. */
+  estime?: boolean
 }
 
 export type CategorieSport = 'cardio' | 'pilates' | 'muscu' | 'exterieur'

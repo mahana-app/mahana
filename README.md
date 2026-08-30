@@ -13,7 +13,7 @@ base de données. Elle ne partage rien avec quoi que ce soit d'autre.
 | | |
 |---|---|
 | **Accueil** | La journée entière : la jauge des calories avec les quatre repas à une touche, l'eau, les pas, le minuteur de jeûne, le défi de la semaine, l'habitude en cours, l'entraînement, le sommeil, le score, la recette du jour et la leçon suivante. |
-| **Repas** | Le bandeau de la semaine, la jauge *consommé · restantes · brûlé*, les macros, et les quatre repas avec **l'objectif de calories réparti** entre eux. On ajoute un aliment à la fois, ou on **décrit le repas en une phrase** et l'app calcule. Plus l'accès aux recettes. |
+| **Repas** | Le bandeau de la semaine, la jauge *consommé · restantes · brûlé*, les macros, et les quatre repas avec **l'objectif de calories réparti** entre eux. On ajoute un aliment à la fois, on **décrit le repas en une phrase**, ou on le **photographie** et l'app estime. Plus l'accès aux recettes. |
 | **Jeûne** | Le plan (12:12 → 23:1), le **jeûne programmé à une heure**, l'anneau avec les étapes du corps posées tout autour, la correction de l'heure de début, l'**ajout d'un jeûne oublié**, l'historique et les recettes pour rompre le jeûne. |
 | **Progrès** | Le **score du jour sur 100** et ce qu'il reste à faire pour le remplir, la série, l'**IMC sur sa règle colorée**, puis le poids, les calories, les heures de jeûne, les pas et le sport — par **semaine, mois ou année**. |
 | **Le bouton +** | Au centre de la barre : noter un repas, boire un verre, démarrer ou terminer le jeûne, lancer une séance, sortir marcher, noter son poids, ses pas ou sa nuit. |
@@ -64,6 +64,25 @@ suivante.
 
 Le code de l'analyse est dans `src/lib/analyse.ts`. Rien ne part sur internet :
 la reconnaissance se fait dans le téléphone, contre la base d'aliments.
+
+## Photographier un repas
+
+On prend la photo de l'assiette, on répond à trois questions — **qu'est-ce que
+c'était** (assiette complète, plat en sauce, bol, sandwich, salade, soupe,
+petit-déjeuner, en-cas, boisson), **quelle portion** et **quelle préparation**
+— et l'app donne une estimation avec sa fourchette : « 1 370 kcal, sans doute
+entre 1 100 et 1 640 ». Le chiffre se corrige à la main quand on le connaît.
+
+Il faut être clair sur ce point : **l'app ne lit pas la photo**. Reconnaître un
+plat sur une image demande d'envoyer la photo à un serveur d'intelligence
+artificielle, et ici rien ne quitte le téléphone. La photo sert de souvenir des
+portions ; l'estimation vient des réponses. C'est moins magique et beaucoup
+plus honnête qu'un chiffre inventé.
+
+Les photos sont réduites et gardées dans la réserve d'images du navigateur
+(`src/lib/photos.ts`) : elles ne partent nulle part, et une vignette apparaît
+devant chaque repas dans la liste du jour — on la touche pour la voir en grand.
+Une photo peut aussi être jointe à un repas décrit en une phrase.
 
 ## Le score du jour
 

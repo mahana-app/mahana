@@ -12,8 +12,9 @@ import { clefJour, deClefJour, jourCourt } from '../lib/dates'
 import { totauxDuJour, useApp } from '../lib/etat'
 import type { NomSymbole } from '../composants/Symbole'
 import type { Vue } from '../lib/navigation'
+import { supprimerPhoto, usePhoto } from '../lib/photos'
 import { objectifCalories, objectifMacros } from '../lib/profil'
-import type { MomentRepas } from '../lib/stockage'
+import type { LigneRepas, MomentRepas } from '../lib/stockage'
 
 const MOMENTS: Array<{
   id: MomentRepas
@@ -34,6 +35,8 @@ type Repartition = { petitDejeuner: number; dejeuner: number; diner: number; enc
 export default function Repas({ ouvrir }: { ouvrir: (vue: Vue) => void }) {
   const { etat, supprimerRepas } = useApp()
   const [jour, setJour] = useState(clefJour())
+  // La photo qu'on regarde en grand quand on touche une vignette.
+  const [photoOuverte, setPhotoOuverte] = useState<string | null>(null)
   const totaux = totauxDuJour(etat, jour)
   const but = objectifCalories(etat)
   const macros = but ? objectifMacros(but) : null
@@ -136,11 +139,13 @@ export default function Repas({ ouvrir }: { ouvrir: (vue: Vue) => void }) {
               <div style={{ marginTop: 8 }}>
                 {duMoment.map((ligne) => (
                   <div key={ligne.id} className="ligne-liste">
-                    <div style={{ minWidth: 0 }}>
+                    <Vignette ligne={ligne} regarder={setPhotoOuverte} />
+                    <div style={{ minWidth: 0, flex: 1 }}>
                       <div style={{ fontWeight: 600, fontSize: 15 }}>{ligne.nom}</div>
                       <div className="doux mini">
-                        {ligne.quantite.toLocaleString('fr-FR')}{' '}
-                        {ligne.unite === 'portion' ? '' : ligne.unite} ·{' '}
+                        {ligne.estime ? 'Estimé · ' : ''}
+                        {ligne.unite !== 'portion' &&
+                          `${ligne.quantite.toLocaleString('fr-FR')} ${ligne.unite} · `}
                         {ligne.glucides.toLocaleString('fr-FR')} g de glucides ·{' '}
                         {ligne.proteines.toLocaleString('fr-FR')} g de protéines
                       </div>
@@ -152,7 +157,12 @@ export default function Repas({ ouvrir }: { ouvrir: (vue: Vue) => void }) {
                         className="bouton-fin"
                         style={{ padding: '4px 10px' }}
                         aria-label="Retirer"
-                        onClick={() => supprimerRepas(ligne.id)}
+                        onClick={() => {
+                          // La photo part avec la ligne : sinon la réserve
+                          // d'images se remplit d'assiettes oubliées.
+                          if (ligne.photoId) void supprimerPhoto(ligne.photoId)
+                          supprimerRepas(ligne.id)
+                        }}
                       >
                         ✕
                       </button>
@@ -182,6 +192,68 @@ export default function Repas({ ouvrir }: { ouvrir: (vue: Vue) => void }) {
           <IconeFleche />
         </div>
       </button>
+
+      {photoOuverte && (
+        <PhotoEnGrand id={photoOuverte} fermer={() => setPhotoOuverte(null)} />
+      )}
+    </div>
+  )
+}
+
+/* La petite photo devant la ligne du repas — rien du tout s'il n'y en a pas. */
+function Vignette({
+  ligne,
+  regarder,
+}: {
+  ligne: LigneRepas
+  regarder: (id: string) => void
+}) {
+  const adresse = usePhoto(ligne.photoId)
+  if (!ligne.photoId) return null
+  return (
+    <button
+      type="button"
+      aria-label={`Voir la photo de ${ligne.nom}`}
+      style={{
+        width: 44,
+        height: 44,
+        borderRadius: 12,
+        border: 0,
+        padding: 0,
+        flex: '0 0 auto',
+        overflow: 'hidden',
+        background: 'var(--piste)',
+      }}
+      onClick={() => ligne.photoId && regarder(ligne.photoId)}
+    >
+      {adresse && (
+        <img
+          src={adresse}
+          alt=""
+          style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block' }}
+        />
+      )}
+    </button>
+  )
+}
+
+/* La photo en grand, par-dessus tout le reste. */
+function PhotoEnGrand({ id, fermer }: { id: string; fermer: () => void }) {
+  const adresse = usePhoto(id)
+  return (
+    <div
+      className="voile"
+      onClick={fermer}
+      role="presentation"
+      style={{ display: 'grid', placeItems: 'center', padding: 20, zIndex: 60 }}
+    >
+      {adresse && (
+        <img
+          src={adresse}
+          alt="Le repas photographié"
+          style={{ maxWidth: '100%', maxHeight: '80vh', borderRadius: 18, display: 'block' }}
+        />
+      )}
     </div>
   )
 }

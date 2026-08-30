@@ -5,7 +5,7 @@
    Tout reste modifiable : une estimation qu'on ne peut pas corriger ne vaut
    rien, et c'est celle qui mange qui sait ce qu'il y avait dans l'assiette. */
 
-import { useState } from 'react'
+import { useEffect, useMemo, useRef, useState } from 'react'
 import Entete from '../composants/Entete'
 import Symbole from '../composants/Symbole'
 import type { Aliment } from '../lib/aliments'
@@ -13,6 +13,7 @@ import { chercherAliment, pour } from '../lib/aliments'
 import { analyser } from '../lib/analyse'
 import { useApp } from '../lib/etat'
 import { nombreFr } from '../lib/formats'
+import { enregistrerPhoto, reduireImage } from '../lib/photos'
 import { nouvelId } from '../lib/stockage'
 import type { MomentRepas } from '../lib/stockage'
 
@@ -43,6 +44,26 @@ export default function ComposerPlat({
   const [moment, setMoment] = useState<MomentRepas>(momentDepart)
   const [recherchePour, setRecherchePour] = useState<string | null>(null)
   const [garde, setGarde] = useState(false)
+  // La photo est facultative : elle ne change pas les calories, elle sert
+  // à se souvenir de la portion en relisant sa semaine.
+  const [image, setImage] = useState<Blob | null>(null)
+  const champFichier = useRef<HTMLInputElement>(null)
+
+  // L'aperçu se déduit de la photo choisie, et se libère dès qu'elle change.
+  const apercu = useMemo(() => (image ? URL.createObjectURL(image) : null), [image])
+  useEffect(() => {
+    if (!apercu) return
+    return () => URL.revokeObjectURL(apercu)
+  }, [apercu])
+
+  async function choisirPhoto(fichier: File | undefined) {
+    if (!fichier) return
+    try {
+      setImage(await reduireImage(fichier))
+    } catch {
+      setImage(fichier)
+    }
+  }
 
   function lancerAnalyse() {
     const resultat = analyser(phrase)
@@ -74,8 +95,18 @@ export default function ComposerPlat({
 
   const arrondi = (v: number) => Math.round(v * 10) / 10
 
-  function enregistrer() {
+  async function enregistrer() {
     const titre = nom.trim() || 'Repas'
+    let photoId: string | undefined
+    if (image) {
+      photoId = nouvelId()
+      try {
+        await enregistrerPhoto(photoId, image)
+      } catch {
+        /* réserve d'images pleine : on garde au moins le repas */
+        photoId = undefined
+      }
+    }
     ajouterRepas({
       moment,
       nom: titre,
@@ -85,6 +116,7 @@ export default function ComposerPlat({
       glucides: arrondi(totaux.glucides),
       proteines: arrondi(totaux.proteines),
       lipides: arrondi(totaux.lipides),
+      photoId,
     })
     if (garde) {
       garderPlat({
@@ -151,6 +183,54 @@ export default function ComposerPlat({
           value={nom}
           onChange={(e) => setNom(e.target.value)}
         />
+      </div>
+
+      <div className="carte">
+        <div className="kicker">La photo (facultative)</div>
+        <input
+          ref={champFichier}
+          type="file"
+          accept="image/*"
+          capture="environment"
+          style={{ display: 'none' }}
+          onChange={(e) => {
+            void choisirPhoto(e.target.files?.[0])
+            e.target.value = ''
+          }}
+        />
+        {apercu ? (
+          <>
+            <img
+              src={apercu}
+              alt="Le repas photographié"
+              style={{
+                width: '100%',
+                marginTop: 10,
+                borderRadius: 14,
+                display: 'block',
+                aspectRatio: '4 / 3',
+                objectFit: 'cover',
+              }}
+            />
+            <button
+              type="button"
+              className="bouton-fin"
+              style={{ width: '100%', marginTop: 8 }}
+              onClick={() => setImage(null)}
+            >
+              Retirer la photo
+            </button>
+          </>
+        ) : (
+          <button
+            type="button"
+            className="bouton-fin"
+            style={{ width: '100%', marginTop: 10 }}
+            onClick={() => champFichier.current?.click()}
+          >
+            ◎ Ajouter une photo du plat
+          </button>
+        )}
       </div>
 
       <div className="carte">
@@ -313,7 +393,7 @@ export default function ComposerPlat({
         {garde ? '★ Ce plat sera gardé' : '☆ Garder ce plat pour la prochaine fois'}
       </button>
 
-      <button type="button" className="bouton" disabled={totaux.kcal <= 0} onClick={enregistrer}>
+      <button type="button" className="bouton" disabled={totaux.kcal <= 0} onClick={() => void enregistrer()}>
         Ajouter {NOMS[moment]}
       </button>
     </div>

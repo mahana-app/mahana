@@ -17,6 +17,7 @@ import EcranEau from './ecrans/Eau'
 import EcranJeune from './ecrans/Jeune'
 import { ListeLecons, UneLecon } from './ecrans/Lecons'
 import Moi from './ecrans/Moi'
+import PhotoRepas from './ecrans/PhotoRepas'
 import NoterSeance from './ecrans/NoterSeance'
 import EcranProgramme, { NouveauProgramme } from './ecrans/Programme'
 import Progres from './ecrans/Progres'
@@ -72,6 +73,8 @@ export default function App() {
         return <AjoutAliment moment={vue.moment} fermer={fermer} ouvrir={ouvrir} />
       case 'composer':
         return <ComposerPlat moment={vue.moment} fermer={fermer} />
+      case 'photo-repas':
+        return <PhotoRepas moment={vue.moment} fermer={fermer} />
       case 'defis':
         return <Defis fermer={fermer} />
       case 'moi':

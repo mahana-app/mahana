@@ -40,6 +40,25 @@ reste étrangère à celle-ci.
   pas en arrière-plan et ne suit pas le GPS écran éteint : l'app le dit
   franchement plutôt que de faire semblant.
 
+## Les photos des repas
+
+Elles ne tiennent pas dans le `localStorage` — une seule photo pèse plus que
+tout le suivi d'une année. Elles vont dans la réserve d'images du navigateur
+(IndexedDB, base `mahana-photos`, voir `src/lib/photos.ts`), réduites à
+900 pixels et compressées en JPEG : ~60 ko pièce. Elles restent dans le
+téléphone comme le reste, et **l'export JSON ne les contient pas**.
+
+Une photo est toujours facultative, et elle part avec la ligne de repas qu'on
+supprime — sinon la réserve se remplit d'assiettes oubliées.
+
+**L'estimation des calories d'après une photo ne se devine pas.** Aucun code
+qui tourne dans le téléphone ne reconnaît un plat sur une image ; il faudrait
+envoyer la photo à un serveur d'intelligence artificielle, ce que la règle
+ci-dessus interdit. À la place, `src/lib/estimation.ts` pose trois questions —
+le type de plat, la portion, la préparation — et donne une **fourchette**
+honnête, toujours corrigeable à la main. Ne pas remplacer ça par un chiffre
+qui aurait l'air deviné.
+
 ## Le modèle de données
 
 Tout est décrit dans `src/lib/stockage.ts`. Une sauvegarde ancienne doit

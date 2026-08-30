@@ -36,6 +36,7 @@ export type NomSymbole =
   | 'etincelle'
   | 'renouveau'
   | 'medaille'
+  | 'photo'
 
 const TRACES: Record<NomSymbole, JSX.Element> = {
   /* le logo : le soleil sur l'eau */
@@ -204,6 +205,13 @@ const TRACES: Record<NomSymbole, JSX.Element> = {
     <>
       <circle cx="12" cy="14.4" r="5.6" />
       <path d="M8.6 9.4L6.2 3.4h11.6l-2.4 6" />
+    </>
+  ),
+  /* l'appareil photo : le boîtier et l'objectif */
+  photo: (
+    <>
+      <path d="M3.2 8.8h3.4l1.7-2.6h7.4l1.7 2.6h3.4v10.4H3.2z" />
+      <circle cx="12" cy="13.6" r="3.4" />
     </>
   ),
 }

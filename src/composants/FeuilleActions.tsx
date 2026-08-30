@@ -36,6 +36,14 @@ export default function FeuilleActions({
 
   const actions: Action[] = [
     {
+      icone: 'photo',
+      fond: 'var(--argile-pale)',
+      couleur: 'var(--argile)',
+      nom: 'Photographier mon repas',
+      detail: 'Une photo, trois questions, les calories',
+      faire: aller({ nom: 'photo-repas', moment: momentProbable() }),
+    },
+    {
       icone: 'dejeuner',
       fond: 'var(--olive-pale)',
       couleur: 'var(--olive)',

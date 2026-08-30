@@ -143,6 +143,20 @@ export default function AjoutAliment({
         </p>
       </button>
 
+      {/* Le repas photographié, estimé en trois questions */}
+      <button
+        type="button"
+        className="carte"
+        style={{ width: '100%', border: 0, textAlign: 'left' }}
+        onClick={() => ouvrir({ nom: 'photo-repas', moment })}
+      >
+        <div style={{ fontWeight: 600 }}>◎ Prendre une photo du repas</div>
+        <p className="doux mini" style={{ margin: '4px 0 0' }}>
+          La photo reste dans le téléphone, et trois questions sur l'assiette donnent une
+          estimation des calories.
+        </p>
+      </button>
+
       {etat.platsGardes.length > 0 && (
         <div className="carte">
           <div className="kicker">Mes plats</div>

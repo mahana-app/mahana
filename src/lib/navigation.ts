@@ -18,6 +18,7 @@ export type Vue =
   | { nom: 'sortie' }
   | { nom: 'ajout'; moment: MomentRepas }
   | { nom: 'composer'; moment: MomentRepas }
+  | { nom: 'photo-repas'; moment: MomentRepas }
   | { nom: 'corps' }
   | { nom: 'eau' }
   | { nom: 'activite' }
