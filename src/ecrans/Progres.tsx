@@ -7,11 +7,12 @@ import Entete from '../composants/Entete'
 import Symbole from '../composants/Symbole'
 import JaugeDemi from '../composants/JaugeDemi'
 import RegleImc from '../composants/RegleImc'
-import { ajouterJours, clefJour, heuresMinutes, initialeJour } from '../lib/dates'
+import { ajouterJours, clefJour, heuresMinutes, initialeJour, jourCourt } from '../lib/dates'
 import { useApp } from '../lib/etat'
 import { nombreFr } from '../lib/formats'
 import { dureeHeures, jourDuJeune, objectifAtteint, serie, serieLaPlusLongue } from '../lib/jeune'
 import type { Vue } from '../lib/navigation'
+import { delaiEnMots, projection } from '../lib/objectif'
 import { imc, objectifCalories, poidsActuel } from '../lib/profil'
 import { motDuScore, scoreDuJour } from '../lib/score'
 import type { Etat } from '../lib/stockage'
@@ -467,6 +468,7 @@ function CourbePoids({
         <p className="vide" style={{ padding: '18px 8px' }}>
           Il faut au moins deux pesées sur la période pour tracer une courbe.
         </p>
+        <LigneObjectif etat={etat} />
       </div>
     )
   }
@@ -515,6 +517,33 @@ function CourbePoids({
         <span>{nombreFr(valeurs[0], 1)} kg</span>
         <span>{nombreFr(valeurs[valeurs.length - 1], 1)} kg</span>
       </div>
+      <LigneObjectif etat={etat} />
+    </div>
+  )
+}
+
+/* Le rappel de l'échéance sous la courbe : c'est en la regardant qu'on se
+   demande quand on y sera. Le détail et l'hypothèse sont dans « Mon poids ». */
+function LigneObjectif({ etat }: { etat: Etat }) {
+  const p = projection(etat)
+  if (p.situation === 'sans-but' || p.situation === 'sans-pesee') return null
+
+  const mot =
+    p.situation === 'atteint'
+      ? 'Objectif atteint 🎉'
+      : p.situation === 'stagne'
+        ? `Il reste ${nombreFr(p.reste, 1)} kg — pas de date tant que la courbe ne repart pas`
+        : p.tropLoin
+          ? `Il reste ${nombreFr(p.reste, 1)} kg — plus de trois ans à ce rythme`
+          : `Il reste ${nombreFr(p.reste, 1)} kg — ${delaiEnMots(p.jours ?? 0)}, vers le ${jourCourt(p.date as Date)}`
+
+  return (
+    <div
+      className="doux mini"
+      style={{ marginTop: 10, paddingTop: 10, borderTop: '1px solid var(--bord)' }}
+    >
+      🎯 {mot}
+      {p.source === 'prevu' && p.situation === 'en-route' && ' (rythme prévu, pas encore mesuré)'}
     </div>
   )
 }

@@ -90,6 +90,32 @@ Les photos sont réduites et gardées dans la réserve d'images du navigateur
 devant chaque repas dans la liste du jour — on la touche pour la voir en grand.
 Une photo peut aussi être jointe à un repas décrit en une phrase.
 
+## Dans combien de temps j'atteins mon objectif
+
+C'est la question qu'on se pose en descendant de la balance, et l'app y répond
+sur l'accueil, sous la courbe de poids, et en détail dans **Mon poids** :
+
+> **Il reste 6,4 kg** · 36 % du chemin fait
+> **Vers le lun. 14 déc.** — dans 4 mois, 107 jours
+> Au rythme de vos pesées : −0,42 kg par semaine, mesurés sur 5 pesées et 28 jours.
+
+Deux rythmes servent au calcul, et l'app dit toujours lequel elle utilise :
+
+- **le rythme prévu**, celui du déficit de calories choisi (un kilo de graisse
+  vaut environ 7 700 kcal). Disponible dès le premier jour, mais c'est une
+  promesse sur le papier ;
+- **le rythme réel**, la pente des pesées du dernier mois, calculée par une
+  droite des moindres carrés — une pesée bizarre ne fait pas basculer le
+  résultat. Il prend le relais dès qu'il y a trois pesées sur au moins dix
+  jours, et c'est le seul qui compte.
+
+Quand le poids stagne, l'app le dit et ne donne **aucune date** — inventer un
+chiffre serait la meilleure façon de faire abandonner. Elle rappelle aussi que
+c'est une ligne droite tracée à travers la vraie vie : il y a des paliers, des
+semaines sans rien, des semaines à deux kilos. Et elle prévient quand le rythme
+dépasse un kilo par semaine, ou quand l'objectif de poids descend sous un IMC
+de 18,5.
+
 ## Le score du jour
 
 Une note sur 100, composée de six ingrédients : le jeûne (20), l'alimentation

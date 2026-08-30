@@ -2,6 +2,7 @@
    dans les mêmes conditions — sinon la courbe raconte n'importe quoi. */
 
 import { useState } from 'react'
+import CarteObjectif from '../composants/CarteObjectif'
 import Entete from '../composants/Entete'
 import { clefJour, deClefJour, jourCourt } from '../lib/dates'
 import { useApp } from '../lib/etat'
@@ -75,6 +76,8 @@ export default function EcranCorps({ fermer }: { fermer: () => void }) {
           </p>
         )}
       </div>
+
+      <CarteObjectif etat={etat} />
 
       <div className="carte">
         <label className="etiquette" htmlFor="poids">

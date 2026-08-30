@@ -7,13 +7,15 @@ import Symbole from '../composants/Symbole'
 import type { NomSymbole } from '../composants/Symbole'
 import { IconeFleche } from '../composants/Icones'
 import type { Onglet } from '../composants/BarreOnglets'
-import { clefJour, duree, heuresMinutes, initialeJour, septDerniersJours } from '../lib/dates'
+import { clefJour, duree, heuresMinutes, initialeJour, jourCourt, septDerniersJours } from '../lib/dates'
 import { defiParId, joursTenus, jourValide } from '../lib/defis'
 import { totauxDuJour, useApp, useHorloge } from '../lib/etat'
+import { nombreFr } from '../lib/formats'
 import { habitudeParId, jourNumeroHabitude } from '../lib/habitudes'
 import { dureeMs, jeuneEnCours, serie } from '../lib/jeune'
 import { prochaineLecon } from '../lib/lecons'
 import type { Vue } from '../lib/navigation'
+import { delaiEnMots, projection } from '../lib/objectif'
 import { objectifCalories, objectifMacros } from '../lib/profil'
 import { recetteDuJour } from '../lib/recettes'
 import { scoreDuJour } from '../lib/score'
@@ -40,6 +42,7 @@ export default function Accueil({
   allerA: (onglet: Onglet) => void
 }) {
   const { etat, ajouterVerres, cocherJour, cocherHabitude } = useApp()
+  const objectifPoids = projection(etat)
   const maintenant = useHorloge()
   const aujourdhui = clefJour()
   const totaux = totauxDuJour(etat, aujourdhui)
@@ -241,6 +244,47 @@ export default function Accueil({
           </div>
         </div>
       </button>
+
+      {/* l'objectif de poids : la question qu'on se pose chaque matin */}
+      {(objectifPoids.situation === 'en-route' || objectifPoids.situation === 'stagne' || objectifPoids.situation === 'atteint') && (
+        <button
+          type="button"
+          className="carte"
+          style={{ width: '100%', border: 0, textAlign: 'left' }}
+          onClick={() => ouvrir({ nom: 'corps' })}
+        >
+          <div className="rangee">
+            <div style={{ minWidth: 0, flex: 1 }}>
+              <div className="kicker" style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
+                <Symbole nom="poids" taille={13} /> Objectif de poids
+              </div>
+              {objectifPoids.situation === 'atteint' ? (
+                <div style={{ fontSize: 17, fontWeight: 700 }}>Vous y êtes 🎉</div>
+              ) : (
+                <>
+                  <div className="chiffre" style={{ fontSize: 25 }}>
+                    {nombreFr(objectifPoids.reste, 1)}
+                    <span className="doux" style={{ fontSize: 14, fontWeight: 500 }}> kg à perdre</span>
+                  </div>
+                  <div className="doux mini">
+                    {objectifPoids.situation === 'stagne'
+                      ? 'Le poids ne descend pas en ce moment'
+                      : objectifPoids.tropLoin
+                        ? 'Plus de trois ans à ce rythme'
+                        : `${delaiEnMots(objectifPoids.jours ?? 0)}, vers le ${jourCourt(objectifPoids.date as Date)}`}
+                  </div>
+                </>
+              )}
+              {objectifPoids.part !== null && objectifPoids.situation !== 'atteint' && (
+                <div className="barre" style={{ height: 5, marginTop: 8 }}>
+                  <i style={{ width: `${Math.round(objectifPoids.part * 100)}%`, background: 'var(--argile)' }} />
+                </div>
+              )}
+            </div>
+            <IconeFleche />
+          </div>
+        </button>
+      )}
 
       {/* le défi de la semaine */}
       {etat.defiEnCours && defi ? (

@@ -40,6 +40,22 @@ reste étrangère à celle-ci.
   pas en arrière-plan et ne suit pas le GPS écran éteint : l'app le dit
   franchement plutôt que de faire semblant.
 
+## La date d'objectif
+
+`src/lib/objectif.ts` calcule quand le poids visé sera atteint. Deux règles à
+ne pas casser :
+
+- **Toujours afficher l'hypothèse avec la date.** Une date sans son rythme
+  (mesuré sur les pesées, ou promis par le déficit) est une promesse, pas une
+  information. Le rythme mesuré l'emporte dès qu'il existe.
+- **Ne jamais inventer de date quand le poids stagne.** La fonction renvoie
+  `situation: 'stagne'` et l'écran le dit franchement. Un chiffre inventé est
+  la meilleure façon de faire abandonner.
+
+Le rythme réel vient d'une droite des moindres carrés sur les pesées du dernier
+mois, jamais d'un simple « dernière moins première » : une pesée un lendemain
+de fête ferait basculer le résultat.
+
 ## Les photos des repas
 
 Elles ne tiennent pas dans le `localStorage` — une seule photo pèse plus que
