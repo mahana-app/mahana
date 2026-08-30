@@ -39,8 +39,16 @@ export default function FeuilleActions({
       icone: 'dejeuner',
       fond: 'var(--olive-pale)',
       couleur: 'var(--olive)',
-      nom: 'Noter un repas',
-      detail: 'Chercher un aliment et l’ajouter',
+      nom: 'Décrire un repas',
+      detail: 'Une phrase, et les calories se calculent',
+      faire: aller({ nom: 'composer', moment: momentProbable() }),
+    },
+    {
+      icone: 'encas',
+      fond: 'var(--miel-pale)',
+      couleur: 'var(--miel)',
+      nom: 'Chercher un aliment',
+      detail: 'Un par un, dans la base',
       faire: aller({ nom: 'ajout', moment: momentProbable() }),
     },
     {

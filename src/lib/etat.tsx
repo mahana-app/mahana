@@ -12,6 +12,7 @@ import type {
   LigneRepas,
   MomentRepas,
   Nuit,
+  PlatGarde,
   Profil,
   Programme,
   SeanceFaite,
@@ -34,6 +35,8 @@ type Actions = {
   /* les repas */
   ajouterRepas: (ligne: Omit<LigneRepas, 'id' | 'jour'> & { jour?: string }) => void
   supprimerRepas: (id: string) => void
+  garderPlat: (plat: Omit<PlatGarde, 'id'>) => void
+  supprimerPlat: (id: string) => void
   /* le sport */
   noterSeance: (seance: Omit<SeanceFaite, 'id' | 'jour'> & { jour?: string }) => void
   supprimerSeance: (id: string) => void
@@ -209,6 +212,17 @@ export function FournisseurEtat({ children }: { children: ReactNode }) {
     setEtat((p) => ({ ...p, repas: p.repas.filter((r) => r.id !== id) }))
   }, [])
 
+  const garderPlat = useCallback((plat: Omit<PlatGarde, 'id'>) => {
+    setEtat((p) => ({
+      ...p,
+      platsGardes: [...p.platsGardes.filter((x) => x.nom !== plat.nom), { ...plat, id: nouvelId() }],
+    }))
+  }, [])
+
+  const supprimerPlat = useCallback((id: string) => {
+    setEtat((p) => ({ ...p, platsGardes: p.platsGardes.filter((x) => x.id !== id) }))
+  }, [])
+
   /* ---------- le sport ---------- */
 
   const noterSeance = useCallback(
@@ -360,6 +374,8 @@ export function FournisseurEtat({ children }: { children: ReactNode }) {
       supprimerPesee,
       ajouterRepas,
       supprimerRepas,
+      garderPlat,
+      supprimerPlat,
       noterSeance,
       supprimerSeance,
       ajouterProgramme,
@@ -395,6 +411,8 @@ export function FournisseurEtat({ children }: { children: ReactNode }) {
       supprimerPesee,
       ajouterRepas,
       supprimerRepas,
+      garderPlat,
+      supprimerPlat,
       noterSeance,
       supprimerSeance,
       ajouterProgramme,

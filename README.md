@@ -13,7 +13,7 @@ base de données. Elle ne partage rien avec quoi que ce soit d'autre.
 | | |
 |---|---|
 | **Accueil** | La journée entière : la jauge des calories avec les quatre repas à une touche, l'eau, les pas, le minuteur de jeûne, le défi de la semaine, l'habitude en cours, l'entraînement, le sommeil, le score, la recette du jour et la leçon suivante. |
-| **Repas** | Le bandeau de la semaine, la jauge *consommé · restantes · brûlé*, les macros, et les quatre repas avec **l'objectif de calories réparti** entre eux. Plus l'accès aux recettes. |
+| **Repas** | Le bandeau de la semaine, la jauge *consommé · restantes · brûlé*, les macros, et les quatre repas avec **l'objectif de calories réparti** entre eux. On ajoute un aliment à la fois, ou on **décrit le repas en une phrase** et l'app calcule. Plus l'accès aux recettes. |
 | **Jeûne** | Le plan (12:12 → 23:1), le **jeûne programmé à une heure**, l'anneau avec les étapes du corps posées tout autour, la correction de l'heure de début, l'**ajout d'un jeûne oublié**, l'historique et les recettes pour rompre le jeûne. |
 | **Progrès** | Le **score du jour sur 100** et ce qu'il reste à faire pour le remplir, la série, l'**IMC sur sa règle colorée**, puis le poids, les calories, les heures de jeûne, les pas et le sport — par **semaine, mois ou année**. |
 | **Le bouton +** | Au centre de la barre : noter un repas, boire un verre, démarrer ou terminer le jeûne, lancer une séance, sortir marcher, noter son poids, ses pas ou sa nuit. |
@@ -45,6 +45,25 @@ perdre sa place.
 
 Et les **sorties dehors** suivies au GPS : marche, course, vélo, randonnée,
 avec distance, allure et calories en direct.
+
+## Décrire un repas en une phrase
+
+Plutôt que d'ajouter les aliments un par un, on écrit :
+
+> « un sandwich avec 2 pains de mie complets, 80 g de poulet pané, un peu de
+> salade, carotte râpée, tomate, beurre d'olive et du chimichurri »
+
+L'app découpe la phrase, reconnaît chaque aliment dans sa base, comprend les
+quantités (« 80 g », « 2 pains », « un peu de », « une poignée », « un bol »)
+et propose une portion quand rien n'est précisé. Le résultat s'affiche
+ingrédient par ingrédient, **avec le morceau de phrase d'origine**, et tout se
+corrige : la quantité, l'aliment reconnu, les lignes à retirer.
+
+Un plat composé peut être **gardé** pour être ajouté d'une touche la fois
+suivante.
+
+Le code de l'analyse est dans `src/lib/analyse.ts`. Rien ne part sur internet :
+la reconnaissance se fait dans le téléphone, contre la base d'aliments.
 
 ## Le score du jour
 

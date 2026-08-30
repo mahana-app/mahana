@@ -6,6 +6,7 @@ import Entete from '../composants/Entete'
 import type { Aliment } from '../lib/aliments'
 import { ALIMENTS, CATEGORIES, chercherAliment, pour } from '../lib/aliments'
 import { useApp } from '../lib/etat'
+import type { Vue } from '../lib/navigation'
 import type { MomentRepas } from '../lib/stockage'
 
 const NOMS: Record<MomentRepas, string> = {
@@ -18,11 +19,13 @@ const NOMS: Record<MomentRepas, string> = {
 export default function AjoutAliment({
   moment,
   fermer,
+  ouvrir,
 }: {
   moment: MomentRepas
   fermer: () => void
+  ouvrir: (vue: Vue) => void
 }) {
-  const { ajouterRepas } = useApp()
+  const { etat, ajouterRepas, supprimerPlat } = useApp()
   const [recherche, setRecherche] = useState('')
   const [categorie, setCategorie] = useState(CATEGORIES[0])
   const [choisi, setChoisi] = useState<Aliment | null>(null)
@@ -125,6 +128,59 @@ export default function AjoutAliment({
   return (
     <div className="page">
       <Entete kicker={`Ajouter ${NOMS[moment]}`} titre="Qu'avez-vous mangé ?" retour={fermer} />
+
+      {/* Le repas complet, décrit en une phrase */}
+      <button
+        type="button"
+        className="carte"
+        style={{ width: '100%', border: 0, textAlign: 'left' }}
+        onClick={() => ouvrir({ nom: 'composer', moment })}
+      >
+        <div style={{ fontWeight: 600 }}>✎ Décrire tout le repas en une phrase</div>
+        <p className="doux mini" style={{ margin: '4px 0 0' }}>
+          « un sandwich avec 2 pains de mie, 80 g de poulet pané, un peu de salade… » — l'app
+          reconnaît les aliments et calcule les calories.
+        </p>
+      </button>
+
+      {etat.platsGardes.length > 0 && (
+        <div className="carte">
+          <div className="kicker">Mes plats</div>
+          {etat.platsGardes.map((plat) => (
+            <div key={plat.id} className="ligne-liste">
+              <button
+                type="button"
+                style={{ flex: 1, border: 0, background: 'none', textAlign: 'left', minWidth: 0 }}
+                onClick={() => {
+                  ajouterRepas({
+                    moment,
+                    nom: plat.nom,
+                    quantite: 1,
+                    unite: 'portion',
+                    kcal: plat.kcal,
+                    glucides: plat.glucides,
+                    proteines: plat.proteines,
+                    lipides: plat.lipides,
+                  })
+                  fermer()
+                }}
+              >
+                <span style={{ display: 'block', fontWeight: 600, fontSize: 15 }}>{plat.nom}</span>
+                <span className="doux mini">{plat.kcal} kcal la portion</span>
+              </button>
+              <button
+                type="button"
+                className="bouton-fin"
+                style={{ padding: '4px 10px' }}
+                aria-label="Oublier ce plat"
+                onClick={() => supprimerPlat(plat.id)}
+              >
+                ✕
+              </button>
+            </div>
+          ))}
+        </div>
+      )}
 
       <input
         className="champ"

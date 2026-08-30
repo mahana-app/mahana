@@ -41,12 +41,15 @@ const TABLE: Record<string, Ligne[]> = {
     ['Flocons d’avoine', 370, 60, 13, 7, 40],
     ['Céréales du petit-déjeuner', 380, 75, 8, 5, 40],
     ['Biscotte', 400, 75, 11, 6, 20],
+    ['Pain de mie', 265, 49, 8, 3.5, 50],
+    ['Pain de mie complet', 250, 41, 9, 4, 50],
   ],
   'Légumes': [
     ['Salade verte', 15, 3, 1.4, 0.2, 80],
     ['Tomate', 18, 3.9, 0.9, 0.2, 120],
     ['Concombre', 15, 3.6, 0.7, 0.1, 100],
     ['Carotte', 41, 10, 0.9, 0.2, 100],
+    ['Carotte râpée', 41, 10, 0.9, 0.2, 80],
     ['Courgette', 17, 3.1, 1.2, 0.3, 150],
     ['Haricots verts', 31, 7, 1.8, 0.1, 150],
     ['Brocoli', 34, 7, 2.8, 0.4, 150],
@@ -96,6 +99,7 @@ const TABLE: Record<string, Ligne[]> = {
     ['Crevettes', 99, 0.2, 24, 0.3, 120],
     ['Poulpe', 82, 2, 15, 1, 120],
     ['Poisson pané', 220, 16, 13, 11, 120],
+    ['Poulet pané', 240, 14, 18, 12, 120],
     ['Œuf', 143, 0.7, 13, 9.5, 110],
   ],
   'Produits laitiers': [
@@ -159,6 +163,9 @@ const TABLE: Record<string, Ligne[]> = {
     ['Vinaigrette', 450, 3, 0.5, 48, 15],
     ['Ketchup', 100, 24, 1.2, 0.1, 15],
     ['Sauce soja', 60, 5, 6, 0, 10, 'ml'],
+    ['Chimichurri', 300, 3, 1, 31, 20],
+    ['Beurre d’olive', 620, 0.5, 0.4, 68, 10],
+    ['Moutarde', 150, 6, 7, 10, 10],
     ['Sucre', 400, 100, 0, 0, 5],
     ['Miel', 304, 82, 0.3, 0, 20],
     ['Confiture', 270, 65, 0.4, 0.1, 20],
@@ -180,6 +187,37 @@ export const ALIMENTS: Aliment[] = Object.entries(TABLE).flatMap(([categorie, li
 )
 
 export const CATEGORIES = Object.keys(TABLE)
+
+/**
+ * Le poids d'une unité, pour les aliments qui se comptent plutôt qu'ils ne se
+ * pèsent : « 2 pains de mie », « un œuf », « une banane ».
+ */
+export const PAR_UNITE: Record<string, number> = {
+  'Pain de mie': 25,
+  'Pain de mie complet': 25,
+  'Pain blanc': 30,
+  Baguette: 60,
+  Biscotte: 10,
+  Œuf: 55,
+  Banane: 120,
+  Pomme: 150,
+  Orange: 150,
+  Mangue: 200,
+  'Yaourt nature': 125,
+  'Yaourt 0 %': 125,
+  'Yaourt aux fruits': 125,
+  Croissant: 60,
+  'Pain au chocolat': 70,
+  'Firi firi': 80,
+  Tomate: 120,
+  'Barre chocolatée': 45,
+  'Fruit de la passion': 50,
+  Litchi: 10,
+}
+
+/** Le poids d'une unité, ou la portion si l'aliment ne se compte pas. */
+export const poidsUnitaire = (aliment: Aliment): number =>
+  PAR_UNITE[aliment.nom] ?? aliment.portion
 
 /** Enlève les accents et la casse : « pates » doit trouver « Pâtes ». */
 const simplifier = (texte: string) =>

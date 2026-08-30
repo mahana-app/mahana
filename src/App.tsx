@@ -10,6 +10,7 @@ import Accueil from './ecrans/Accueil'
 import Activite from './ecrans/Activite'
 import AjoutAliment from './ecrans/AjoutAliment'
 import Bienvenue from './ecrans/Bienvenue'
+import ComposerPlat from './ecrans/ComposerPlat'
 import EcranCorps from './ecrans/Corps'
 import Defis from './ecrans/Defis'
 import EcranEau from './ecrans/Eau'
@@ -68,7 +69,9 @@ export default function App() {
       case 'sortie':
         return <Sortie fermer={fermer} />
       case 'ajout':
-        return <AjoutAliment moment={vue.moment} fermer={fermer} />
+        return <AjoutAliment moment={vue.moment} fermer={fermer} ouvrir={ouvrir} />
+      case 'composer':
+        return <ComposerPlat moment={vue.moment} fermer={fermer} />
       case 'defis':
         return <Defis fermer={fermer} />
       case 'moi':

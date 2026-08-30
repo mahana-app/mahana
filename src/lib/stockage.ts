@@ -52,6 +52,16 @@ export type Jeune = {
 
 export type Pesee = { jour: string; poids: number }
 
+/** Un plat composé une fois, gardé pour ne pas tout ressaisir la prochaine. */
+export type PlatGarde = {
+  id: string
+  nom: string
+  kcal: number
+  glucides: number
+  proteines: number
+  lipides: number
+}
+
 export type MomentRepas = 'petit-dejeuner' | 'dejeuner' | 'diner' | 'encas'
 
 export type LigneRepas = {
@@ -153,6 +163,7 @@ export type Etat = {
   seances: SeanceFaite[]
   nuits: Nuit[]
   programmes: Programme[]
+  platsGardes: PlatGarde[]
   /** Verres d'eau bus, par journée. */
   eau: Record<string, number>
   /** Pas marchés, par journée. */
@@ -198,6 +209,7 @@ export const ETAT_VIDE: Etat = {
   seances: [],
   nuits: [],
   programmes: [],
+  platsGardes: [],
   eau: {},
   pas: {},
   defiEnCours: null,
@@ -268,6 +280,7 @@ export function lireEtat(): Etat {
       seances: lu.seances ?? [],
       nuits: lu.nuits ?? [],
       programmes: lu.programmes ?? [],
+      platsGardes: lu.platsGardes ?? [],
       eau: lu.eau ?? {},
       pas: lu.pas ?? {},
       defiEnCours: lu.defiEnCours ?? null,

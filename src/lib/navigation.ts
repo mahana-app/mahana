@@ -17,6 +17,7 @@ export type Vue =
   | { nom: 'seance'; id: string }
   | { nom: 'sortie' }
   | { nom: 'ajout'; moment: MomentRepas }
+  | { nom: 'composer'; moment: MomentRepas }
   | { nom: 'corps' }
   | { nom: 'eau' }
   | { nom: 'activite' }
