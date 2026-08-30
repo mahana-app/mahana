@@ -79,6 +79,33 @@ export type SeanceFaite = {
   kcal: number
   /** Renseignée seulement pour les sorties suivies au GPS. */
   distanceKm?: number
+  /** Ce qui a travaillé : haut du corps, fessiers, abdos… */
+  parties?: string[]
+  /** Le programme suivi, quand la séance en fait partie. */
+  programmeId?: string
+  /** Le numéro du jour dans ce programme : « Jour 5 sur 28 ». */
+  numeroJour?: number
+}
+
+/**
+ * Un programme suivi : une série de séances numérotées, comme les défis
+ * de vingt-huit jours qu'on suit en vidéo. L'avancement se compte en
+ * séances faites, pas en jours de calendrier — sauter un jour ne fait pas
+ * perdre sa place.
+ */
+export type Programme = {
+  id: string
+  nom: string
+  categorie: CategorieSport
+  /** Nombre de jours du programme. */
+  jours: number
+  /** Le jour où il a été commencé. */
+  debut: string
+  /** L'adresse de la chaîne ou de la liste de lecture, si on en a une. */
+  lien?: string
+  /** Avec qui on le suit — une belle-sœur, une amie. */
+  avec?: string
+  termine: boolean
 }
 
 export type Nuit = {
@@ -125,6 +152,7 @@ export type Etat = {
   repas: LigneRepas[]
   seances: SeanceFaite[]
   nuits: Nuit[]
+  programmes: Programme[]
   /** Verres d'eau bus, par journée. */
   eau: Record<string, number>
   /** Pas marchés, par journée. */
@@ -169,6 +197,7 @@ export const ETAT_VIDE: Etat = {
   repas: [],
   seances: [],
   nuits: [],
+  programmes: [],
   eau: {},
   pas: {},
   defiEnCours: null,
@@ -238,6 +267,7 @@ export function lireEtat(): Etat {
       repas: lu.repas ?? [],
       seances: lu.seances ?? [],
       nuits: lu.nuits ?? [],
+      programmes: lu.programmes ?? [],
       eau: lu.eau ?? {},
       pas: lu.pas ?? {},
       defiEnCours: lu.defiEnCours ?? null,

@@ -8,7 +8,7 @@ import { ajouterJours, clefJour, jourRelatif } from '../lib/dates'
 import { useApp } from '../lib/etat'
 import type { Vue } from '../lib/navigation'
 import { poidsActuel } from '../lib/profil'
-import { FAMILLES, SEANCES, caloriesSeance } from '../lib/sport'
+import { FAMILLES, SEANCES, caloriesSeance, joursFaits, prochainJour } from '../lib/sport'
 import { nombreFr } from '../lib/formats'
 
 export default function Sport({ ouvrir, fermer }: { ouvrir: (vue: Vue) => void; fermer: () => void }) {
@@ -44,6 +44,91 @@ export default function Sport({ ouvrir, fermer }: { ouvrir: (vue: Vue) => void; 
           <Symbole nom="medaille" taille={32} couleur="var(--argile)" />
         </div>
       </div>
+
+      {/* Noter une séance faite ailleurs */}
+      <button
+        type="button"
+        className="bouton"
+        style={{ marginBottom: 14 }}
+        onClick={() => ouvrir({ nom: 'noter-seance' })}
+      >
+        + Noter une séance que j'ai faite
+      </button>
+
+      {/* Les programmes suivis */}
+      <div className="rangee" style={{ margin: '18px 4px 10px' }}>
+        <span className="titre-section" style={{ margin: 0 }}>
+          Mes programmes
+        </span>
+        <button type="button" className="pilule" onClick={() => ouvrir({ nom: 'nouveau-programme' })}>
+          + Nouveau
+        </button>
+      </div>
+
+      {etat.programmes.length === 0 ? (
+        <button
+          type="button"
+          className="carte"
+          style={{ width: '100%', border: 0, textAlign: 'left' }}
+          onClick={() => ouvrir({ nom: 'nouveau-programme' })}
+        >
+          <div className="rangee">
+            <div>
+              <div style={{ fontWeight: 600 }}>Suivre un programme</div>
+              <p className="doux mini" style={{ margin: '4px 0 0' }}>
+                Un défi en vidéo, un plan de salle, un cours — l'app compte les jours faits et
+                garde la trace de chaque séance.
+              </p>
+            </div>
+            <IconeFleche />
+          </div>
+        </button>
+      ) : (
+        etat.programmes.map((programme) => {
+          const faits = joursFaits(programme.id, etat.seances).size
+          const famille = FAMILLES.find((f) => f.id === programme.categorie)
+          return (
+            <button
+              key={programme.id}
+              type="button"
+              className="carte serree"
+              style={{ width: '100%', border: 0, textAlign: 'left', opacity: programme.termine ? 0.6 : 1 }}
+              onClick={() => ouvrir({ nom: 'programme', id: programme.id })}
+            >
+              <div className="rangee">
+                <span
+                  className="pastille"
+                  style={{ width: 44, height: 44, background: 'var(--piste)', color: famille?.couleur }}
+                >
+                  <Symbole
+                    nom={
+                      programme.categorie === 'cardio'
+                        ? 'coeur'
+                        : programme.categorie === 'pilates'
+                          ? 'lotus'
+                          : 'sport'
+                    }
+                    taille={21}
+                  />
+                </span>
+                <div style={{ flex: 1, minWidth: 0 }}>
+                  <div style={{ fontWeight: 600 }}>{programme.nom}</div>
+                  <div className="doux mini">
+                    {programme.termine
+                      ? 'Terminé'
+                      : `Jour ${Math.min(prochainJour(programme.id, etat.seances), programme.jours)} sur ${programme.jours}`}
+                    {programme.avec ? ` · avec ${programme.avec}` : ''}
+                  </div>
+                  <div className="barre" style={{ marginTop: 8, height: 5 }}>
+                    <i style={{ width: `${(faits / programme.jours) * 100}%` }} />
+                  </div>
+                </div>
+                <IconeFleche />
+              </div>
+            </button>
+          )
+        })
+      )}
 
       {/* Sortir dehors : le chrono et le GPS */}
       <button
@@ -162,6 +247,7 @@ export default function Sport({ ouvrir, fermer }: { ouvrir: (vue: Vue) => void; 
                     {jourRelatif(new Date(seance.jour + 'T12:00'))} · {seance.minutes} min ·{' '}
                     {seance.kcal} kcal
                     {seance.distanceKm ? ` · ${nombreFr(seance.distanceKm, 2)} km` : ''}
+                    {seance.parties?.length ? ` · ${seance.parties.join(', ')}` : ''}
                   </div>
                 </div>
                 <button

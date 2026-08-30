@@ -13,6 +13,7 @@ import type {
   MomentRepas,
   Nuit,
   Profil,
+  Programme,
   SeanceFaite,
 } from './stockage'
 import { ETAT_VIDE, ecrireEtat, lireEtat, nouvelId } from './stockage'
@@ -36,6 +37,10 @@ type Actions = {
   /* le sport */
   noterSeance: (seance: Omit<SeanceFaite, 'id' | 'jour'> & { jour?: string }) => void
   supprimerSeance: (id: string) => void
+  /* les programmes suivis */
+  ajouterProgramme: (programme: Omit<Programme, 'id' | 'debut' | 'termine'>) => void
+  terminerProgramme: (id: string) => void
+  supprimerProgramme: (id: string) => void
   /* les pas et les nuits */
   noterPas: (nombre: number, jour?: string) => void
   noterNuit: (coucher: string, lever: string, jour?: string) => void
@@ -220,6 +225,31 @@ export function FournisseurEtat({ children }: { children: ReactNode }) {
     setEtat((p) => ({ ...p, seances: p.seances.filter((s) => s.id !== id) }))
   }, [])
 
+  const ajouterProgramme = useCallback(
+    (programme: Omit<Programme, 'id' | 'debut' | 'termine'>) => {
+      setEtat((p) => ({
+        ...p,
+        programmes: [
+          ...p.programmes,
+          { ...programme, id: nouvelId(), debut: clefJour(), termine: false },
+        ],
+      }))
+    },
+    [],
+  )
+
+  const terminerProgramme = useCallback((id: string) => {
+    setEtat((p) => ({
+      ...p,
+      programmes: p.programmes.map((x) => (x.id === id ? { ...x, termine: !x.termine } : x)),
+    }))
+  }, [])
+
+  /** On efface le programme, mais on garde les séances : elles ont été faites. */
+  const supprimerProgramme = useCallback((id: string) => {
+    setEtat((p) => ({ ...p, programmes: p.programmes.filter((x) => x.id !== id) }))
+  }, [])
+
   /* ---------- les pas et les nuits ---------- */
 
   const noterPas = useCallback((nombre: number, jour?: string) => {
@@ -321,6 +351,9 @@ export function FournisseurEtat({ children }: { children: ReactNode }) {
       supprimerRepas,
       noterSeance,
       supprimerSeance,
+      ajouterProgramme,
+      terminerProgramme,
+      supprimerProgramme,
       noterPas,
       noterNuit,
       supprimerNuit,
@@ -352,6 +385,9 @@ export function FournisseurEtat({ children }: { children: ReactNode }) {
       supprimerRepas,
       noterSeance,
       supprimerSeance,
+      ajouterProgramme,
+      terminerProgramme,
+      supprimerProgramme,
       noterPas,
       noterNuit,
       supprimerNuit,

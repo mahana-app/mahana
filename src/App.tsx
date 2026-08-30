@@ -16,6 +16,8 @@ import EcranEau from './ecrans/Eau'
 import EcranJeune from './ecrans/Jeune'
 import { ListeLecons, UneLecon } from './ecrans/Lecons'
 import Moi from './ecrans/Moi'
+import NoterSeance from './ecrans/NoterSeance'
+import EcranProgramme, { NouveauProgramme } from './ecrans/Programme'
 import Progres from './ecrans/Progres'
 import EcranRecette from './ecrans/Recette'
 import Recettes from './ecrans/Recettes'
@@ -49,6 +51,18 @@ export default function App() {
     switch (vue.nom) {
       case 'sport':
         return <Sport ouvrir={ouvrir} fermer={fermer} />
+      case 'noter-seance':
+        return (
+          <NoterSeance
+            programmeId={vue.programmeId}
+            numeroJour={vue.numeroJour}
+            fermer={fermer}
+          />
+        )
+      case 'programme':
+        return <EcranProgramme id={vue.id} ouvrir={ouvrir} fermer={fermer} />
+      case 'nouveau-programme':
+        return <NouveauProgramme fermer={fermer} />
       case 'seance':
         return <EcranSeance id={vue.id} fermer={fermer} />
       case 'sortie':

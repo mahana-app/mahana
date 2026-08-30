@@ -5,6 +5,9 @@ import type { MomentRepas } from './stockage'
 
 export type Vue =
   | { nom: 'sport' }
+  | { nom: 'noter-seance'; programmeId?: string; numeroJour?: number }
+  | { nom: 'programme'; id: string }
+  | { nom: 'nouveau-programme' }
   | { nom: 'defis' }
   | { nom: 'moi' }
   | { nom: 'recettes' }

@@ -25,9 +25,23 @@ réglages.
 
 ## Le sport
 
-Trois programmes — **cardio**, **pilates**, **musculation** — et douze séances
-guidées, exercice par exercice, avec minuteur de série et de repos, la consigne
-de chaque mouvement et les calories estimées.
+Trois façons de s'y prendre :
+
+**Les séances guidées** — cardio, pilates, musculation : douze séances menées
+exercice par exercice, avec minuteur de série et de repos, la consigne de
+chaque mouvement et les calories estimées.
+
+**Les séances notées à la main** — une vidéo suivie sur YouTube, un cours, la
+salle. On met le nom, la durée, ce qui a travaillé (corps entier, fessiers,
+abdos…) et l'effort ; les calories se calculent toutes seules à partir du
+poids, quitte à les corriger.
+
+**Les programmes suivis** — un défi de vingt-huit jours en vidéo, un plan de
+salle, un cours hebdomadaire. Le programme porte son nom, son sport, son
+nombre de jours, le lien des vidéos et avec qui on le suit. Chaque séance est
+enregistrée sous « Jour 5 · Glute + Abs », et **l'avancement se compte en
+séances faites, pas en jours de calendrier** : sauter un jour ne fait pas
+perdre sa place.
 
 Et les **sorties dehors** suivies au GPS : marche, course, vélo, randonnée,
 avec distance, allure et calories en direct.

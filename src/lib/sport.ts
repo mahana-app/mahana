@@ -10,7 +10,7 @@
    personne — sans capteur, c'est la meilleure approximation possible. */
 
 import type { NomSymbole } from '../composants/Symbole'
-import type { CategorieSport } from './stockage'
+import type { CategorieSport, SeanceFaite } from './stockage'
 
 export type Exercice = {
   nom: string
@@ -329,4 +329,67 @@ export function allure(distanceKm: number, secondes: number): string {
   const minutes = Math.floor(parKm)
   const reste = Math.round((parKm - minutes) * 60)
   return `${minutes}:${String(reste).padStart(2, '0')} /km`
+}
+
+/* ---------- noter une séance à la main ---------- */
+
+/** Ce qui a travaillé pendant la séance. */
+export const PARTIES_CORPS = [
+  'Corps entier',
+  'Haut du corps',
+  'Bas du corps',
+  'Abdos et gainage',
+  'Fessiers',
+  'Dos',
+  'Bras',
+  'Jambes',
+  'Cardio',
+  'Souplesse',
+]
+
+export type Intensite = 'douce' | 'moderee' | 'intense'
+
+export const INTENSITES: Array<{ id: Intensite; nom: string; detail: string }> = [
+  { id: 'douce', nom: 'Douce', detail: 'On peut parler sans effort' },
+  { id: 'moderee', nom: 'Modérée', detail: 'On souffle, on peut encore parler' },
+  { id: 'intense', nom: 'Intense', detail: 'On ne peut plus parler' },
+]
+
+/* Le coût énergétique dépend du sport et de l'effort réellement fourni :
+   un pilates doux et un HIIT n'ont rien à voir. */
+const MET: Record<string, Record<Intensite, number>> = {
+  cardio: { douce: 4.5, moderee: 7, intense: 9.5 },
+  pilates: { douce: 2.5, moderee: 3.5, intense: 4.5 },
+  muscu: { douce: 3.5, moderee: 5, intense: 6.5 },
+  exterieur: { douce: 3.5, moderee: 5.5, intense: 8 },
+}
+
+/** L'estimation de calories proposée quand on note une séance à la main. */
+export function caloriesEstimees(
+  categorie: CategorieSport,
+  intensite: Intensite,
+  minutes: number,
+  poidsKg: number,
+): number {
+  const met = (MET[categorie] ?? MET.muscu)[intensite]
+  return Math.round((met * poidsKg * minutes) / 60)
+}
+
+/* ---------- les programmes suivis ---------- */
+
+/** Le prochain jour à faire : le plus grand numéro déjà noté, plus un. */
+export function prochainJour(programmeId: string, seances: SeanceFaite[]): number {
+  const faits = seances
+    .filter((s) => s.programmeId === programmeId && s.numeroJour)
+    .map((s) => s.numeroJour as number)
+  return faits.length === 0 ? 1 : Math.max(...faits) + 1
+}
+
+/** Les numéros de jour déjà faits, pour cocher la grille. */
+export function joursFaits(programmeId: string, seances: SeanceFaite[]): Set<number> {
+  return new Set(
+    seances
+      .filter((s) => s.programmeId === programmeId && s.numeroJour)
+      .map((s) => s.numeroJour as number),
+  )
 }
