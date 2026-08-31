@@ -1,7 +1,7 @@
 /* Les écrans qui s'ouvrent par-dessus les onglets. Pas de routeur : l'app
    tient dans une poignée d'écrans, et un simple aiguillage suffit. */
 
-import type { MomentRepas } from './stockage'
+import type { CategorieSport, MomentRepas } from './stockage'
 
 export type Vue =
   | { nom: 'sport' }
@@ -12,9 +12,11 @@ export type Vue =
   | { nom: 'moi' }
   | { nom: 'recettes' }
   | { nom: 'recette'; id: string }
+  | { nom: 'ma-recette'; id?: string }
   | { nom: 'lecons' }
   | { nom: 'lecon'; id: string }
   | { nom: 'seance'; id: string }
+  | { nom: 'ma-seance'; id?: string; categorie?: CategorieSport }
   | { nom: 'sortie' }
   | { nom: 'ajout'; moment: MomentRepas }
   | { nom: 'composer'; moment: MomentRepas }

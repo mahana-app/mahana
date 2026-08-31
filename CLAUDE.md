@@ -78,6 +78,43 @@ Le rythme réel vient d'une droite des moindres carrés sur les pesées du derni
 mois, jamais d'un simple « dernière moins première » : une pesée un lendemain
 de fête ferait basculer le résultat.
 
+## Ce qui est écrit par l'utilisatrice
+
+Deux carnets lui appartiennent, à côté de ceux fournis avec l'app :
+`etat.mesRecettes` et `etat.mesSeances`. Règle commune : **ce qu'elle a écrit
+passe devant ce qui est fourni** — ses recettes en premier onglet et en
+« recette du jour », ses séances en tête de leur famille. Le catalogue ne sert
+plus qu'à dépanner celle qui débute.
+
+- Les calories d'une recette ne se saisissent pas : `analyse.ts` lit les
+  ingrédients et le total se divise par les portions. Le champ de correction
+  existe toujours — une estimation qu'on ne peut pas corriger ne vaut rien.
+- La durée d'une séance ne se saisit pas non plus : elle se calcule des
+  exercices, par la même fonction (`versSeance`) que celle qui la fait jouer.
+  Une durée déclarée et des exercices qui ne collent pas, c'est la porte
+  ouverte aux calories fantaisistes.
+- `seanceAJouer(id, miennes)` sert au lecteur : il ne doit pas savoir d'où
+  vient la séance.
+
+## Le parseur d'ingrédients (`analyse.ts`)
+
+Trois pièges déjà payés, à ne pas réintroduire :
+
+- **Les ligatures ne se décomposent pas** comme les accents. Sans le
+  remplacement `œ → oe` dans `simplifier`, « bœuf » et « boeuf » restent deux
+  mots différents et 500 g de viande disparaissent du calcul.
+- **Un nom court ne doit pas gagner sur un nom long.** Le score croise la
+  précision (le nom est-il couvert par le fragment) et la couverture (le
+  fragment est-il couvert par le nom) : sans ça, « 3 pommes de terre » trouve
+  « Pomme », parfaite sur son unique mot.
+- **Le pluriel se joue sur une lettre** : `racine()` retire un `s` final. La
+  distance d'édition ne peut pas s'en charger — elle refuse les mots de moins
+  de cinq lettres, sinon « pain » trouverait « pané ».
+
+Le banc d'essai est vite remonté : compiler `analyse.ts` et `aliments.ts` avec
+`npx tsc --ignoreConfig`, puis appeler `analyser()` sur quelques phrases.
+Toujours y garder la phrase du sandwich (507 kcal) comme témoin.
+
 ## Les photos des repas
 
 Elles ne tiennent pas dans le `localStorage` — une seule photo pèse plus que

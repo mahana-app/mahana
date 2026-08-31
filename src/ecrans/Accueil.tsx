@@ -17,7 +17,7 @@ import { prochaineLecon } from '../lib/lecons'
 import type { Vue } from '../lib/navigation'
 import { delaiEnMots, projection } from '../lib/objectif'
 import { objectifCalories, objectifMacros } from '../lib/profil'
-import { recetteDuJour } from '../lib/recettes'
+import { couleurDuMoment, ideeDuJour } from '../lib/recettes'
 import { scoreDuJour } from '../lib/score'
 import type { MomentRepas } from '../lib/stockage'
 
@@ -53,7 +53,10 @@ export default function Accueil({
   const score = scoreDuJour(etat, aujourdhui)
   const defi = etat.defiEnCours ? defiParId(etat.defiEnCours.defiId) : null
   const habitude = etat.habitudeEnCours ? habitudeParId(etat.habitudeEnCours.habitudeId) : null
-  const recette = recetteDuJour(aujourdhui)
+  // L'idée du jour : ses propres recettes d'abord, et un dîner en fin
+  // d'après-midi — c'est là qu'on se demande quoi préparer.
+  const idee = ideeDuJour(etat, aujourdhui, new Date().getHours())
+  const recette = idee.recette
   const lecon = prochaineLecon(etat.leconsLues)
   const nuit = etat.nuits.find((n) => n.jour === aujourdhui)
 
@@ -456,7 +459,9 @@ export default function Accueil({
         type="button"
         className="carte"
         style={{ width: '100%', border: 0, textAlign: 'left', marginTop: 14 }}
-        onClick={() => ouvrir({ nom: 'recette', id: recette.id })}
+        onClick={() =>
+          ouvrir(idee.mienne ? { nom: 'ma-recette', id: recette.id } : { nom: 'recette', id: recette.id })
+        }
       >
         <div className="rangee">
           <span
@@ -464,7 +469,7 @@ export default function Accueil({
               width: 52,
               height: 52,
               borderRadius: 16,
-              background: recette.couleur,
+              background: idee.mienne ? couleurDuMoment(idee.recette.moment) : idee.recette.couleur,
               display: 'grid',
               placeItems: 'center',
               fontSize: 25,
@@ -474,7 +479,7 @@ export default function Accueil({
             {recette.emoji}
           </span>
           <div style={{ flex: 1, minWidth: 0 }}>
-            <div className="kicker">Recette du jour</div>
+            <div className="kicker">{idee.mienne ? 'Ma recette du jour' : 'Recette du jour'}</div>
             <div style={{ fontWeight: 700 }}>{recette.nom}</div>
             <div className="doux mini">
               {recette.kcal} kcal · {recette.minutes} min

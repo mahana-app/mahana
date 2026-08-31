@@ -106,8 +106,16 @@ export default function FeuilleActions({
       fond: 'var(--olive-pale)',
       couleur: 'var(--olive)',
       nom: 'Suivre une séance guidée',
-      detail: 'Cardio, pilates ou musculation',
+      detail: 'La mienne, ou une du catalogue',
       faire: aller({ nom: 'sport' }),
+    },
+    {
+      icone: 'etincelle',
+      fond: 'var(--canard-pale)',
+      couleur: 'var(--canard)',
+      nom: 'Créer ma séance',
+      detail: 'Mes exercices, mes séries, mes repos',
+      faire: aller({ nom: 'ma-seance' }),
     },
     {
       icone: 'gps',
@@ -116,6 +124,14 @@ export default function FeuilleActions({
       nom: 'Sortir marcher ou courir',
       detail: 'Chrono et GPS',
       faire: aller({ nom: 'sortie' }),
+    },
+    {
+      icone: 'recette',
+      fond: 'var(--olive-pale)',
+      couleur: 'var(--olive)',
+      nom: 'Écrire une recette',
+      detail: 'Ce que je cuisine, pour ne plus chercher',
+      faire: aller({ nom: 'ma-recette' }),
     },
     {
       icone: 'poids',

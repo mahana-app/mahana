@@ -15,7 +15,9 @@ import type {
   PlatGarde,
   Profil,
   Programme,
+  RecettePerso,
   SeanceFaite,
+  SeancePerso,
 } from './stockage'
 import { ETAT_VIDE, ecrireEtat, lireEtat, nouvelId } from './stockage'
 
@@ -59,6 +61,13 @@ type Actions = {
   /* le contenu */
   marquerLeconLue: (leconId: string) => void
   basculerRecette: (recetteId: string) => void
+  /* mes recettes et mes séances */
+  ajouterRecettePerso: (recette: Omit<RecettePerso, 'id' | 'creee'>) => void
+  modifierRecettePerso: (id: string, changements: Partial<RecettePerso>) => void
+  supprimerRecettePerso: (id: string) => void
+  ajouterSeancePerso: (seance: Omit<SeancePerso, 'id' | 'creee'>) => void
+  modifierSeancePerso: (id: string, changements: Partial<SeancePerso>) => void
+  supprimerSeancePerso: (id: string) => void
   /* le reste */
   reglerLe: (changements: Partial<Profil>) => void
   demarrer: () => void
@@ -360,6 +369,46 @@ export function FournisseurEtat({ children }: { children: ReactNode }) {
     }))
   }, [])
 
+  /* ---------- mes recettes et mes séances ----------
+     Les dernières écrites passent devant : c'est presque toujours celle
+     d'hier soir qu'on vient rechercher. */
+
+  const ajouterRecettePerso = useCallback((recette: Omit<RecettePerso, 'id' | 'creee'>) => {
+    setEtat((p) => ({
+      ...p,
+      mesRecettes: [{ ...recette, id: nouvelId(), creee: clefJour() }, ...p.mesRecettes],
+    }))
+  }, [])
+
+  const modifierRecettePerso = useCallback((id: string, changements: Partial<RecettePerso>) => {
+    setEtat((p) => ({
+      ...p,
+      mesRecettes: p.mesRecettes.map((r) => (r.id === id ? { ...r, ...changements } : r)),
+    }))
+  }, [])
+
+  const supprimerRecettePerso = useCallback((id: string) => {
+    setEtat((p) => ({ ...p, mesRecettes: p.mesRecettes.filter((r) => r.id !== id) }))
+  }, [])
+
+  const ajouterSeancePerso = useCallback((seance: Omit<SeancePerso, 'id' | 'creee'>) => {
+    setEtat((p) => ({
+      ...p,
+      mesSeances: [{ ...seance, id: nouvelId(), creee: clefJour() }, ...p.mesSeances],
+    }))
+  }, [])
+
+  const modifierSeancePerso = useCallback((id: string, changements: Partial<SeancePerso>) => {
+    setEtat((p) => ({
+      ...p,
+      mesSeances: p.mesSeances.map((s) => (s.id === id ? { ...s, ...changements } : s)),
+    }))
+  }, [])
+
+  const supprimerSeancePerso = useCallback((id: string) => {
+    setEtat((p) => ({ ...p, mesSeances: p.mesSeances.filter((s) => s.id !== id) }))
+  }, [])
+
   /* ---------- le reste ---------- */
 
   const reglerLe = useCallback((changements: Partial<Profil>) => {
@@ -403,6 +452,12 @@ export function FournisseurEtat({ children }: { children: ReactNode }) {
       arreterHabitude,
       marquerLeconLue,
       basculerRecette,
+      ajouterRecettePerso,
+      modifierRecettePerso,
+      supprimerRecettePerso,
+      ajouterSeancePerso,
+      modifierSeancePerso,
+      supprimerSeancePerso,
       reglerLe,
       demarrer,
       remplacerTout,
@@ -440,6 +495,12 @@ export function FournisseurEtat({ children }: { children: ReactNode }) {
       arreterHabitude,
       marquerLeconLue,
       basculerRecette,
+      ajouterRecettePerso,
+      modifierRecettePerso,
+      supprimerRecettePerso,
+      ajouterSeancePerso,
+      modifierSeancePerso,
+      supprimerSeancePerso,
       reglerLe,
       demarrer,
       remplacerTout,

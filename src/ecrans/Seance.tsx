@@ -9,7 +9,7 @@ import { chrono } from '../lib/dates'
 import { useApp } from '../lib/etat'
 import { poidsActuel } from '../lib/profil'
 import type { Exercice } from '../lib/sport'
-import { caloriesSeance, seanceParId, symboleFamille } from '../lib/sport'
+import { caloriesSeance, seanceAJouer, symboleFamille } from '../lib/sport'
 
 type Etape =
   | { type: 'travail'; exercice: Exercice; serie: number; total: number }
@@ -17,7 +17,7 @@ type Etape =
 
 export default function EcranSeance({ id, fermer }: { id: string; fermer: () => void }) {
   const { etat, noterSeance } = useApp()
-  const seance = seanceParId(id)
+  const seance = seanceAJouer(id, etat.mesSeances)
   const poids = poidsActuel(etat) ?? 70
 
   const etapes = useMemo<Etape[]>(() => {

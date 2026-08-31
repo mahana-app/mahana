@@ -37,6 +37,13 @@ séances qu'on fait **seule entre deux entraînements** — les déplacements au
 physique du tapis, et des rounds à vide pour le cardio. Le cours du soir, lui,
 se note comme n'importe quelle autre séance.
 
+**Mes séances** — dans chaque famille, on monte la sienne : le circuit de la
+salle, l'enchaînement du coach, les cinq exercices du mardi. Chaque exercice
+porte ses séries, ses répétitions **ou** sa durée, son repos et sa consigne. La
+durée totale et les calories se calculent toutes seules à partir de là — jamais
+saisies à la main, sinon elles ne voudraient plus rien dire. Une fois écrite, la
+séance se joue exactement comme celles du catalogue, avec ses minuteurs.
+
 **Les séances notées à la main** — une vidéo suivie sur YouTube, un cours, la
 salle. On met le nom, la durée, ce qui a travaillé (corps entier, fessiers,
 abdos…) et l'effort ; les calories se calculent toutes seules à partir du
@@ -51,6 +58,26 @@ perdre sa place.
 
 Et les **sorties dehors** suivies au GPS : marche, course, vélo, randonnée,
 avec distance, allure et calories en direct.
+
+## Mes recettes : ce que je cuisine vraiment
+
+Le carnet de recettes toutes faites donne des idées ; celui-ci donne les
+siennes. On écrit ce qu'on a préparé — surtout les dîners, c'est là qu'on
+manque d'idées — et l'accueil vient piocher dedans.
+
+On écrit les ingrédients comme on les dirait, un par ligne :
+
+> 500 g de viande de bœuf · 2 patates douces · 3 pommes de terre ·
+> sauce chimichurri · une salade verte · 2 cuillères d'huile d'olive
+
+L'app reconnaît chacun, additionne, **divise par le nombre de portions** et
+annonce les calories d'une portion — corrigeables à la main. On peut ajouter la
+marche à suivre, une photo du plat, et mettre la recette dans sa journée d'une
+touche.
+
+Sur l'accueil, la **recette du jour** devient « ma recette du jour » dès qu'on
+en a écrit une. À partir du milieu de l'après-midi, elle montre un dîner : c'est
+à ce moment-là qu'on se demande quoi préparer ce soir.
 
 ## Décrire un repas en une phrase
 

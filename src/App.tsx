@@ -16,6 +16,8 @@ import Defis from './ecrans/Defis'
 import EcranEau from './ecrans/Eau'
 import EcranJeune from './ecrans/Jeune'
 import { ListeLecons, UneLecon } from './ecrans/Lecons'
+import MaRecette from './ecrans/MaRecette'
+import MaSeance from './ecrans/MaSeance'
 import Moi from './ecrans/Moi'
 import PhotoRepas from './ecrans/PhotoRepas'
 import NoterSeance from './ecrans/NoterSeance'
@@ -83,6 +85,10 @@ export default function App() {
         return <Recettes ouvrir={ouvrir} fermer={fermer} />
       case 'recette':
         return <EcranRecette id={vue.id} fermer={fermer} />
+      case 'ma-recette':
+        return <MaRecette id={vue.id} fermer={fermer} />
+      case 'ma-seance':
+        return <MaSeance id={vue.id} categorie={vue.categorie} fermer={fermer} />
       case 'lecons':
         return <ListeLecons ouvrir={ouvrir} fermer={fermer} />
       case 'lecon':

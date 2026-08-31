@@ -15,7 +15,7 @@
    personne — sans capteur, c'est la meilleure approximation possible. */
 
 import type { NomSymbole } from '../composants/Symbole'
-import type { CategorieSport, SeanceFaite } from './stockage'
+import type { CategorieSport, SeanceFaite, SeancePerso } from './stockage'
 
 export type Exercice = {
   nom: string
@@ -378,6 +378,41 @@ export function symboleFamille(categorie: CategorieSport): NomSymbole {
 }
 
 export const seanceParId = (id: string) => SEANCES.find((s) => s.id === id) ?? null
+
+/* Une séance montée par soi se joue exactement comme les autres : on la
+   convertit à la même forme, en calculant sa durée d'après ses exercices et
+   son coût énergétique d'après l'effort annoncé. */
+export function versSeance(perso: SeancePerso): Seance {
+  const exercices: Exercice[] = perso.exercices.map((e) => ({
+    nom: e.nom,
+    series: e.series,
+    reps: e.reps ?? undefined,
+    secondes: e.secondes ?? undefined,
+    repos: e.repos,
+    consigne: e.consigne,
+  }))
+  const secondes = exercices.reduce((total, e) => total + dureeExercice(e), 0)
+  const famille = FAMILLES.find((f) => f.id === perso.categorie)
+  return {
+    id: perso.id,
+    categorie: (perso.categorie === 'exterieur' ? 'cardio' : perso.categorie) as Seance['categorie'],
+    nom: perso.nom,
+    sousTitre: perso.sousTitre || 'Ma séance',
+    minutes: Math.max(1, Math.round(secondes / 60)),
+    niveau: perso.intensite === 'douce' ? 'Débutant' : perso.intensite === 'moderee' ? 'Intermédiaire' : 'Confirmé',
+    met: MET[perso.categorie]?.[perso.intensite] ?? MET.muscu[perso.intensite],
+    emoji: famille?.emoji ?? '💪',
+    exercices,
+  }
+}
+
+/** La séance à jouer, qu'elle vienne du catalogue ou de ses propres séances. */
+export function seanceAJouer(id: string, miennes: SeancePerso[]): Seance | null {
+  const catalogue = seanceParId(id)
+  if (catalogue) return catalogue
+  const mienne = miennes.find((s) => s.id === id)
+  return mienne ? versSeance(mienne) : null
+}
 
 /** Durée totale d'un exercice (toutes séries + repos), en secondes. */
 export function dureeExercice(exercice: Exercice): number {

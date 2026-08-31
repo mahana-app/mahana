@@ -87,6 +87,31 @@ export type LigneRepas = {
   estime?: boolean
 }
 
+/* Une recette écrite par soi : ce qu'on cuisine vraiment. Le carnet des
+   recettes toutes faites donne des idées ; celui-ci donne les siennes, et
+   c'est lui qu'on regarde à 18 h quand on ne sait pas quoi préparer. */
+export type RecettePerso = {
+  id: string
+  nom: string
+  /** À quel repas on la sert : c'est ce qui fait remonter les dîners le soir. */
+  moment: MomentRepas
+  emoji: string
+  /** Une ligne par ingrédient, telle qu'on l'a écrite. */
+  ingredients: string[]
+  /** La marche à suivre. Vide quand on n'a pas pris le temps de la noter. */
+  etapes: string[]
+  minutes: number
+  portions: number
+  /** Par portion. Estimé depuis les ingrédients, toujours corrigeable. */
+  kcal: number
+  glucides: number
+  proteines: number
+  lipides: number
+  photoId?: string
+  /** Le jour où elle a été écrite, pour montrer les dernières en premier. */
+  creee: string
+}
+
 export type CategorieSport = 'cardio' | 'pilates' | 'muscu' | 'jiujitsu' | 'exterieur'
 
 export type SeanceFaite = {
@@ -112,6 +137,33 @@ export type SeanceFaite = {
  * séances faites, pas en jours de calendrier — sauter un jour ne fait pas
  * perdre sa place.
  */
+/** L'effort d'une séance, qui décide des calories brûlées. */
+export type IntensiteSeance = 'douce' | 'moderee' | 'intense'
+
+/* Un exercice d'une séance écrite par soi. Les champs sont nullables plutôt
+   qu'absents : un formulaire manipule mieux « vide » que « pas là ». */
+export type ExercicePerso = {
+  nom: string
+  series: number
+  /** Des répétitions, ou une durée en secondes : l'un OU l'autre. */
+  reps: number | null
+  secondes: number | null
+  /** Repos après l'exercice, en secondes. */
+  repos: number
+  consigne: string
+}
+
+/** Une séance montée par soi, dans une des familles de sport. */
+export type SeancePerso = {
+  id: string
+  categorie: CategorieSport
+  nom: string
+  sousTitre: string
+  intensite: IntensiteSeance
+  exercices: ExercicePerso[]
+  creee: string
+}
+
 export type Programme = {
   id: string
   nom: string
@@ -185,6 +237,9 @@ export type Etat = {
   leconsLues: string[]
   /** Les recettes mises de côté. */
   recettesGardees: string[]
+  /** Les recettes écrites par soi, et les séances montées par soi. */
+  mesRecettes: RecettePerso[]
+  mesSeances: SeancePerso[]
 }
 
 export const PROFIL_PAR_DEFAUT: Profil = {
@@ -228,6 +283,8 @@ export const ETAT_VIDE: Etat = {
   habitudesFinies: [],
   leconsLues: [],
   recettesGardees: [],
+  mesRecettes: [],
+  mesSeances: [],
 }
 
 const CLE = 'mahana.v1'
@@ -299,6 +356,8 @@ export function lireEtat(): Etat {
       habitudesFinies: lu.habitudesFinies ?? [],
       leconsLues: lu.leconsLues ?? [],
       recettesGardees: lu.recettesGardees ?? [],
+      mesRecettes: lu.mesRecettes ?? [],
+      mesSeances: lu.mesSeances ?? [],
     }
   } catch {
     return ETAT_VIDE

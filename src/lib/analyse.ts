@@ -28,6 +28,10 @@ export function simplifier(texte: string): string {
     .replace(/[’']/g, ' ')
     .replace(/[.,;:!?()]/g, ' ')
     .toLowerCase()
+    // Les ligatures ne se décomposent pas comme les accents : sans cette
+    // ligne, « bœuf » et « boeuf » restent deux mots différents.
+    .replace(/œ/g, 'oe')
+    .replace(/æ/g, 'ae')
     .replace(/\s+/g, ' ')
     .trim()
 }
@@ -80,6 +84,13 @@ function presquePareil(a: string, b: string): boolean {
   return ecarts + (long.length - j) <= 1
 }
 
+/* Le pluriel français se joue sur une lettre : « 3 œufs » doit trouver
+   « Œuf ». La distance d'édition ne suffit pas — elle refuse les mots de
+   moins de cinq lettres, sans quoi « pain » trouverait « pané ». */
+function racine(mot: string): string {
+  return mot.length > 3 ? mot.replace(/[sx]$/, '') : mot
+}
+
 /* Quand un seul mot est écrit, c'est presque toujours celui-là qu'on veut. */
 const RACCOURCIS: Record<string, string> = {
   salade: 'Salade verte',
@@ -128,20 +139,27 @@ function reconnaitre(fragment: string): Aliment | null {
     if (raccourci) return ALIMENTS.find((a) => a.nom === raccourci) ?? null
   }
 
-  let meilleur: { aliment: Aliment; score: number; trouves: number } | null = null
+  let meilleur: { aliment: Aliment; note: number; trouves: number } | null = null
   for (const entree of INDEX) {
     if (entree.mots.length === 0) continue
     const trouves = entree.mots.filter((m) =>
-      motsFragment.some((f) => f === m || presquePareil(f, m)),
+      motsFragment.some((f) => f === m || racine(f) === racine(m) || presquePareil(f, m)),
     ).length
     if (trouves === 0) continue
-    const score = trouves / entree.mots.length
-    if (score < 0.5) continue
+
+    // Deux exigences, et il faut les deux. Le nom de l'aliment doit être
+    // bien recouvert par le fragment — sinon « Salade de fruits » sortirait
+    // pour « salade ». Et le fragment doit être bien recouvert par le nom :
+    // sans ça « 3 pommes de terre » trouve « Pomme », qui fait un score
+    // parfait sur son seul mot et laisse « terre » de côté.
+    const precision = trouves / entree.mots.length
+    if (precision < 0.5) continue
+    const couverture = trouves / motsFragment.length
+    const note = precision * couverture
+
     const mieux =
-      !meilleur ||
-      score > meilleur.score ||
-      (score === meilleur.score && trouves > meilleur.trouves)
-    if (mieux) meilleur = { aliment: entree.aliment, score, trouves }
+      !meilleur || note > meilleur.note || (note === meilleur.note && trouves > meilleur.trouves)
+    if (mieux) meilleur = { aliment: entree.aliment, note, trouves }
   }
   return meilleur?.aliment ?? null
 }

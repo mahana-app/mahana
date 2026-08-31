@@ -7,6 +7,8 @@
    Pas de photos : les images pèsent lourd et il faudrait les héberger. Une
    couleur et un emoji par recette suffisent à s'y retrouver. */
 
+import type { Etat, MomentRepas, RecettePerso } from './stockage'
+
 export type CategorieRecette = 'petit-dejeuner' | 'dejeuner' | 'diner' | 'encas' | 'rompre'
 
 export type Recette = {
@@ -561,7 +563,38 @@ export const RECETTES: Recette[] = [
 export const recetteParId = (id: string) => RECETTES.find((r) => r.id === id) ?? null
 
 /** La recette du jour : la même toute la journée, différente demain. */
+function graine(clef: string): number {
+  return [...clef].reduce((total, lettre) => total + lettre.charCodeAt(0), 0)
+}
+
 export function recetteDuJour(clef: string): Recette {
-  const somme = [...clef].reduce((total, lettre) => total + lettre.charCodeAt(0), 0)
-  return RECETTES[somme % RECETTES.length]
+  return RECETTES[graine(clef) % RECETTES.length]
+}
+
+/* L'idée du jour sur l'accueil.
+
+   Les recettes qu'on a écrites soi-même passent devant celles du carnet :
+   ce qu'on cuisine vraiment donne de bien meilleures idées qu'une recette
+   toute faite. Et à partir du milieu de l'après-midi, on montre un dîner —
+   c'est à ce moment-là qu'on se demande quoi préparer ce soir. */
+export type IdeeDuJour =
+  | { mienne: true; recette: RecettePerso }
+  | { mienne: false; recette: Recette }
+
+export function ideeDuJour(etat: Etat, clef: string, heure: number): IdeeDuJour {
+  const miennes = etat.mesRecettes
+  if (miennes.length > 0) {
+    const diners = heure >= 15 ? miennes.filter((r) => r.moment === 'diner') : []
+    const bassin = diners.length > 0 ? diners : miennes
+    return { mienne: true, recette: bassin[graine(clef) % bassin.length] }
+  }
+  return { mienne: false, recette: recetteDuJour(clef) }
+}
+
+/** La couleur de fond d'une recette écrite par soi, d'après son repas. */
+export function couleurDuMoment(moment: MomentRepas): string {
+  if (moment === 'petit-dejeuner') return 'var(--miel-pale)'
+  if (moment === 'dejeuner') return 'var(--olive-pale)'
+  if (moment === 'diner') return 'var(--canard-pale)'
+  return 'var(--argile-pale)'
 }

@@ -1,14 +1,17 @@
-/* Le sport : trois familles de séances, plus les sorties dehors suivies au GPS. */
+/* Le sport : quatre familles de séances — les vôtres et celles du catalogue —
+   plus les sorties dehors suivies au GPS. */
 
 import { useMemo, useState } from 'react'
 import Entete from '../composants/Entete'
 import Symbole from '../composants/Symbole'
+import type { NomSymbole } from '../composants/Symbole'
 import { IconeFleche, IconeGps } from '../composants/Icones'
 import { ajouterJours, clefJour, jourRelatif } from '../lib/dates'
 import { useApp } from '../lib/etat'
 import type { Vue } from '../lib/navigation'
 import { poidsActuel } from '../lib/profil'
-import { FAMILLES, SEANCES, caloriesSeance, joursFaits, prochainJour, symboleFamille } from '../lib/sport'
+import type { Seance } from '../lib/sport'
+import { FAMILLES, SEANCES, caloriesSeance, joursFaits, prochainJour, symboleFamille, versSeance } from '../lib/sport'
 import { nombreFr } from '../lib/formats'
 
 export default function Sport({ ouvrir, fermer }: { ouvrir: (vue: Vue) => void; fermer: () => void }) {
@@ -174,45 +177,41 @@ export default function Sport({ ouvrir, fermer }: { ouvrir: (vue: Vue) => void; 
             </span>
             <span style={{ color: 'var(--doux)', fontWeight: 400, fontSize: 15 }}> — {f.detail}</span>
           </div>
+          <button
+            type="button"
+            className="bouton-fin"
+            style={{ width: '100%', marginBottom: 10 }}
+            onClick={() => ouvrir({ nom: 'ma-seance', categorie: f.id })}
+          >
+            + Créer ma séance de {f.nom.toLowerCase()}
+          </button>
+
+          {/* Les siennes d'abord : c'est celles qu'on vient chercher. Elles
+              portent un crayon, les autres non — on ne modifie pas le
+              catalogue, on écrit la sienne à côté. */}
+          {etat.mesSeances
+            .filter((s) => s.categorie === f.id)
+            .map((perso) => (
+              <CarteSeance
+                key={perso.id}
+                seance={versSeance(perso)}
+                icone={f.icone}
+                poids={poids}
+                mienne
+                ouvrir={ouvrir}
+              />
+            ))}
+
           {liste
             .filter((s) => s.categorie === f.id)
             .map((seance) => (
-              <button
+              <CarteSeance
                 key={seance.id}
-                type="button"
-                className="carte serree"
-                style={{ width: '100%', border: 0, textAlign: 'left' }}
-                onClick={() => ouvrir({ nom: 'seance', id: seance.id })}
-              >
-                <div className="rangee">
-                  <div
-                    style={{
-                      width: 46,
-                      height: 46,
-                      borderRadius: 14,
-                      display: 'grid',
-                      placeItems: 'center',
-                      background: 'var(--piste)',
-                      flex: '0 0 auto',
-                      color: 'var(--doux)',
-                    }}
-                  >
-                    <Symbole nom={f.icone} taille={22} />
-                  </div>
-                  <div style={{ flex: 1, minWidth: 0 }}>
-                    <div style={{ fontWeight: 700 }}>{seance.nom}</div>
-                    <div className="doux mini">{seance.sousTitre}</div>
-                    <div style={{ display: 'flex', gap: 6, marginTop: 6, flexWrap: 'wrap' }}>
-                      <span className="pilule">{seance.minutes} min</span>
-                      <span className="pilule">
-                        ≈ {caloriesSeance(seance.met, seance.minutes, poids)} kcal
-                      </span>
-                      <span className="pilule">{seance.niveau}</span>
-                    </div>
-                  </div>
-                  <IconeFleche />
-                </div>
-              </button>
+                seance={seance}
+                icone={f.icone}
+                poids={poids}
+                ouvrir={ouvrir}
+              />
             ))}
         </div>
       ))}
@@ -246,6 +245,77 @@ export default function Sport({ ouvrir, fermer }: { ouvrir: (vue: Vue) => void; 
           </div>
         </>
       )}
+    </div>
+  )
+}
+
+/* Une séance dans la liste. Celles qu'on a écrites portent en plus le
+   crayon qui ouvre le formulaire — sans lui, une faute de frappe dans un
+   exercice serait définitive. */
+function CarteSeance({
+  seance,
+  icone,
+  poids,
+  mienne = false,
+  ouvrir,
+}: {
+  seance: Seance
+  icone: NomSymbole
+  poids: number
+  mienne?: boolean
+  ouvrir: (vue: Vue) => void
+}) {
+  return (
+    <div className="carte serree">
+      <div className="rangee">
+        <button
+          type="button"
+          style={{ border: 0, background: 'none', padding: 0, textAlign: 'left', flex: 1, minWidth: 0 }}
+          onClick={() => ouvrir({ nom: 'seance', id: seance.id })}
+        >
+          <div className="rangee">
+            <div
+              style={{
+                width: 46,
+                height: 46,
+                borderRadius: 14,
+                display: 'grid',
+                placeItems: 'center',
+                background: 'var(--piste)',
+                flex: '0 0 auto',
+                color: 'var(--doux)',
+              }}
+            >
+              <Symbole nom={icone} taille={22} />
+            </div>
+            <div style={{ flex: 1, minWidth: 0 }}>
+              <div style={{ fontWeight: 700 }}>{seance.nom}</div>
+              <div className="doux mini">{seance.sousTitre}</div>
+              <div style={{ display: 'flex', gap: 6, marginTop: 6, flexWrap: 'wrap' }}>
+                <span className="pilule">{seance.minutes} min</span>
+                <span className="pilule">
+                  ≈ {caloriesSeance(seance.met, seance.minutes, poids)} kcal
+                </span>
+                <span className="pilule">{seance.niveau}</span>
+                {mienne && <span className="pilule corail">Ma séance</span>}
+              </div>
+            </div>
+          </div>
+        </button>
+        {mienne ? (
+          <button
+            type="button"
+            className="bouton-fin"
+            style={{ padding: '6px 12px', flex: '0 0 auto' }}
+            aria-label={`Modifier ${seance.nom}`}
+            onClick={() => ouvrir({ nom: 'ma-seance', id: seance.id })}
+          >
+            <Symbole nom="crayon" taille={17} />
+          </button>
+        ) : (
+          <IconeFleche />
+        )}
+      </div>
     </div>
   )
 }
