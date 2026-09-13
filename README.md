@@ -1,4 +1,4 @@
-# Fare · la maison
+# Sweet Home · la maison
 
 L'application de la maison, pour les deux foyers qui y vivent : les **LAI AH
 CHE** et les **LENOIR**. Les charges, la caisse commune des courses, et ce
@@ -7,6 +7,10 @@ qu'on doit à la roulotte.
 Elle a remplacé *Mahana* (le suivi de poids) à la même adresse. L'ancienne app
 n'est pas perdue : elle reste dans l'historique du dépôt, jusqu'au commit
 « Mes recettes et mes séances, écrites par moi ».
+
+*Le dossier et le paquet s'appellent encore `fare` — « la maison » en tahitien,
+le nom du projet avant que Maru choisisse celui affiché sur l'écran. Rien à
+corriger : ce n'est qu'un nom de dossier.*
 
 ## Les quatre onglets
 

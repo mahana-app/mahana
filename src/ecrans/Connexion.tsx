@@ -8,6 +8,27 @@ import { useState } from 'react'
 import Symbole from '../composants/Symbole'
 import { client } from '../lib/base'
 
+/* Les messages de Supabase sont exacts mais secs, et en anglais. On les
+   montre tels quels — jamais masqués, c'est la règle — mais quand on
+   reconnaît une panne de réglage, on ajoute dessous la phrase qui dit où
+   aller regarder. Un message qu'on ne peut pas agir ne sert à rien. */
+function indice(message: string): string | null {
+  const m = message.toLowerCase()
+  if (m.includes('invalid path') || m.includes('not found')) {
+    return "On dirait que l'adresse du serveur est mal réglée : VITE_SUPABASE_URL doit se terminer par « .supabase.co » et rien après — ni « /rest/v1 », ni barre oblique finale."
+  }
+  if (m.includes('failed to fetch') || m.includes('network')) {
+    return "Le serveur n'a pas répondu. Soit la connexion est coupée, soit l'adresse du serveur est fausse."
+  }
+  if (m.includes('api key') || m.includes('apikey') || m.includes('jwt')) {
+    return 'La clé du serveur ne convient pas : VITE_SUPABASE_ANON_KEY doit être la clé marquée « publishable » ou « anon public », jamais la clé secrète.'
+  }
+  if (m.includes('invalid login credentials')) {
+    return "L'adresse ou le mot de passe ne correspond à aucun compte de la maison."
+  }
+  return null
+}
+
 export default function Connexion() {
   const [courriel, setCourriel] = useState('')
   const [motDePasse, setMotDePasse] = useState('')
@@ -34,7 +55,7 @@ export default function Connexion() {
         <span style={{ display: 'inline-block' }}>
           <Symbole nom="maison" taille={64} epaisseur={1.3} />
         </span>
-        <h1 style={{ fontSize: 30, marginTop: 10 }}>Fare</h1>
+        <h1 style={{ fontSize: 30, marginTop: 10 }}>Sweet Home</h1>
         <p className="doux" style={{ margin: '4px 0 0' }}>
           La maison, à deux familles.
         </p>
@@ -71,9 +92,16 @@ export default function Connexion() {
         />
 
         {erreur && (
-          <p className="doux mini" style={{ margin: '12px 0 0', color: 'var(--corail-fonce)' }}>
-            {erreur}
-          </p>
+          <>
+            <p className="doux mini" style={{ margin: '12px 0 0', color: 'var(--corail-fonce)' }}>
+              {erreur}
+            </p>
+            {indice(erreur) && (
+              <p className="doux mini" style={{ margin: '8px 0 0', lineHeight: 1.7 }}>
+                {indice(erreur)}
+              </p>
+            )}
+          </>
         )}
       </div>
 

@@ -1,4 +1,8 @@
-# Fare — consignes de travail
+# Sweet Home — consignes de travail
+
+**Sweet Home** est le nom affiché ; le dossier et le paquet s'appellent encore
+`fare` (« la maison » en tahitien), nom du projet avant que Maru choisisse
+celui de l'écran. Ce n'est qu'un nom de dossier, rien à corriger.
 
 Application de la maison de Mahina, partagée par les deux foyers qui y vivent :
 les **LAI AH CHE** (Maru, Will) et les **LENOIR** (la sœur de Will, Manahiti
