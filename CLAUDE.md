@@ -100,6 +100,25 @@ Ce qui est propre à Supabase (le rôle `authenticated`) doit être **gardé** p
 un `if exists (select 1 from pg_roles …)`, sinon le script de vérification, qui
 tourne sur un PostgreSQL ordinaire, échoue à tort.
 
+## L'entrée : un code, puis une politesse
+
+**Le code de la maison est le mot de passe d'un compte Supabase unique**
+(`COMPTE_MAISON` dans `src/ecrans/Connexion.tsx`). L'adresse de ce compte est
+dans le code, jamais tapée par personne. Ne pas remplacer ce mécanisme par un
+code vérifié dans l'application : ce serait une porte peinte sur un mur.
+
+Quatre comptes séparés étaient plus corrects et ont été essayés. Ils ont été
+abandonnés pour une raison qui n'est pas technique : quatre mots de passe à
+retenir et à redistribuer dans une famille, ça ne tient pas une semaine. Un
+système parfait dont on se détourne protège moins qu'un système simple qu'on
+utilise.
+
+**« Qui es-tu ? » n'est pas une sécurité** et ne doit jamais le devenir. La
+réponse vit dans le `localStorage` de chaque téléphone (`src/lib/moi.ts`), se
+change d'une touche, et ne sert qu'au confort : dire bonjour par le prénom,
+cocher d'avance qui a fait les courses. Ne rien y accrocher qui demande de la
+confiance.
+
 ## La sécurité, en une phrase
 
 La clé « anon » est dans la page : ce n'est pas un secret. Ce qui protège les

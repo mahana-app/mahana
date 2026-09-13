@@ -10,6 +10,7 @@ import type { ReactNode } from 'react'
 import { SERVEUR_BRANCHE, base, client, nouvelId, rubriqueDe } from './base'
 import type { NomTable } from './base'
 import { jourDe, repartir } from './argent'
+import { ecrireMoi, lireMoi } from './moi'
 import type {
   Achat,
   Charge,
@@ -66,6 +67,9 @@ type Contenu = {
   /** Faux quand le serveur est branché mais que personne n'est connecté. */
   connecte: boolean
   sortir: () => Promise<void>
+  /** Le membre qui se sert de ce téléphone. Vide tant qu'il ne l'a pas dit. */
+  moiId: Identifiant | null
+  direQuiJeSuis: (id: Identifiant | null) => void
 } & Actions
 
 const Contexte = createContext<Contenu | null>(null)
@@ -76,6 +80,7 @@ export function FournisseurMaison({ children }: { children: ReactNode }) {
   const [erreur, setErreur] = useState<string | null>(null)
   // Sans serveur, il n'y a personne à connecter : le mode essai est ouvert.
   const [connecte, setConnecte] = useState(!SERVEUR_BRANCHE)
+  const [moiId, setMoiId] = useState<Identifiant | null>(() => lireMoi())
 
   // Les actions qui suppriment en cascade ou répartissent une facture doivent
   // lire l'état au moment où elles s'exécutent, pas celui figé à leur
@@ -292,6 +297,11 @@ export function FournisseurMaison({ children }: { children: ReactNode }) {
     setMaison(MAISON_VIDE)
   }, [])
 
+  const direQuiJeSuis = useCallback((id: Identifiant | null) => {
+    ecrireMoi(id)
+    setMoiId(id)
+  }, [])
+
   const reglerCotisationMensuelle = useCallback<Actions['reglerCotisationMensuelle']>(
     async (montants) => {
       try {
@@ -313,6 +323,8 @@ export function FournisseurMaison({ children }: { children: ReactNode }) {
       partagee: SERVEUR_BRANCHE,
       connecte,
       sortir,
+      moiId,
+      direQuiJeSuis,
       ajouterCharge,
       modifierCharge,
       supprimerCharge,
@@ -341,6 +353,8 @@ export function FournisseurMaison({ children }: { children: ReactNode }) {
       erreur,
       connecte,
       sortir,
+      moiId,
+      direQuiJeSuis,
       ajouterCharge,
       modifierCharge,
       supprimerCharge,

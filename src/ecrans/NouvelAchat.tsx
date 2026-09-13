@@ -9,11 +9,12 @@ import { CATEGORIES_ACHAT } from '../lib/types'
 import type { CategorieAchat } from '../lib/types'
 
 export default function NouvelAchat({ fermer }: { fermer: () => void }) {
-  const { maison, ajouterAchat } = useMaison()
+  const { maison, moiId, ajouterAchat } = useMaison()
   const [libelle, setLibelle] = useState('')
   const [montantTexte, setMontantTexte] = useState('')
   const [categorie, setCategorie] = useState<CategorieAchat>('viande')
-  const [parMembreId, setParMembreId] = useState<string | null>(null)
+  // Neuf fois sur dix, c'est celui qui tient le téléphone qui y est allé.
+  const [parMembreId, setParMembreId] = useState<string | null>(moiId)
   const [le, setLe] = useState(jourDe())
 
   const montant = lireMontant(montantTexte)

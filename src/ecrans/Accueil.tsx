@@ -9,6 +9,8 @@ import Symbole from '../composants/Symbole'
 import { QuiDoitQuoi } from './Charges'
 import { chargeSoldee, duALaRoulotte, etatCaisse, fcfp, moisDe, moisEnMots } from '../lib/argent'
 import { useMaison } from '../lib/maison'
+import { salutation } from '../lib/moi'
+import { membreDe } from '../lib/types'
 import type { Onglet } from '../composants/BarreOnglets'
 import type { Vue } from '../lib/navigation'
 
@@ -19,18 +21,19 @@ export default function Accueil({
   ouvrir: (vue: Vue) => void
   allerA: (onglet: Onglet) => void
 }) {
-  const { maison } = useMaison()
+  const { maison, moiId } = useMaison()
   const periode = moisDe()
   const caisse = etatCaisse(maison)
   const du = duALaRoulotte(maison)
   const totalRoulotte = Object.values(du).reduce((somme, v) => somme + v, 0)
+  const moi = membreDe(maison, moiId)
   const enAttente = maison.charges.filter((c) => !chargeSoldee(maison, c))
   const aPayer = enAttente.filter((c) => !c.avanceePar)
 
   return (
     <div className="page">
       <Entete
-        kicker={moisEnMots(periode)}
+        kicker={moi ? `${salutation()} ${moi.prenom}` : moisEnMots(periode)}
         titre="À la maison"
         ouvrirReglages={() => ouvrir({ nom: 'maisonnee' })}
       />

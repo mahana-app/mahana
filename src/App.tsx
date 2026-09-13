@@ -16,12 +16,13 @@ import Maisonnee from './ecrans/Maisonnee'
 import NouvelAchat from './ecrans/NouvelAchat'
 import NouvelleArdoise from './ecrans/NouvelleArdoise'
 import NouvelleCharge from './ecrans/NouvelleCharge'
+import QuiEsTu from './ecrans/QuiEsTu'
 import UneCharge from './ecrans/UneCharge'
 import { useMaison } from './lib/maison'
 import type { Vue } from './lib/navigation'
 
 export default function App() {
-  const { chargement, erreur, partagee, connecte } = useMaison()
+  const { maison, chargement, erreur, partagee, connecte, moiId } = useMaison()
   const [onglet, setOnglet] = useState<Onglet>('accueil')
   const [pile, setPile] = useState<Vue[]>([])
   const [ajout, setAjout] = useState(false)
@@ -47,6 +48,11 @@ export default function App() {
       </div>
     )
   }
+
+  // La question ne se pose que s'il y a des prénoms à proposer : à la toute
+  // première ouverture, la maison est vide et l'accueil invite à la remplir.
+  const aDuMonde = maison.membres.some((m) => m.role === 'adulte' && m.actif)
+  if (aDuMonde && !moiId) return <QuiEsTu />
 
   if (vue) {
     switch (vue.nom) {

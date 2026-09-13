@@ -7,9 +7,12 @@ import { jourDe, lireMontant } from '../lib/argent'
 import { useMaison } from '../lib/maison'
 
 export default function NouvelleArdoise({ fermer }: { fermer: () => void }) {
-  const { maison, ajouterArdoise } = useMaison()
-  const [foyerId, setFoyerId] = useState(maison.foyers[0]?.id ?? '')
-  const [parMembreId, setParMembreId] = useState<string | null>(null)
+  const { maison, moiId, ajouterArdoise } = useMaison()
+  // On part de celui qui tient le téléphone, et de son foyer : c'est presque
+  // toujours pour soi qu'on prend à manger à la roulotte.
+  const moi = maison.membres.find((m) => m.id === moiId)
+  const [foyerId, setFoyerId] = useState(moi?.foyerId ?? maison.foyers[0]?.id ?? '')
+  const [parMembreId, setParMembreId] = useState<string | null>(moi?.id ?? null)
   const [libelle, setLibelle] = useState('')
   const [montantTexte, setMontantTexte] = useState('')
   const [le, setLe] = useState(jourDe())

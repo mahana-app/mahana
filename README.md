@@ -79,16 +79,47 @@ reste dans le navigateur, personne d'autre ne voit rien, et un bandeau le dit
 en haut de l'écran. C'est fait pour regarder à quoi ça ressemble avant de
 monter quoi que ce soit.
 
+### Un seul code pour toute la maison
+
+Quatre comptes avec quatre mots de passe, c'était la bonne façon de faire sur
+le papier — et la mauvaise dans cette maison : personne ne les aurait retenus,
+et Maru serait devenue le service d'assistance de sa propre famille. Un code
+partagé qu'on se dit une fois vaut mieux qu'un système parfait dont tout le
+monde se détourne.
+
+Techniquement, la maison a **un seul compte** chez Supabase. Son adresse est
+écrite dans l'app (`COMPTE_MAISON`, dans `src/ecrans/Connexion.tsx`) et
+personne n'a à la connaître ; le code que l'on tape à l'entrée est le **mot de
+passe** de ce compte. La serrure est donc exactement celle d'un vrai compte —
+c'est seulement la clé qui est partagée, comme celle de la porte d'entrée.
+
+Pour créer ou changer le code : Supabase → **Authentication → Users**, sur le
+compte `maison@sweet-home.pf`. Six caractères minimum.
+
+### Et une fois entré, « qui es-tu ? »
+
+Posée une seule fois, à la première ouverture, la réponse reste dans ce
+téléphone-là. **Ce n'est pas une sécurité** — le code a déjà fait ce travail.
+C'est ce qui permet à l'app de dire bonjour par le prénom, et de cocher
+d'avance qui est allé faire les courses ou chercher à manger à la roulotte.
+
+Ça se change dans **Maisonnée → Ce téléphone → Ce n'est pas moi**.
+
 ### Brancher le serveur
 
 1. Sur [supabase.com](https://supabase.com), créer un projet — gratuit.
    **Un nouveau projet**, séparé de celui de la roulotte.
 2. Ouvrir **SQL Editor**, coller **tout** le contenu de `supabase/schema.sql`,
    et lancer. Le fichier peut être recollé autant de fois qu'on veut.
-3. Dans **Authentication → Users → Add user**, créer un compte par adulte de la
-   maison : une adresse et un mot de passe. Pas d'inscription depuis l'app,
-   exprès — on n'ouvre pas les comptes de deux familles à qui tomberait sur
-   l'adresse.
+3. Dans **Authentication → Users → Add user → Create new user**, créer
+   **un seul** compte, celui de la maison :
+   - adresse : `maison@sweet-home.pf` — **exactement celle-là**, elle est
+     écrite dans l'app
+   - mot de passe : le code de la maison, six caractères minimum
+   - cocher **Auto Confirm User**, sinon personne ne pourra entrer
+
+   Pas d'inscription depuis l'app, exprès : on n'ouvre pas les comptes de deux
+   familles à qui tomberait sur l'adresse.
 4. Dans **Project Settings → API**, relever l'**URL** et la clé **anon public**.
 5. Sur Netlify (ou Vercel), ajouter deux variables d'environnement :
 

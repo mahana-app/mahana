@@ -11,12 +11,15 @@ import Entete from '../composants/Entete'
 import Symbole from '../composants/Symbole'
 import { fcfp, lireMontant } from '../lib/argent'
 import { useMaison } from '../lib/maison'
+import { membreDe } from '../lib/types'
 import type { Identifiant, RoleMembre } from '../lib/types'
 
 export default function Maisonnee({ fermer }: { fermer: () => void }) {
   const {
     maison,
     partagee,
+    moiId,
+    direQuiJeSuis,
     sortir,
     modifierFoyer,
     ajouterMembre,
@@ -28,6 +31,7 @@ export default function Maisonnee({ fermer }: { fermer: () => void }) {
   const [prenom, setPrenom] = useState('')
   const [role, setRole] = useState<RoleMembre>('adulte')
 
+  const moi = membreDe(maison, moiId)
   const cotisations = maison.reglages.cotisationMensuelle
   const totalCotisations = maison.foyers.reduce((s, f) => s + (cotisations[f.id] ?? 0), 0)
 
@@ -189,6 +193,34 @@ export default function Maisonnee({ fermer }: { fermer: () => void }) {
         )
       })}
 
+      {/* À qui est ce téléphone : posé une fois, changeable ici. */}
+      <div className="carte">
+        <div className="kicker">Ce téléphone</div>
+        {moi ? (
+          <>
+            <div style={{ fontWeight: 700, fontSize: 17, marginTop: 4 }}>
+              C'est celui de {moi.prenom}
+            </div>
+            <p className="doux mini" style={{ margin: '4px 0 0', lineHeight: 1.7 }}>
+              L'app dit bonjour par ce prénom, et le coche d'avance quand on note une course ou
+              ce qu'on a pris à la roulotte.
+            </p>
+          </>
+        ) : (
+          <p className="doux mini" style={{ margin: '6px 0 0' }}>
+            Ce téléphone n'est attribué à personne.
+          </p>
+        )}
+        <button
+          type="button"
+          className="bouton-fin"
+          style={{ width: '100%', marginTop: 12 }}
+          onClick={() => direQuiJeSuis(null)}
+        >
+          {moi ? 'Ce n’est pas moi' : 'Dire qui je suis'}
+        </button>
+      </div>
+
       <div className="carte" style={{ background: 'var(--lagon-pale)' }}>
         <div className="kicker">Ce que ça donne</div>
         <div className="rangee" style={{ marginTop: 8 }}>
@@ -214,7 +246,9 @@ export default function Maisonnee({ fermer }: { fermer: () => void }) {
           {partagee ? (
             <>
               L'application est <b>partagée</b> : tout ce que vous notez ici est visible par
-              chaque personne de la maison qui ouvre l'app, sur son propre téléphone.
+              chaque personne de la maison qui ouvre l'app, sur son propre téléphone. Toute la
+              maison entre avec <b>le même code</b> — pour le changer, il faut modifier le mot de
+              passe du compte de la maison dans Supabase.
             </>
           ) : (
             <>
