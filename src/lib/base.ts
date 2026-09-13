@@ -189,8 +189,27 @@ export function baseSupabase(client: SupabaseClient): Base {
 
 /* ---------- laquelle des deux ---------- */
 
-const ADRESSE = import.meta.env.VITE_SUPABASE_URL as string | undefined
-const CLE_PUBLIQUE = import.meta.env.VITE_SUPABASE_ANON_KEY as string | undefined
+/* L'adresse du serveur, nettoyée de ce qu'on y colle par mégarde.
+
+   Supabase montre cette adresse à trois endroits différents, et l'un d'eux
+   la donne suivie de « /rest/v1 ». Collée telle quelle, l'app demandait
+   « …/rest/v1/auth/v1/token » et le serveur répondait « Invalid path
+   specified in request URL » — un message juste, mais qui ne dit pas où est
+   la faute. Un réglage qui se fait sur un téléphone, à 22 h, doit pardonner
+   une barre oblique de trop. */
+function origineSeule(adresse: string | undefined): string | undefined {
+  if (!adresse) return undefined
+  const propre = adresse.trim()
+  try {
+    return new URL(propre).origin
+  } catch {
+    // Pas une adresse complète : au moins, on retire ce qui traîne au bout.
+    return propre.replace(/\/+$/, '')
+  }
+}
+
+const ADRESSE = origineSeule(import.meta.env.VITE_SUPABASE_URL as string | undefined)
+const CLE_PUBLIQUE = (import.meta.env.VITE_SUPABASE_ANON_KEY as string | undefined)?.trim()
 
 /** Vrai quand le serveur est branché : l'app est alors vraiment partagée. */
 export const SERVEUR_BRANCHE = Boolean(ADRESSE && CLE_PUBLIQUE)
