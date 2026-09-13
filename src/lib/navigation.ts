@@ -1,27 +1,9 @@
 /* Les écrans qui s'ouvrent par-dessus les onglets. Pas de routeur : l'app
    tient dans une poignée d'écrans, et un simple aiguillage suffit. */
 
-import type { CategorieSport, MomentRepas } from './stockage'
-
 export type Vue =
-  | { nom: 'sport' }
-  | { nom: 'noter-seance'; programmeId?: string; numeroJour?: number }
-  | { nom: 'programme'; id: string }
-  | { nom: 'nouveau-programme' }
-  | { nom: 'defis' }
-  | { nom: 'moi' }
-  | { nom: 'recettes' }
-  | { nom: 'recette'; id: string }
-  | { nom: 'ma-recette'; id?: string }
-  | { nom: 'lecons' }
-  | { nom: 'lecon'; id: string }
-  | { nom: 'seance'; id: string }
-  | { nom: 'ma-seance'; id?: string; categorie?: CategorieSport }
-  | { nom: 'sortie' }
-  | { nom: 'ajout'; moment: MomentRepas }
-  | { nom: 'composer'; moment: MomentRepas }
-  | { nom: 'photo-repas'; moment: MomentRepas }
-  | { nom: 'corps' }
-  | { nom: 'eau' }
-  | { nom: 'activite' }
-  | { nom: 'reglages' }
+  | { nom: 'charge'; id: string }
+  | { nom: 'nouvelle-charge' }
+  | { nom: 'nouvel-achat' }
+  | { nom: 'nouvelle-ardoise' }
+  | { nom: 'maisonnee' }

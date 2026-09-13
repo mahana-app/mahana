@@ -1,7 +1,7 @@
-/* Le haut de chaque écran. Avec, selon les cas, un bouton retour à gauche
-   et le bouton des réglages à droite. */
+/* L'en-tête d'un écran : un mot de contexte, un titre, et le bouton retour
+   ou celui des réglages. Toujours au même endroit d'un écran à l'autre. */
 
-import { IconeReglages, IconeRetour } from './Icones'
+import Symbole from './Symbole'
 
 export default function Entete({
   kicker,
@@ -15,14 +15,16 @@ export default function Entete({
   ouvrirReglages?: () => void
 }) {
   return (
-    <header className="entete">
+    <div className="entete">
       {retour && (
         <button type="button" className="rond-entete" aria-label="Retour" onClick={retour}>
-          <IconeRetour />
+          <span style={{ transform: 'rotate(180deg)' }}>
+            <Symbole nom="fleche" taille={18} />
+          </span>
         </button>
       )}
       <div style={{ flex: 1, minWidth: 0 }}>
-        <div className="bonjour">{kicker}</div>
+        <div className="kicker">{kicker}</div>
         <h1>{titre}</h1>
       </div>
       {ouvrirReglages && (
@@ -32,9 +34,9 @@ export default function Entete({
           aria-label="Réglages"
           onClick={ouvrirReglages}
         >
-          <IconeReglages />
+          <Symbole nom="reglages" taille={19} />
         </button>
       )}
-    </header>
+    </div>
   )
 }

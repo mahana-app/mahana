@@ -1,11 +1,7 @@
 /* La feuille qui monte quand on touche le +. Tout ce qu'on note dans une
-   journée, au même endroit, sans avoir à chercher le bon écran. */
+   journée de maison, au même endroit, sans avoir à chercher le bon écran. */
 
-import { clefJour } from '../lib/dates'
-import { useApp, momentProbable } from '../lib/etat'
-import { jeuneEnCours } from '../lib/jeune'
 import type { Vue } from '../lib/navigation'
-import { IconeCroix } from './Icones'
 import Symbole from './Symbole'
 import type { NomSymbole } from './Symbole'
 
@@ -14,9 +10,44 @@ type Action = {
   fond: string
   couleur: string
   nom: string
-  detail?: string
-  faire: () => void
+  detail: string
+  vue: Vue
 }
+
+const ACTIONS: Action[] = [
+  {
+    icone: 'eclair',
+    fond: 'var(--ocre-pale)',
+    couleur: 'var(--ocre)',
+    nom: 'Une facture',
+    detail: 'Électricité, eau, internet, impôts, déchets',
+    vue: { nom: 'nouvelle-charge' },
+  },
+  {
+    icone: 'panier',
+    fond: 'var(--lagon-pale)',
+    couleur: 'var(--lagon)',
+    nom: 'Une course en gros',
+    detail: 'Payée avec la caisse commune',
+    vue: { nom: 'nouvel-achat' },
+  },
+  {
+    icone: 'roulotte',
+    fond: 'var(--corail-pale)',
+    couleur: 'var(--corail)',
+    nom: 'Pris à la roulotte',
+    detail: 'À rembourser en fin de mois',
+    vue: { nom: 'nouvelle-ardoise' },
+  },
+  {
+    icone: 'famille',
+    fond: 'var(--feuille-pale)',
+    couleur: 'var(--feuille)',
+    nom: 'La maisonnée',
+    detail: 'Les foyers, les parts, les cotisations',
+    vue: { nom: 'maisonnee' },
+  },
+]
 
 export default function FeuilleActions({
   fermer,
@@ -25,167 +56,37 @@ export default function FeuilleActions({
   fermer: () => void
   ouvrir: (vue: Vue) => void
 }) {
-  const { etat, ajouterVerres, commencer, terminer } = useApp()
-  const enCours = jeuneEnCours(etat)
-  const verres = etat.eau[clefJour()] ?? 0
-
-  const aller = (vue: Vue) => () => {
-    fermer()
-    ouvrir(vue)
-  }
-
-  const actions: Action[] = [
-    {
-      icone: 'photo',
-      fond: 'var(--argile-pale)',
-      couleur: 'var(--argile)',
-      nom: 'Photographier mon repas',
-      detail: 'Une photo, trois questions, les calories',
-      faire: aller({ nom: 'photo-repas', moment: momentProbable() }),
-    },
-    {
-      icone: 'dejeuner',
-      fond: 'var(--olive-pale)',
-      couleur: 'var(--olive)',
-      nom: 'Décrire un repas',
-      detail: 'Une phrase, et les calories se calculent',
-      faire: aller({ nom: 'composer', moment: momentProbable() }),
-    },
-    {
-      icone: 'encas',
-      fond: 'var(--miel-pale)',
-      couleur: 'var(--miel)',
-      nom: 'Chercher un aliment',
-      detail: 'Un par un, dans la base',
-      faire: aller({ nom: 'ajout', moment: momentProbable() }),
-    },
-    {
-      icone: 'eau',
-      fond: 'var(--canard-pale)',
-      couleur: 'var(--canard)',
-      nom: 'Un verre d’eau',
-      detail: `${verres} sur ${etat.profil.butEau} aujourd’hui`,
-      faire: () => {
-        ajouterVerres(1)
-        fermer()
-      },
-    },
-    enCours
-      ? {
-          icone: 'renouveau',
-          fond: 'var(--argile-pale)',
-          couleur: 'var(--argile)',
-          nom: 'Terminer le jeûne',
-          detail: 'Le minuteur s’arrête maintenant',
-          faire: () => {
-            terminer()
-            fermer()
-          },
-        }
-      : {
-          icone: 'jeune',
-          fond: 'var(--argile-pale)',
-          couleur: 'var(--argile)',
-          nom: 'Commencer le jeûne',
-          detail: 'Le minuteur part de maintenant',
-          faire: () => {
-            commencer()
-            fermer()
-          },
-        },
-    {
-      icone: 'sport',
-      fond: 'var(--canard-pale)',
-      couleur: 'var(--canard)',
-      nom: 'Noter une séance faite',
-      detail: 'Une vidéo, un cours, la salle',
-      faire: aller({ nom: 'noter-seance' }),
-    },
-    {
-      icone: 'lotus',
-      fond: 'var(--olive-pale)',
-      couleur: 'var(--olive)',
-      nom: 'Suivre une séance guidée',
-      detail: 'La mienne, ou une du catalogue',
-      faire: aller({ nom: 'sport' }),
-    },
-    {
-      icone: 'etincelle',
-      fond: 'var(--canard-pale)',
-      couleur: 'var(--canard)',
-      nom: 'Créer ma séance',
-      detail: 'Mes exercices, mes séries, mes repos',
-      faire: aller({ nom: 'ma-seance' }),
-    },
-    {
-      icone: 'gps',
-      fond: 'var(--olive-pale)',
-      couleur: 'var(--olive)',
-      nom: 'Sortir marcher ou courir',
-      detail: 'Chrono et GPS',
-      faire: aller({ nom: 'sortie' }),
-    },
-    {
-      icone: 'recette',
-      fond: 'var(--olive-pale)',
-      couleur: 'var(--olive)',
-      nom: 'Écrire une recette',
-      detail: 'Ce que je cuisine, pour ne plus chercher',
-      faire: aller({ nom: 'ma-recette' }),
-    },
-    {
-      icone: 'poids',
-      fond: 'var(--miel-pale)',
-      couleur: 'var(--miel)',
-      nom: 'Noter mon poids',
-      faire: aller({ nom: 'corps' }),
-    },
-    {
-      icone: 'pas',
-      fond: 'var(--miel-pale)',
-      couleur: 'var(--miel)',
-      nom: 'Mes pas et ma nuit',
-      faire: aller({ nom: 'activite' }),
-    },
-  ]
-
   return (
     <>
       <div className="voile" onClick={fermer} role="presentation" />
       <div className="feuille" role="dialog" aria-label="Ajouter">
         <div className="poignee" />
         <div className="rangee" style={{ marginBottom: 6 }}>
-          <h2 style={{ fontSize: 18 }}>Ajouter à ma journée</h2>
+          <h2 style={{ fontSize: 18 }}>Noter quelque chose</h2>
           <button type="button" className="rond-entete" aria-label="Fermer" onClick={fermer}>
-            <IconeCroix />
+            <Symbole nom="croix" taille={17} />
           </button>
         </div>
-        {actions.map((action) => (
+        {ACTIONS.map((action) => (
           <button
             key={action.nom}
             type="button"
             className="ligne-liste"
             style={{ width: '100%', border: 0, background: 'none', textAlign: 'left' }}
-            onClick={action.faire}
+            onClick={() => {
+              fermer()
+              ouvrir(action.vue)
+            }}
           >
             <span
-              className="rond"
-              style={{
-                background: action.fond,
-                color: action.couleur,
-                width: 42,
-                height: 42,
-                borderRadius: 14,
-                display: 'grid',
-                placeItems: 'center',
-                flex: '0 0 auto',
-              }}
+              className="pastille"
+              style={{ width: 42, height: 42, background: action.fond, color: action.couleur }}
             >
               <Symbole nom={action.icone} taille={21} />
             </span>
             <span style={{ flex: 1 }}>
               <span style={{ display: 'block', fontWeight: 700 }}>{action.nom}</span>
-              {action.detail && <span className="doux mini">{action.detail}</span>}
+              <span className="doux mini">{action.detail}</span>
             </span>
           </button>
         ))}

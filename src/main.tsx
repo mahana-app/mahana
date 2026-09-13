@@ -1,22 +1,23 @@
 import { StrictMode } from 'react'
 import { createRoot } from 'react-dom/client'
 import App from './App'
-import { FournisseurEtat } from './lib/etat'
+import { FournisseurMaison } from './lib/maison'
 import './theme.css'
 
 createRoot(document.getElementById('root') as HTMLElement).render(
   <StrictMode>
-    <FournisseurEtat>
+    <FournisseurMaison>
       <App />
-    </FournisseurEtat>
+    </FournisseurMaison>
   </StrictMode>,
 )
 
-// Le service worker garde l'app utilisable sans réseau, une fois installée.
+/* Le service worker de Mahana gardait l'ancienne app en réserve sur les
+   téléphones où elle était installée. On le désinscrit au passage : le
+   fichier `public/sw.js` s'en charge aussi de son côté, mais celui-ci
+   rattrape les navigateurs qui auraient déjà la nouvelle page. */
 if ('serviceWorker' in navigator) {
-  window.addEventListener('load', () => {
-    navigator.serviceWorker.register('/sw.js').catch(() => {
-      // Pas de mode hors ligne : ce n'est pas une raison d'empêcher l'app de tourner.
-    })
+  void navigator.serviceWorker.getRegistrations().then((inscriptions) => {
+    for (const inscription of inscriptions) void inscription.unregister()
   })
 }

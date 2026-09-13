@@ -1,154 +1,120 @@
-# Mahana — consignes de travail
+# Fare — consignes de travail
 
-Application personnelle de **perte de poids** : jeûne intermittent, repas et
-calories, sport, pas, sommeil, défis hebdomadaires. React + TypeScript + Vite,
-en PWA, mise en ligne sur Netlify.
+Application de la maison de Mahina, partagée par les deux foyers qui y vivent :
+les **LAI AH CHE** (Maru, Will) et les **LENOIR** (la sœur de Will, Manahiti
+Lenoir, et leurs filles Mia et Eva). React + TypeScript + Vite (PWA), base
+PostgreSQL sur Supabase décrite par `supabase/schema.sql`.
 
-**Cette application est seule au monde.** Elle ne partage rien avec aucun autre
-projet : pas de base commune, pas de compte commun, pas de code recopié depuis
-un autre dépôt. Si une autre application appartient à la même personne, elle
-reste étrangère à celle-ci.
+**Cette application n'a rien à voir avec Sodi's App**, l'application RH de la
+roulotte — dépôt différent, base différente, équipe différente. Le seul point
+de contact est l'ardoise : ce que la maison prend à manger à la roulotte et lui
+rembourse. Cette ardoise vit **ici**, pas dans la base de la roulotte.
+
+Elle a remplacé *Mahana* (suivi de poids) à la même adresse, sur demande de
+Maru. L'ancienne app reste dans l'historique du dépôt — ne pas la ressusciter
+sans qu'elle le demande.
 
 ## Les règles
 
-- **Tout est en français** — noms de composants, de fonctions, de variables,
+- **Tout est en français** — composants, fonctions, variables, colonnes SQL,
   commentaires. L'utilisatrice est non-technique et lit le code.
-- Les commentaires expliquent **le pourquoi**, pas la syntaxe.
-- **Aucune donnée ne sort du téléphone.** Tout tient dans le `localStorage`
-  (clé `mahana.v1`, voir `src/lib/stockage.ts`). Pas de compte, pas de serveur,
-  pas de mouchard — la seule exception est la police Google chargée par
-  `index.html`. Si une synchronisation est ajoutée un jour, ce sera un choix
-  explicite de l'utilisatrice.
-- **Mobile d'abord** : tout se consulte sur un téléphone, à une main.
-- Le style tient dans un seul fichier, `src/theme.css` : des variables CSS et
-  des classes utilitaires. Pas de bibliothèque de composants.
-- **Deux thèmes, un seul jeu de variables.** Toutes les couleurs vivent dans
-  `src/theme.css`. Les noms sont des **rôles**, pas des teintes : `--argile`
-  est l'accent principal, `--olive` le vert de la réussite, `--canard` le bleu
-  frais, `--miel` l'ambre des avertissements. Le thème « argile » (clair,
-  terre cuite, serif *Cormorant Garamond*) et le thème « néon » (fond noir,
-  cyan et vert électriques, grotesque *Space Grotesk*) leur donnent d'autres
-  valeurs, jamais d'autres emplois.
-- **Aucune couleur en dur, nulle part.** Pas dans un `.tsx`, pas dans une
-  donnée de `src/lib/*.ts` (recettes, défis, habitudes portent des
-  `var(--…)`). Un `#f5ebdc` oublié reste clair quand tout passe au noir — et
-  ça ne se voit que sur l'autre thème. Le contrôle :
+- Les commentaires expliquent **la règle de la maison**, pas la syntaxe :
+  pourquoi un foyer avance une facture et l'autre lui rend sa part, pas ce que
+  fait la ligne.
+- **Les montants sont des entiers en francs Pacifique.** Jamais de centimes, le
+  F CFP n'en a pas. Un arrondi à la virgule finirait par créer des écarts que
+  personne ne saurait expliquer.
+- **Mobile d'abord** : tout se consulte sur un téléphone, à une main, pouce en
+  bas de l'écran.
+- **Aucune couleur en dur**, nulle part : tout passe par une variable de
+  `src/theme.css`. Le contrôle :
 
   ```bash
   grep -rn "#[0-9a-fA-F]\{3,6\}" src --include=*.ts --include=*.tsx
   ```
 
-  Seules exceptions légitimes : `theme.css` lui-même et la couleur de la barre
-  du téléphone dans `etat.tsx`.
-- **Texte posé sur une couleur : `var(--sur-accent)`**, jamais du blanc. En
-  clair c'est un crème ; en néon un bleu très sombre, parce qu'un aplat cyan
-  ne porte pas du blanc. Pour l'onglet ou la pilule sélectionnés, la paire
-  `--actif-fond` / `--actif-texte`.
-- Le choix se garde dans `profil.theme` et se pose sur
-  `document.documentElement.dataset.theme`. Une vignette d'aperçu porte son
-  propre `data-theme` : elle est peinte avec les vraies variables du thème
-  qu'elle propose (`ChoixTheme.tsx`).
-- **Les symboles sont dessinés au trait**, dans `composants/Symbole.tsx`, tous
-  dans le même esprit que le logo — un cercle, une courbe, rien de plus.
-  Pas d'emoji pour la structure de l'app (titres, cartes, onglets, étapes) :
-  les emoji ne restent que dans le contenu, là où ils sont expressifs (défis,
-  habitudes, recettes, aliments).
-- **Le logo** est le soleil au-dessus de l'eau : *mahana*, c'est le soleil et
-  le jour ; la vague, c'est ici. Il se refabrique avec `npm run icones`.
-- **Aucune promesse médicale.** Les calories, les étapes du jeûne et les
-  dépenses sont des estimations : le dire, et garder l'avertissement des
-  réglages.
-- **Ne pas inventer de capacité que le web n'a pas.** Un site ne compte pas les
-  pas en arrière-plan et ne suit pas le GPS écran éteint : l'app le dit
-  franchement plutôt que de faire semblant.
+## Trois pièges déjà payés
 
-## La date d'objectif
+**1. Un nom de classe qui en écrase un autre.** `.feuille` est la fiche qui
+monte du bas : `position: fixed; z-index: 31`. Une pastille écrite
+`class="pilule feuille"` héritait des deux et se retrouvait collée en bas de
+l'écran, par-dessus les onglets — invisible à la lecture du code, trouvée par
+le navigateur. Un mot qui sert déjà à une **disposition** ne peut pas servir de
+**variante de couleur**. Les variantes de pastille sont `lagon`, `corail`,
+`vert`, `ocre`.
 
-`src/lib/objectif.ts` calcule quand le poids visé sera atteint. Deux règles à
-ne pas casser :
+**2. Les parts d'une facture sont figées à la saisie.** Elles ne sont jamais
+recalculées depuis les parts courantes de la maison. Sinon, changer la
+répartition en janvier ferait bouger les comptes de décembre, déjà soldés.
 
-- **Toujours afficher l'hypothèse avec la date.** Une date sans son rythme
-  (mesuré sur les pesées, ou promis par le déficit) est une promesse, pas une
-  information. Le rythme mesuré l'emporte dès qu'il existe.
-- **Ne jamais inventer de date quand le poids stagne.** La fonction renvoie
-  `situation: 'stagne'` et l'écran le dit franchement. Un chiffre inventé est
-  la meilleure façon de faire abandonner.
+**3. Un écran qui ne peut pas lire ne doit jamais afficher une liste vide.**
+Une liste vide se lit comme « il n'y a rien », et on cherche des jours au
+mauvais endroit. Le message de la base remonte tel quel, dans le bandeau rouge
+(`BandeauErreur`). Ne jamais le remplacer par un texte qui croit savoir.
 
-Le rythme réel vient d'une droite des moindres carrés sur les pesées du dernier
-mois, jamais d'un simple « dernière moins première » : une pesée un lendemain
-de fête ferait basculer le résultat.
+## Où vit quoi
 
-## Ce qui est écrit par l'utilisatrice
+**La base ne fait que garder des lignes.** Tous les calculs — le partage d'une
+facture, le solde entre foyers, l'état de la caisse, le dû à la roulotte — sont
+en TypeScript dans `src/lib/argent.ts`. Une règle écrite à un seul endroit ne
+peut pas se contredire elle-même, et c'est ce qui permet d'avoir deux rangements
+(serveur et mode essai) sans écrire deux fois la même règle.
 
-Deux carnets lui appartiennent, à côté de ceux fournis avec l'app :
-`etat.mesRecettes` et `etat.mesSeances`. Règle commune : **ce qu'elle a écrit
-passe devant ce qui est fourni** — ses recettes en premier onglet et en
-« recette du jour », ses séances en tête de leur famille. Le catalogue ne sert
-plus qu'à dépanner celle qui débute.
+`src/lib/base.ts` expose trois gestes seulement — ajouter, modifier, supprimer
+une ligne — et deux implémentations :
 
-- Les calories d'une recette ne se saisissent pas : `analyse.ts` lit les
-  ingrédients et le total se divise par les portions. Le champ de correction
-  existe toujours — une estimation qu'on ne peut pas corriger ne vaut rien.
-- La durée d'une séance ne se saisit pas non plus : elle se calcule des
-  exercices, par la même fonction (`versSeance`) que celle qui la fait jouer.
-  Une durée déclarée et des exercices qui ne collent pas, c'est la porte
-  ouverte aux calories fantaisistes.
-- `seanceAJouer(id, miennes)` sert au lecteur : il ne doit pas savoir d'où
-  vient la séance.
+- **`baseSupabase`** quand `VITE_SUPABASE_URL` et `VITE_SUPABASE_ANON_KEY` sont
+  présentes : les données sont partagées entre les téléphones.
+- **`baseLocale`** sinon : tout reste dans le navigateur, et l'app l'annonce
+  avec le bandeau « mode essai ». C'est ce qui permet de la mettre à l'épreuve
+  écran par écran, dans un vrai navigateur, sans serveur.
 
-## Le parseur d'ingrédients (`analyse.ts`)
+Les identifiants sont fabriqués par l'app (`nouvelId()`), pas par la base :
+l'écran peut ainsi afficher une ligne tout de suite et l'envoyer ensuite, ce
+qui reste fluide avec une mauvaise 4G.
 
-Trois pièges déjà payés, à ne pas réintroduire :
+La conversion des noms de colonnes est mécanique : `foyerId` ⇄ `foyer_id`.
+Ne pas tenir de liste à la main, on oublierait de la compléter.
 
-- **Les ligatures ne se décomposent pas** comme les accents. Sans le
-  remplacement `œ → oe` dans `simplifier`, « bœuf » et « boeuf » restent deux
-  mots différents et 500 g de viande disparaissent du calcul.
-- **Un nom court ne doit pas gagner sur un nom long.** Le score croise la
-  précision (le nom est-il couvert par le fragment) et la couverture (le
-  fragment est-il couvert par le nom) : sans ça, « 3 pommes de terre » trouve
-  « Pomme », parfaite sur son unique mot.
-- **Le pluriel se joue sur une lettre** : `racine()` retire un `s` final. La
-  distance d'édition ne peut pas s'en charger — elle refuse les mots de moins
-  de cinq lettres, sinon « pain » trouverait « pané ».
+## Écrire dans `supabase/schema.sql`
 
-Le banc d'essai est vite remonté : compiler `analyse.ts` et `aliments.ts` avec
-`npx tsc --ignoreConfig`, puis appeler `analyser()` sur quelques phrases.
-Toujours y garder la phrase du sandwich (507 kcal) comme témoin.
+Ce fichier se recolle **en entier** dans l'éditeur SQL de Supabase, à la main,
+à chaque mise à jour. Il doit pouvoir être rejoué indéfiniment sans échouer —
+et quand il échoue, ça ne se voit pas : Supabase s'arrête à la ligne fautive et
+tout ce qui suit n'arrive jamais dans la base.
 
-## Les photos des repas
+```bash
+./supabase/verifier_schema.sh
+```
 
-Elles ne tiennent pas dans le `localStorage` — une seule photo pèse plus que
-tout le suivi d'une année. Elles vont dans la réserve d'images du navigateur
-(IndexedDB, base `mahana-photos`, voir `src/lib/photos.ts`), réduites à
-900 pixels et compressées en JPEG : ~60 ko pièce. Elles restent dans le
-téléphone comme le reste, et **l'export JSON ne les contient pas**.
+Le script monte une base PostgreSQL jetable et applique le schéma **trois
+fois**. Le passage 1 ne prouve rien (base vierge) ; ce sont les passages 2 et 3
+qui attrapent les bugs. **Aucun changement de schéma ne part sans ce script au
+vert.**
 
-Une photo est toujours facultative, et elle part avec la ligne de repas qu'on
-supprime — sinon la réserve se remplit d'assiettes oubliées.
+Ce qui est propre à Supabase (le rôle `authenticated`) doit être **gardé** par
+un `if exists (select 1 from pg_roles …)`, sinon le script de vérification, qui
+tourne sur un PostgreSQL ordinaire, échoue à tort.
 
-**L'estimation des calories d'après une photo ne se devine pas.** Aucun code
-qui tourne dans le téléphone ne reconnaît un plat sur une image ; il faudrait
-envoyer la photo à un serveur d'intelligence artificielle, ce que la règle
-ci-dessus interdit. À la place, `src/lib/estimation.ts` pose trois questions —
-le type de plat, la portion, la préparation — et donne une **fourchette**
-honnête, toujours corrigeable à la main. Ne pas remplacer ça par un chiffre
-qui aurait l'air deviné.
+## La sécurité, en une phrase
 
-## Le modèle de données
-
-Tout est décrit dans `src/lib/stockage.ts`. Une sauvegarde ancienne doit
-toujours pouvoir être relue : `lireEtat()` recolle sur l'état vide et reprend
-les versions précédentes (`reprendreV1`). **Ne jamais casser cette reprise** —
-c'est le seul filet de l'utilisatrice.
+La clé « anon » est dans la page : ce n'est pas un secret. Ce qui protège les
+comptes des deux familles, c'est la politique du schéma — **il faut un compte
+pour lire ou écrire quoi que ce soit**. Ne jamais ouvrir une table au rôle
+`anon`, quelle que soit la raison.
 
 ## Avant de pousser
 
 ```bash
-npm run build   # tsc -b && vite build — doit passer
-npm run lint    # oxlint
+npm run build                   # tsc -b && vite build — doit passer
+npm run lint                    # oxlint
+./supabase/verifier_schema.sh   # si le schéma a bougé
 ```
 
 `noUnusedLocals` est actif : un import qui traîne fait échouer le build.
 
-Messages de commit en français, à l'indicatif, décrivant l'effet pour celle
-qui utilise l'app plutôt que le détail technique.
+Et vérifier dans un vrai navigateur. C'est comme ça qu'on a trouvé la collision
+de classes ci-dessus, que ni le compilateur ni le linter ne pouvaient voir.
+
+Messages de commit en français, à l'indicatif, décrivant l'effet pour la maison
+plutôt que le détail technique.

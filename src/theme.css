@@ -1,168 +1,59 @@
-/* Mahana — l'habillage.
+/* Fare — l'habillage.
 
-   Deux thèmes, et un seul jeu de variables. Chaque couleur de l'app passe par
-   une variable définie ici : aucun écran n'écrit une couleur en dur, sans quoi
-   il resterait en clair quand tout le reste passe en sombre.
+   « Fare », c'est la maison. Des couleurs de lagon et de bois, des cartes
+   claires, rien de froid : c'est une application de famille, pas un logiciel
+   de comptabilité — même si elle compte des francs toute la journée.
 
-   Les noms sont des rôles, pas des teintes. « argile » est l'accent principal,
-   « olive » le vert de la réussite, « canard » le bleu frais, « miel » l'ambre
-   des avertissements, « sauge » le vert secondaire. Le thème néon leur donne
-   d'autres valeurs, jamais d'autres emplois.
+   Toutes les couleurs passent par une variable. Aucun écran n'en écrit une
+   en dur : c'est ce qui permettra d'ajouter un thème sombre sans repasser
+   dans tous les fichiers. */
 
-   — Argile : sable, crème, terre cuite, olive, canard. Rien de criard : une
-     app qu'on ouvre le matin et le soir, elle doit apaiser.
-   — Néon : fond noir et couleurs électriques, pour qui préfère. */
-
-/* Le thème argile est aussi nommé explicitement : c'est ce qui permet de
-   montrer un aperçu d'un thème depuis l'autre, en posant simplement
-   « data-theme » sur la vignette. */
-:root,
-[data-theme='argile'] {
+:root {
   color-scheme: light;
 
-  --sable: #f2ebdf;
-  --lin: #e7ddcd;
-  --creme: #fbf7f0;
+  --sable: #f4efe5;
+  --creme: #fffdf8;
+  --lin: #e9e1d3;
 
-  --argile: #c0603a;
-  --argile-clair: #c96a43;
-  --argile-fonce: #a54f2e;
-  --argile-pale: #f3e6dc;
+  --lagon: #16706b;
+  --lagon-fonce: #0f5a56;
+  --lagon-pale: #dceeec;
 
-  --olive: #4e5b3c;
-  --olive-pale: #e6eadd;
+  --corail: #cf5f3e;
+  --corail-fonce: #b04e30;
+  --corail-pale: #f9e5dd;
 
-  --canard: #2f5a66;
-  --canard-clair: #386874;
-  --canard-fonce: #274c57;
-  --canard-pale: #e1e8e9;
+  --feuille: #55793f;
+  --feuille-pale: #e6eddd;
 
-  --sauge: #8b9a79;
-  --sauge-pale: #eaeee3;
+  --ocre: #c2913a;
+  --ocre-pale: #f6ecd8;
 
-  --miel: #c89a5b;
-  --miel-clair: #f6b45e;
-  --miel-pale: #f5ebdc;
-  --miel-texte: #96702f;
+  --encre: #241f1a;
+  --doux: #7a7064;
+  --estompe: #a79c8d;
 
-  --alerte: #b8462a;
-
-  --encre: #2c2723;
-  --doux: #7c7266;
-  --estompe: #a99e90;
-
-  /* Le fond de la page, celui des cartes, et le texte posé sur un aplat
-     de couleur — les trois changent du tout au tout d'un thème à l'autre. */
-  --fond-page: linear-gradient(178deg, #f4eee4 0%, #f2ebdf 55%, #eae0d0 100%);
+  --fond-page: linear-gradient(178deg, #f7f2e9 0%, #f4efe5 55%, #ece4d6 100%);
   --carte-fond: var(--creme);
-  --champ-fond: #fdfbf7;
-  --barre-fond: rgba(251, 247, 240, 0.94);
-  --voile-fond: rgba(44, 39, 35, 0.32);
-  --sur-accent: #fdfaf5;
-  /* L'onglet ou la pilule sélectionnés. En clair c'est l'encre, presque noire ;
-     en néon ce serait un aplat blanc éblouissant, alors c'est l'accent. */
+  --champ-fond: #fffdfa;
+  --barre-fond: rgba(255, 253, 248, 0.94);
+  --voile-fond: rgba(36, 31, 26, 0.34);
+  --sur-accent: #fdfbf6;
   --actif-fond: var(--encre);
   --actif-texte: var(--carte-fond);
 
-  --bord: rgba(44, 39, 35, 0.1);
-  --piste: rgba(44, 39, 35, 0.08);
-  --ombre: 0 8px 24px rgba(44, 39, 35, 0.07);
-  --ombre-basse: 0 3px 12px rgba(44, 39, 35, 0.05);
-  --ombre-argile: 0 8px 18px rgba(192, 96, 58, 0.26);
-  --ombre-olive: 0 8px 18px rgba(78, 91, 60, 0.24);
-  --ombre-encre: 0 8px 18px rgba(44, 39, 35, 0.2);
-  --ombre-plus: 0 7px 16px rgba(192, 96, 58, 0.36);
-  --ombre-feuille: 0 -10px 40px rgba(44, 39, 35, 0.16);
+  --bord: rgba(36, 31, 26, 0.1);
+  --piste: rgba(36, 31, 26, 0.07);
+  --ombre: 0 8px 24px rgba(36, 31, 26, 0.07);
+  --ombre-lagon: 0 8px 18px rgba(22, 112, 107, 0.26);
+  --ombre-plus: 0 7px 16px rgba(22, 112, 107, 0.36);
+  --ombre-feuille: 0 -10px 40px rgba(36, 31, 26, 0.16);
 
-  --degrade-argile: linear-gradient(120deg, #c96a43, #b0532f);
-  --degrade-olive: linear-gradient(120deg, #5b6a47, #465335);
-  --degrade-canard: linear-gradient(120deg, #386874, #274c57);
+  --degrade-lagon: linear-gradient(120deg, #1a827c, #12635f);
+  --degrade-corail: linear-gradient(120deg, #d96a48, #b7512f);
 
-  --serif: 'Cormorant Garamond', Charter, Georgia, 'Times New Roman', serif;
+  --titre: Fraunces, 'Cormorant Garamond', Charter, Georgia, serif;
   --sans: Jost, 'Liberation Sans', system-ui, -apple-system, sans-serif;
-}
-
-/* ---------- le thème néon : fond noir et couleurs électriques ----------
-
-   Sur un fond noir, une couleur vive doit porter du texte sombre, jamais du
-   blanc : c'est l'inverse du thème clair, d'où « --sur-accent ». Les ombres
-   deviennent des halos de la couleur du bouton — c'est ce qui fait « néon »
-   plutôt que « clair inversé ». */
-
-[data-theme='neon'] {
-  color-scheme: dark;
-
-  --sable: #0a0c12;
-  --lin: #1e2434;
-  --creme: #151926;
-
-  --argile: #2ee6ff;
-  --argile-clair: #5cf0ff;
-  --argile-fonce: #13c9e6;
-  --argile-pale: rgba(46, 230, 255, 0.15);
-
-  --olive: #7cff5a;
-  --olive-pale: rgba(124, 255, 90, 0.14);
-
-  --canard: #6a95ff;
-  --canard-clair: #7ea6ff;
-  --canard-fonce: #3d5ff0;
-  --canard-pale: rgba(106, 149, 255, 0.16);
-
-  --sauge: #39d98a;
-  --sauge-pale: rgba(57, 217, 138, 0.14);
-
-  --miel: #ffc93c;
-  --miel-clair: #ffe07a;
-  --miel-pale: rgba(255, 201, 60, 0.15);
-  --miel-texte: #ffc93c;
-
-  --alerte: #ff4d6d;
-
-  --encre: #eef2f8;
-  --doux: #99a3b8;
-  --estompe: #626c80;
-
-  --fond-page: linear-gradient(178deg, #10141f 0%, #0a0c12 55%, #06070d 100%);
-  --carte-fond: #151926;
-  --champ-fond: #10141f;
-  --barre-fond: rgba(10, 12, 18, 0.94);
-  --voile-fond: rgba(0, 0, 0, 0.62);
-  --sur-accent: #04121a;
-  --actif-fond: var(--degrade-argile);
-  --actif-texte: var(--sur-accent);
-
-  --bord: rgba(255, 255, 255, 0.09);
-  --piste: rgba(255, 255, 255, 0.07);
-  --ombre: 0 8px 26px rgba(0, 0, 0, 0.55);
-  --ombre-basse: 0 3px 12px rgba(0, 0, 0, 0.45);
-  --ombre-argile: 0 6px 22px rgba(46, 230, 255, 0.34);
-  --ombre-olive: 0 6px 22px rgba(124, 255, 90, 0.3);
-  --ombre-encre: 0 6px 22px rgba(0, 0, 0, 0.6);
-  --ombre-plus: 0 6px 20px rgba(46, 230, 255, 0.45);
-  --ombre-feuille: 0 -10px 40px rgba(0, 0, 0, 0.6);
-
-  --degrade-argile: linear-gradient(120deg, #46ecff, #12b6e8);
-  --degrade-olive: linear-gradient(120deg, #8dff6e, #35c94a);
-  --degrade-canard: linear-gradient(120deg, #7ea6ff, #3d5ff0);
-
-  /* Pas de serif ici : les titres passent en grotesque, c'est ce qui change
-     l'allure de l'app autant que les couleurs. */
-  --serif: 'Space Grotesk', Jost, 'Liberation Sans', system-ui, sans-serif;
-  --sans: Jost, 'Liberation Sans', system-ui, -apple-system, sans-serif;
-}
-
-[data-theme='neon'] h1,
-[data-theme='neon'] h2,
-[data-theme='neon'] h3 {
-  font-weight: 700;
-  letter-spacing: -0.015em;
-}
-
-/* Un bouton néon porte du texte sombre : il est lumineux, pas coloré. */
-[data-theme='neon'] .bouton.sombre {
-  background: var(--lin);
-  color: var(--encre);
 }
 
 * {
@@ -171,12 +62,6 @@
 
 html {
   background: var(--sable);
-}
-
-/* La barre de défilement du navigateur suit le thème, sinon elle reste
-   blanche au milieu d'un écran noir. */
-[data-theme='neon'] {
-  scrollbar-color: var(--estompe) var(--sable);
 }
 
 body {
@@ -194,7 +79,7 @@ h1,
 h2,
 h3 {
   margin: 0;
-  font-family: var(--serif);
+  font-family: var(--titre);
   font-weight: 600;
   letter-spacing: 0.005em;
 }
@@ -215,7 +100,7 @@ textarea {
 /* ---------- ossature ---------- */
 
 .page {
-  max-width: 540px;
+  max-width: 560px;
   margin: 0 auto;
   padding: 14px 16px calc(104px + env(safe-area-inset-bottom));
 }
@@ -233,12 +118,12 @@ textarea {
   line-height: 1.15;
 }
 
-.bonjour {
-  color: var(--doux);
-  font-size: 10.5px;
-  font-weight: 500;
+.kicker {
+  font-size: 10px;
+  font-weight: 700;
   text-transform: uppercase;
-  letter-spacing: 0.18em;
+  letter-spacing: 0.16em;
+  color: var(--doux);
 }
 
 .rond-entete {
@@ -248,10 +133,9 @@ textarea {
   border-radius: 999px;
   border: 1px solid var(--bord);
   background: var(--creme);
-  color: var(--doux);
   display: grid;
   place-items: center;
-  box-shadow: var(--ombre-basse);
+  color: var(--doux);
 }
 
 .carte {
@@ -270,29 +154,20 @@ textarea {
   font-size: 19px;
 }
 
-.kicker {
-  font-size: 10px;
-  font-weight: 600;
-  text-transform: uppercase;
-  letter-spacing: 0.16em;
-  color: var(--estompe);
-}
-
 .titre-section {
-  font-family: var(--serif);
-  font-size: 21px;
-  font-weight: 600;
+  font-family: var(--titre);
+  font-size: 20px;
+  font-weight: 700;
   margin: 22px 4px 10px;
 }
 
 .doux {
   color: var(--doux);
-  font-size: 14px;
-  line-height: 1.55;
+  line-height: 1.6;
 }
 
 .mini {
-  font-size: 12px;
+  font-size: 12.5px;
 }
 
 .rangee {
@@ -302,11 +177,10 @@ textarea {
   gap: 12px;
 }
 
-/* Les chiffres sont en serif : c'est là que l'app respire. */
 .chiffre {
-  font-family: var(--serif);
+  font-family: var(--titre);
   font-variant-numeric: tabular-nums;
-  font-weight: 600;
+  font-weight: 700;
 }
 
 /* ---------- boutons ---------- */
@@ -320,27 +194,16 @@ textarea {
   padding: 15px 20px;
   border: 0;
   border-radius: 999px;
-  background: var(--degrade-argile);
+  background: var(--degrade-lagon);
   color: var(--sur-accent);
   font-weight: 600;
   font-size: 15.5px;
   letter-spacing: 0.02em;
-  box-shadow: var(--ombre-argile);
-}
-
-.bouton.olive {
-  background: var(--degrade-olive);
-  box-shadow: var(--ombre-olive);
+  box-shadow: var(--ombre-lagon);
 }
 
 .bouton.corail {
-  background: var(--degrade-argile);
-}
-
-.bouton.sombre {
-  background: var(--encre);
-  color: var(--carte-fond);
-  box-shadow: var(--ombre-encre);
+  background: var(--degrade-corail);
 }
 
 .bouton:active {
@@ -375,22 +238,27 @@ textarea {
   background: var(--piste);
   color: var(--doux);
   font-size: 12px;
-  font-weight: 500;
+  font-weight: 600;
 }
 
-.pilule.menthe {
-  background: var(--olive-pale);
-  color: var(--olive);
+.pilule.lagon {
+  background: var(--lagon-pale);
+  color: var(--lagon-fonce);
 }
 
 .pilule.corail {
-  background: var(--argile-pale);
-  color: var(--argile-fonce);
+  background: var(--corail-pale);
+  color: var(--corail-fonce);
 }
 
-.pilule.ambre {
-  background: var(--miel-pale);
-  color: var(--miel-texte);
+.pilule.vert {
+  background: var(--feuille-pale);
+  color: var(--feuille);
+}
+
+.pilule.ocre {
+  background: var(--ocre-pale);
+  color: #8f6a1f;
 }
 
 /* ---------- champs ---------- */
@@ -405,7 +273,7 @@ textarea {
 }
 
 .champ:focus {
-  outline: 2px solid var(--argile);
+  outline: 2px solid var(--lagon);
   outline-offset: 1px;
 }
 
@@ -416,6 +284,81 @@ textarea {
   font-weight: 600;
   color: var(--doux);
   letter-spacing: 0.02em;
+}
+
+.choix {
+  text-align: left;
+  padding: 14px;
+  border-radius: 16px;
+  border: 1px solid var(--bord);
+  background: var(--creme);
+  width: 100%;
+}
+
+.choix.actif {
+  border-color: var(--lagon);
+  background: var(--lagon-pale);
+}
+
+.choix b {
+  display: block;
+  font-size: 15px;
+  font-weight: 700;
+}
+
+.grille2 {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+}
+
+.grille3 {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 10px;
+}
+
+/* ---------- listes ---------- */
+
+.ligne-liste {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 12px 0;
+  border-bottom: 1px solid var(--bord);
+}
+
+.ligne-liste:last-child {
+  border-bottom: 0;
+}
+
+.vide {
+  text-align: center;
+  color: var(--doux);
+  padding: 22px 10px;
+  font-size: 14px;
+  line-height: 1.55;
+}
+
+.barre {
+  height: 8px;
+  border-radius: 999px;
+  background: var(--piste);
+  overflow: hidden;
+}
+
+.barre i {
+  display: block;
+  height: 100%;
+  border-radius: 999px;
+}
+
+.pastille {
+  display: grid;
+  place-items: center;
+  border-radius: 14px;
+  flex: 0 0 auto;
 }
 
 /* ---------- barre d'onglets ---------- */
@@ -448,30 +391,12 @@ textarea {
   background: none;
   color: var(--estompe);
   font-size: 10px;
-  font-weight: 500;
-  letter-spacing: 0.06em;
+  font-weight: 600;
+  letter-spacing: 0.05em;
 }
 
 .onglet.actif {
-  color: var(--argile);
-}
-
-.bouton-plus {
-  width: 54px;
-  height: 54px;
-  margin-top: -18px;
-  border: 0;
-  border-radius: 999px;
-  background: var(--degrade-argile);
-  color: var(--sur-accent);
-  display: grid;
-  place-items: center;
-  box-shadow: var(--ombre-plus);
-  flex: 0 0 auto;
-}
-
-.bouton-plus:active {
-  transform: scale(0.94);
+  color: var(--lagon);
 }
 
 /* ---------- la feuille qui monte du bas ---------- */
@@ -491,12 +416,14 @@ textarea {
   right: 0;
   bottom: 0;
   z-index: 31;
-  max-width: 540px;
+  max-width: 560px;
   margin: 0 auto;
   padding: 10px 16px calc(24px + env(safe-area-inset-bottom));
   background: var(--creme);
   border-radius: 26px 26px 0 0;
   box-shadow: var(--ombre-feuille);
+  max-height: 88vh;
+  overflow-y: auto;
   animation: monte 0.26s cubic-bezier(0.2, 0.9, 0.3, 1) both;
 }
 
@@ -512,213 +439,30 @@ textarea {
   from {
     opacity: 0;
   }
-  to {
-    opacity: 1;
-  }
 }
 
 @keyframes monte {
   from {
     transform: translateY(100%);
   }
-  to {
-    transform: none;
-  }
 }
 
-/* ---------- le bandeau de la semaine ---------- */
+/* ---------- le bandeau d'avertissement ---------- */
 
-.semaine {
-  display: flex;
-  gap: 4px;
-  background: var(--creme);
-  border-radius: 18px;
-  padding: 10px 8px;
-  box-shadow: var(--ombre-basse);
-  margin-bottom: 14px;
-}
-
-.semaine button {
-  flex: 1;
-  border: 0;
-  background: none;
-  padding: 4px 0 6px;
+.bandeau {
   border-radius: 14px;
-  color: var(--estompe);
-  font-size: 10px;
-  font-weight: 500;
-  letter-spacing: 0.08em;
-}
-
-.semaine .numero {
-  display: grid;
-  place-items: center;
-  width: 34px;
-  height: 34px;
-  margin: 3px auto 2px;
-  border-radius: 999px;
-  font-size: 16px;
-  color: var(--encre);
-}
-
-.semaine button.actif .numero {
-  border: 1.5px solid var(--argile);
-  color: var(--argile-fonce);
-}
-
-.semaine button.futur {
-  opacity: 0.4;
-}
-
-.semaine .point {
-  width: 5px;
-  height: 5px;
-  border-radius: 999px;
-  background: var(--estompe);
-  margin: 0 auto;
-}
-
-/* ---------- grilles et tuiles ---------- */
-
-.grille2 {
-  display: grid;
-  grid-template-columns: repeat(2, 1fr);
-  gap: 11px;
-}
-
-.grille3 {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 10px;
-}
-
-.tuile {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  padding: 13px;
-  border: 0;
-  border-radius: 16px;
-  background: var(--creme);
-  box-shadow: var(--ombre-basse);
-  text-align: left;
-  font-weight: 500;
-  font-size: 14px;
-}
-
-.tuile .rond {
-  width: 34px;
-  height: 34px;
-  flex: 0 0 auto;
-  border-radius: 12px;
-  display: grid;
-  place-items: center;
-  font-size: 16px;
-}
-
-/* Deux ou trois onglets côte à côte, au-dessus d'une liste. */
-.onglets-plats {
-  display: flex;
-  gap: 8px;
-  margin-bottom: 14px;
-}
-
-.choix {
-  text-align: left;
-  padding: 14px;
-  border-radius: 16px;
-  border: 1px solid var(--bord);
-  background: var(--creme);
-  width: 100%;
-}
-
-.choix.actif {
-  border-color: var(--argile);
-  background: var(--argile-pale);
-}
-
-.choix b {
-  display: block;
-  font-family: var(--serif);
-  font-size: 18px;
-  font-weight: 600;
-}
-
-.choix span {
-  color: var(--doux);
-  font-size: 12.5px;
-  font-weight: 400;
-}
-
-/* ---------- listes ---------- */
-
-.ligne-liste {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 12px;
-  padding: 12px 0;
-  border-bottom: 1px solid var(--bord);
-}
-
-.ligne-liste:last-child {
-  border-bottom: 0;
-}
-
-.vide {
-  text-align: center;
-  color: var(--doux);
-  padding: 22px 10px;
-  font-size: 14px;
+  padding: 11px 14px;
+  font-size: 13px;
   line-height: 1.55;
+  margin-bottom: 13px;
 }
 
-/* ---------- barres de progression ---------- */
-
-.barre {
-  height: 7px;
-  border-radius: 999px;
-  background: var(--piste);
-  overflow: hidden;
+.bandeau.essai {
+  background: var(--ocre-pale);
+  color: #7d5c17;
 }
 
-.barre > i {
-  display: block;
-  height: 100%;
-  border-radius: 999px;
-  background: var(--degrade-argile);
-  transition: width 0.5s ease;
-}
-
-/* La pastille qui porte un symbole ou un emoji dans les listes. */
-.pastille {
-  display: grid;
-  place-items: center;
-  border-radius: 999px;
-  flex: 0 0 auto;
-}
-
-/* ---------- apparition ---------- */
-
-@keyframes apparait {
-  from {
-    opacity: 0;
-    transform: translateY(6px);
-  }
-  to {
-    opacity: 1;
-    transform: none;
-  }
-}
-
-.page > * {
-  animation: apparait 0.26s ease both;
-}
-
-@media (prefers-reduced-motion: reduce) {
-  .page > *,
-  .barre > i {
-    animation: none;
-    transition: none;
-  }
+.bandeau.erreur {
+  background: var(--corail-pale);
+  color: var(--corail-fonce);
 }

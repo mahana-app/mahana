@@ -1,0 +1,203 @@
+/* Le modèle de la maison.
+
+   Deux foyers vivent ici : les LAI AH CHE et les LENOIR. Presque tout dans
+   cette application se rattache à l'un ou à l'autre — une charge se partage
+   entre les deux, une cotisation vient de l'un, une ardoise se rembourse par
+   l'un. C'est la seule notion qu'il faut avoir en tête pour lire le reste.
+
+   Tous les montants sont des entiers en francs Pacifique. Pas de centimes :
+   le franc CFP n'en a pas, et un arrondi à la virgule finirait par créer des
+   écarts que personne ne saurait expliquer. */
+
+export type Identifiant = string
+
+/** Un foyer : une famille de la maison. */
+export type Foyer = {
+  id: Identifiant
+  nom: string
+  /** La couleur qui le représente partout dans l'app. */
+  couleur: string
+  /** Sa part des charges communes, de 0 à 1. Les parts font 1 au total. */
+  part: number
+  ordre: number
+}
+
+export type RoleMembre = 'adulte' | 'enfant'
+
+/** Une personne de la maison. Les enfants n'ont pas de code d'accès. */
+export type Membre = {
+  id: Identifiant
+  foyerId: Identifiant
+  prenom: string
+  role: RoleMembre
+  /** Le code que la personne tape une fois sur son téléphone. Vide = pas d'accès. */
+  code: string
+  actif: boolean
+}
+
+/* ---------- les charges de la maison ---------- */
+
+export type NatureCharge = 'electricite' | 'eau' | 'internet' | 'impots' | 'dechets' | 'autre'
+
+export const NATURES: Array<{ id: NatureCharge; nom: string; emoji: string }> = [
+  { id: 'electricite', nom: 'Électricité', emoji: '⚡' },
+  { id: 'eau', nom: 'Eau', emoji: '💧' },
+  { id: 'internet', nom: 'Internet', emoji: '📶' },
+  { id: 'impots', nom: 'Impôts', emoji: '🏛️' },
+  { id: 'dechets', nom: 'Déchets', emoji: '🗑️' },
+  { id: 'autre', nom: 'Autre', emoji: '🏠' },
+]
+
+/**
+ * Une facture de la maison.
+ *
+ * Qui a payé et comment ça se répartit sont deux choses différentes : c'est
+ * souvent un seul foyer qui avance la totalité au fournisseur, et l'autre lui
+ * rend sa part ensuite. D'où `avanceePar` d'un côté, et les parts de l'autre.
+ */
+export type Charge = {
+  id: Identifiant
+  nature: NatureCharge
+  libelle: string
+  /** Le mois concerné, au format « 2026-09 ». */
+  periode: string
+  montant: number
+  /** Le foyer qui a réglé le fournisseur. Vide tant que personne n'a payé. */
+  avanceePar: Identifiant | null
+  /** Le jour où le fournisseur a été payé. */
+  payeeLe: string | null
+  note: string
+  creeeLe: string
+}
+
+/**
+ * La part d'un foyer dans une charge, figée au moment où la facture est
+ * saisie. Elle n'est pas recalculée après coup : si on change la répartition
+ * de la maison en janvier, les factures de décembre gardent l'ancienne — sinon
+ * des comptes déjà soldés se remettraient à bouger tout seuls.
+ */
+export type PartCharge = {
+  id: Identifiant
+  chargeId: Identifiant
+  foyerId: Identifiant
+  montant: number
+}
+
+/** Un remboursement entre foyers, pour solder une part de charge. */
+export type Reglement = {
+  id: Identifiant
+  chargeId: Identifiant
+  foyerId: Identifiant
+  montant: number
+  le: string
+  note: string
+}
+
+/* ---------- la caisse commune pour les courses ---------- */
+
+/** Ce qu'un foyer verse dans la caisse pour un mois donné. */
+export type Cotisation = {
+  id: Identifiant
+  foyerId: Identifiant
+  /** « 2026-09 ». */
+  periode: string
+  montant: number
+  /** Vide tant que l'argent n'est pas dans la caisse. */
+  verseeLe: string | null
+  note: string
+}
+
+export type CategorieAchat = 'viande' | 'legumes' | 'epicerie' | 'frais' | 'boisson' | 'autre'
+
+export const CATEGORIES_ACHAT: Array<{ id: CategorieAchat; nom: string; emoji: string }> = [
+  { id: 'viande', nom: 'Viande et poisson', emoji: '🍖' },
+  { id: 'legumes', nom: 'Fruits et légumes', emoji: '🥬' },
+  { id: 'epicerie', nom: 'Épicerie sèche', emoji: '🍚' },
+  { id: 'frais', nom: 'Frais et laitages', emoji: '🥛' },
+  { id: 'boisson', nom: 'Boissons', emoji: '🧃' },
+  { id: 'autre', nom: 'Autre', emoji: '🧺' },
+]
+
+/** Une course payée avec l'argent de la caisse commune. */
+export type Achat = {
+  id: Identifiant
+  le: string
+  libelle: string
+  montant: number
+  categorie: CategorieAchat
+  /** Qui est allé faire la course. */
+  parMembreId: Identifiant | null
+  note: string
+}
+
+/* ---------- l'ardoise de la roulotte ---------- */
+
+/**
+ * Ce qu'un foyer a pris à manger à la roulotte. Ce n'est pas un cadeau : le
+ * total du mois est remboursé à la roulotte, sinon la caisse de l'entreprise
+ * ne tombe jamais juste.
+ */
+export type LigneArdoise = {
+  id: Identifiant
+  le: string
+  foyerId: Identifiant
+  /** Qui est venu chercher. Facultatif. */
+  parMembreId: Identifiant | null
+  libelle: string
+  montant: number
+  /** Le jour où le mois a été remboursé. Vide = encore dû. */
+  rembourseeLe: string | null
+}
+
+/* ---------- les réglages ---------- */
+
+export type Reglages = {
+  /** Ce que chaque foyer doit verser dans la caisse chaque mois. */
+  cotisationMensuelle: Record<Identifiant, number>
+}
+
+export const REGLAGES_PAR_DEFAUT: Reglages = { cotisationMensuelle: {} }
+
+/** Tout ce que l'app garde. Une seule maison, donc un seul objet. */
+export type Maison = {
+  foyers: Foyer[]
+  membres: Membre[]
+  charges: Charge[]
+  partsCharge: PartCharge[]
+  reglements: Reglement[]
+  cotisations: Cotisation[]
+  achats: Achat[]
+  ardoise: LigneArdoise[]
+  reglages: Reglages
+}
+
+export const MAISON_VIDE: Maison = {
+  foyers: [],
+  membres: [],
+  charges: [],
+  partsCharge: [],
+  reglements: [],
+  cotisations: [],
+  achats: [],
+  ardoise: [],
+  reglages: REGLAGES_PAR_DEFAUT,
+}
+
+/** Les deux foyers de départ, pour que l'app ne s'ouvre pas sur du vide. */
+export const FOYERS_DE_DEPART: Foyer[] = [
+  { id: 'lai-ah-che', nom: 'LAI AH CHE', couleur: 'var(--lagon)', part: 0.5, ordre: 1 },
+  { id: 'lenoir', nom: 'LENOIR', couleur: 'var(--corail)', part: 0.5, ordre: 2 },
+]
+
+/* ---------- quelques lectures, à côté des listes qu'elles interrogent ---------- */
+
+export const natureDe = (id: string) => NATURES.find((n) => n.id === id) ?? NATURES[5]
+
+export const categorieDe = (id: string) =>
+  CATEGORIES_ACHAT.find((c) => c.id === id) ?? CATEGORIES_ACHAT[5]
+
+export const foyerDe = (maison: Maison, id: Identifiant | null): Foyer | undefined =>
+  maison.foyers.find((f) => f.id === id)
+
+export const membreDe = (maison: Maison, id: Identifiant | null): Membre | undefined =>
+  maison.membres.find((m) => m.id === id)

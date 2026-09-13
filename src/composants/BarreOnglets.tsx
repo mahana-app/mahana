@@ -1,18 +1,16 @@
-/* La barre du bas : quatre écrans, et le gros bouton + au milieu pour tout
-   noter sans avoir à chercher où. */
+/* Les quatre onglets du bas, et le + au milieu. Tout se fait à une main,
+   pouce en bas de l'écran : c'est là qu'on tient son téléphone. */
 
-import { IconeAccueil, IconeChrono, IconePlus, IconeProgres, IconeRepas } from './Icones'
+import Symbole from './Symbole'
+import type { NomSymbole } from './Symbole'
 
-export type Onglet = 'accueil' | 'repas' | 'jeune' | 'progres'
+export type Onglet = 'accueil' | 'charges' | 'caisse' | 'ardoise'
 
-const GAUCHE: Array<{ id: Onglet; nom: string; Icone: typeof IconeAccueil }> = [
-  { id: 'accueil', nom: 'Accueil', Icone: IconeAccueil },
-  { id: 'repas', nom: 'Repas', Icone: IconeRepas },
-]
-
-const DROITE: Array<{ id: Onglet; nom: string; Icone: typeof IconeAccueil }> = [
-  { id: 'jeune', nom: 'Jeûne', Icone: IconeChrono },
-  { id: 'progres', nom: 'Progrès', Icone: IconeProgres },
+const ONGLETS: Array<{ id: Onglet; nom: string; icone: NomSymbole }> = [
+  { id: 'accueil', nom: 'Maison', icone: 'maison' },
+  { id: 'charges', nom: 'Charges', icone: 'eclair' },
+  { id: 'caisse', nom: 'Caisse', icone: 'panier' },
+  { id: 'ardoise', nom: 'Roulotte', icone: 'roulotte' },
 ]
 
 export default function BarreOnglets({
@@ -20,30 +18,62 @@ export default function BarreOnglets({
   changer,
   ouvrirAjout,
 }: {
-  actif: string
+  actif: Onglet
   changer: (onglet: Onglet) => void
   ouvrirAjout: () => void
 }) {
-  const bouton = ({ id, nom, Icone }: { id: Onglet; nom: string; Icone: typeof IconeAccueil }) => (
-    <button
-      key={id}
-      type="button"
-      className={`onglet${actif === id ? ' actif' : ''}`}
-      aria-current={actif === id ? 'page' : undefined}
-      onClick={() => changer(id)}
-    >
-      <Icone />
-      {nom}
-    </button>
-  )
+  const gauche = ONGLETS.slice(0, 2)
+  const droite = ONGLETS.slice(2)
 
   return (
     <nav className="onglets">
-      {GAUCHE.map(bouton)}
-      <button type="button" className="bouton-plus" aria-label="Ajouter" onClick={ouvrirAjout}>
-        <IconePlus taille={26} />
+      {gauche.map((o) => (
+        <Bouton key={o.id} onglet={o} actif={actif} changer={changer} />
+      ))}
+      <button
+        type="button"
+        aria-label="Ajouter"
+        onClick={ouvrirAjout}
+        style={{
+          width: 54,
+          height: 54,
+          marginTop: -18,
+          border: 0,
+          borderRadius: 999,
+          background: 'var(--degrade-lagon)',
+          color: 'var(--sur-accent)',
+          display: 'grid',
+          placeItems: 'center',
+          boxShadow: 'var(--ombre-plus)',
+          flex: '0 0 auto',
+        }}
+      >
+        <Symbole nom="plus" taille={24} epaisseur={2} />
       </button>
-      {DROITE.map(bouton)}
+      {droite.map((o) => (
+        <Bouton key={o.id} onglet={o} actif={actif} changer={changer} />
+      ))}
     </nav>
+  )
+}
+
+function Bouton({
+  onglet,
+  actif,
+  changer,
+}: {
+  onglet: { id: Onglet; nom: string; icone: NomSymbole }
+  actif: Onglet
+  changer: (onglet: Onglet) => void
+}) {
+  return (
+    <button
+      type="button"
+      className={`onglet${actif === onglet.id ? ' actif' : ''}`}
+      onClick={() => changer(onglet.id)}
+    >
+      <Symbole nom={onglet.icone} taille={21} />
+      {onglet.nom}
+    </button>
   )
 }

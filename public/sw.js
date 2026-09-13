@@ -1,55 +1,29 @@
-/* Le mode hors ligne : une fois l'app ouverte une première fois, elle
-   fonctionne sans réseau — utile en voiture, en avion, ou avec trois barres. */
+/* Ce fichier ne sert plus qu'à effacer l'ancien.
 
-const CACHE = 'mahana-v1'
-const SOCLE = ['/', '/index.html', '/manifest.webmanifest', '/icon-192.png', '/icon-512.png']
+   Mahana installait un service worker qui gardait l'app en mémoire pour
+   fonctionner sans réseau. Sur les téléphones où elle était installée, ce
+   service worker continuerait à servir l'ancienne application indéfiniment :
+   il faut lui dire de s'effacer, et il ne peut le faire que lui-même.
 
-self.addEventListener('install', (event) => {
-  event.waitUntil(caches.open(CACHE).then((cache) => cache.addAll(SOCLE)))
-  self.skipWaiting()
-})
+   Le navigateur va chercher ce fichier tout seul à chaque ouverture et voit
+   qu'il a changé. Il l'installe, et celui-ci se supprime au passage.
 
-self.addEventListener('activate', (event) => {
-  event.waitUntil(
-    caches
-      .keys()
-      .then((noms) => Promise.all(noms.filter((nom) => nom !== CACHE).map((nom) => caches.delete(nom))))
-      .then(() => self.clients.claim()),
-  )
-})
+   Fare ne garde rien en réserve pour l'instant, et c'est voulu : les comptes
+   des deux foyers viennent du serveur, et un chiffre périmé affiché comme
+   s'il était à jour serait pire qu'une attente de deux secondes. */
 
-self.addEventListener('fetch', (event) => {
-  const requete = event.request
-  if (requete.method !== 'GET') return
+self.addEventListener('install', () => self.skipWaiting())
 
-  // L'ouverture de l'app : le réseau d'abord, pour attraper les mises à jour,
-  // et la page gardée en réserve si ça ne répond pas.
-  if (requete.mode === 'navigate') {
-    event.respondWith(
-      fetch(requete)
-        .then((reponse) => {
-          const copie = reponse.clone()
-          caches.open(CACHE).then((cache) => cache.put('/index.html', copie))
-          return reponse
-        })
-        .catch(() => caches.match('/index.html').then((page) => page || Response.error())),
-    )
-    return
-  }
-
-  if (new URL(requete.url).origin !== self.location.origin) return
-
-  // Le reste (scripts, images) porte un nom unique par version : on peut le
-  // servir depuis la réserve sans risquer de servir du vieux.
-  event.respondWith(
-    caches.match(requete).then(
-      (garde) =>
-        garde ||
-        fetch(requete).then((reponse) => {
-          const copie = reponse.clone()
-          if (reponse.ok) caches.open(CACHE).then((cache) => cache.put(requete, copie))
-          return reponse
-        }),
-    ),
+self.addEventListener('activate', (evenement) => {
+  evenement.waitUntil(
+    (async () => {
+      const noms = await caches.keys()
+      await Promise.all(noms.map((nom) => caches.delete(nom)))
+      await self.registration.unregister()
+      // On recharge les onglets ouverts : sans ça, celui qui a l'app sous les
+      // yeux continue de voir Mahana jusqu'à ce qu'il la ferme.
+      const fenetres = await self.clients.matchAll({ type: 'window' })
+      for (const fenetre of fenetres) fenetre.navigate(fenetre.url)
+    })(),
   )
 })

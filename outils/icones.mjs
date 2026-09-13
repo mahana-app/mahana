@@ -1,30 +1,26 @@
-/* Fabrique les icônes de l'app (PNG) sans aucune dépendance : on dessine
-   les pixels à la main puis on les emballe au format PNG.
-   À relancer seulement si le logo change :  npm run icones            */
+/* Fabrique les icônes de l'app, sans aucune dépendance.
+
+   Le logo : le toit du fare, et la ligne du lagon dessous. Dessiné ici en
+   pixels plutôt qu'exporté d'un outil de dessin, pour qu'il se refasse d'une
+   commande le jour où la couleur change :  npm run icones
+*/
 
 import { deflateSync } from 'node:zlib'
-import { writeFileSync, mkdirSync } from 'node:fs'
-import { dirname, join } from 'node:path'
-import { fileURLToPath } from 'node:url'
+import { writeFileSync } from 'node:fs'
 
-const ici = dirname(fileURLToPath(import.meta.url))
-const dossierPublic = join(ici, '..', 'public')
-
-/* ---- emballage PNG ---- */
-
-const tableCrc = (() => {
-  const table = new Int32Array(256)
+const TABLE = (() => {
+  const t = new Int32Array(256)
   for (let n = 0; n < 256; n++) {
     let c = n
     for (let k = 0; k < 8; k++) c = c & 1 ? 0xedb88320 ^ (c >>> 1) : c >>> 1
-    table[n] = c
+    t[n] = c
   }
-  return table
+  return t
 })()
 
-function crc32(buffer) {
+function crc32(buf) {
   let c = 0xffffffff
-  for (const octet of buffer) c = tableCrc[(c ^ octet) & 0xff] ^ (c >>> 8)
+  for (const octet of buf) c = TABLE[(c ^ octet) & 0xff] ^ (c >>> 8)
   return (c ^ 0xffffffff) >>> 0
 }
 
@@ -37,150 +33,88 @@ function morceau(type, donnees) {
   return Buffer.concat([entete, corps, somme])
 }
 
-function encoderPng(largeur, hauteur, pixels /* RGBA */) {
-  const lignes = Buffer.alloc((largeur * 4 + 1) * hauteur)
-  for (let y = 0; y < hauteur; y++) {
-    lignes[y * (largeur * 4 + 1)] = 0 // filtre « aucun »
-    pixels.copy(lignes, y * (largeur * 4 + 1) + 1, y * largeur * 4, (y + 1) * largeur * 4)
-  }
+function png(largeur, hauteur, pixels) {
   const ihdr = Buffer.alloc(13)
   ihdr.writeUInt32BE(largeur, 0)
   ihdr.writeUInt32BE(hauteur, 4)
-  ihdr[8] = 8 // 8 bits par canal
-  ihdr[9] = 6 // RVB + transparence
+  ihdr[8] = 8
+  ihdr[9] = 6 // RVBA
+  const lignes = []
+  for (let y = 0; y < hauteur; y++) {
+    lignes.push(Buffer.from([0]), pixels.subarray(y * largeur * 4, (y + 1) * largeur * 4))
+  }
   return Buffer.concat([
     Buffer.from([0x89, 0x50, 0x4e, 0x47, 0x0d, 0x0a, 0x1a, 0x0a]),
     morceau('IHDR', ihdr),
-    morceau('IDAT', deflateSync(lignes, { level: 9 })),
+    morceau('IDAT', deflateSync(Buffer.concat(lignes), { level: 9 })),
     morceau('IEND', Buffer.alloc(0)),
   ])
 }
 
-/* ---- dessin ---- */
+/* ---------- le dessin ---------- */
 
-const ARGILE = [192, 96, 58]
-const ARGILE_FONCE = [165, 79, 46]
-const CREME = [252, 249, 243]
+const LAGON = [0x1a, 0x82, 0x7c]
+const LAGON_FONCE = [0x0e, 0x53, 0x50]
+const CREME = [0xfd, 0xfb, 0xf6]
 
-const borne = (v, min, max) => (v < min ? min : v > max ? max : v)
-const melange = (a, b, t) => a.map((v, i) => v + (b[i] - v) * t)
+const melange = (a, b, t) => a.map((v, i) => Math.round(v + (b[i] - v) * t))
 
-/** Couverture douce d'un bord : 1 dedans, 0 dehors, dégradé sur ~1 pixel. */
-const bordDoux = (distance) => borne(0.5 - distance, 0, 1)
-
-/** Distance signée à un carré aux coins arrondis (négatif = dedans). */
-function distanceCarreArrondi(x, y, demi, rayon) {
-  const dx = Math.abs(x) - (demi - rayon)
-  const dy = Math.abs(y) - (demi - rayon)
-  const dehors = Math.hypot(Math.max(dx, 0), Math.max(dy, 0))
-  return dehors + Math.min(Math.max(dx, dy), 0) - rayon
-}
-
-/** Distance d'un point à un segment. */
+/** Distance d'un point à un segment : sert à épaissir un trait proprement. */
 function distanceSegment(px, py, ax, ay, bx, by) {
   const dx = bx - ax
   const dy = by - ay
   const longueur = dx * dx + dy * dy
-  const t = longueur === 0 ? 0 : borne(((px - ax) * dx + (py - ay) * dy) / longueur, 0, 1)
+  const t = longueur === 0 ? 0 : Math.max(0, Math.min(1, ((px - ax) * dx + (py - ay) * dy) / longueur))
   return Math.hypot(px - (ax + t * dx), py - (ay + t * dy))
 }
 
-/** Distance d'un point à une ligne brisée : c'est ainsi qu'on épaissit un tracé. */
-function distanceTrace(px, py, points) {
-  let mini = Infinity
-  for (let i = 1; i < points.length; i++) {
-    const d = distanceSegment(px, py, points[i - 1][0], points[i - 1][1], points[i][0], points[i][1])
-    if (d < mini) mini = d
-  }
-  return mini
-}
+function dessiner(cote) {
+  const pixels = Buffer.alloc(cote * cote * 4)
+  const u = cote / 100
+  const trait = 7 * u
+  // Le toit, puis les deux murs, puis la vague du lagon sous la maison.
+  const traits = [
+    [22, 46, 50, 22],
+    [50, 22, 78, 46],
+    [30, 44, 30, 68],
+    [70, 44, 70, 68],
+  ]
 
-/** Une courbe de Bézier quadratique, découpée en petits segments. */
-function courbe(a, controle, b, morceaux = 48) {
-  const points = []
-  for (let i = 0; i <= morceaux; i++) {
-    const t = i / morceaux
-    const u = 1 - t
-    points.push([
-      u * u * a[0] + 2 * u * t * controle[0] + t * t * b[0],
-      u * u * a[1] + 2 * u * t * controle[1] + t * t * b[1],
-    ])
-  }
-  return points
-}
+  for (let y = 0; y < cote; y++) {
+    for (let x = 0; x < cote; x++) {
+      const i = (y * cote + x) * 4
+      // Le fond : un dégradé lagon en diagonale.
+      const fond = melange(LAGON, LAGON_FONCE, (x / cote) * 0.5 + (y / cote) * 0.5)
+      let couleur = fond
 
-/**
- * Le logo : le soleil au-dessus de l'horizon, et la vague en dessous.
- * « Mahana », c'est le soleil et le jour ; la vague, c'est ici.
- * `arrondi` = 0 pour une icône pleine page (Android la découpe lui-même).
- */
-function dessiner(taille, { arrondi = 0.22, echelle = 1 } = {}) {
-  const pixels = Buffer.alloc(taille * taille * 4)
-  const centre = taille / 2
-  const e = echelle
-  const trait = taille * 0.052 * e
-
-  const soleil = { x: centre, y: centre - taille * 0.1 * e, r: taille * 0.135 * e }
-  const horizon = courbe(
-    [centre - taille * 0.31 * e, centre + taille * 0.135 * e],
-    [centre, centre],
-    [centre + taille * 0.31 * e, centre + taille * 0.135 * e],
-  )
-  // La vague : trois petites bosses, dessinées par une sinusoïde.
-  const vague = []
-  for (let i = 0; i <= 60; i++) {
-    const t = i / 60
-    vague.push([
-      centre + (t - 0.5) * taille * 0.56 * e,
-      centre + taille * 0.29 * e + Math.sin(t * Math.PI * 6) * taille * 0.032 * e,
-    ])
-  }
-
-  for (let y = 0; y < taille; y++) {
-    for (let x = 0; x < taille; x++) {
-      const px = x + 0.5
-      const py = y + 0.5
-
-      // le fond : terre cuite, légèrement dégradé, dans un carré arrondi
-      const dFond = arrondi
-        ? distanceCarreArrondi(px - centre, py - centre, centre, taille * arrondi)
-        : -1
-      const alphaFond = arrondi ? bordDoux(dFond) : 1
-      const t = borne((px + py) / (taille * 2), 0, 1)
-      let couleur = melange(ARGILE, ARGILE_FONCE, t)
-      let alpha = alphaFond
-
-      // le tracé du logo, en crème
-      const dSoleil = Math.abs(Math.hypot(px - soleil.x, py - soleil.y) - soleil.r)
-      const d = Math.min(dSoleil, distanceTrace(px, py, horizon), distanceTrace(px, py, vague))
-      const alphaTrait = bordDoux(d - trait / 2) * alphaFond
-
-      if (alphaTrait > 0) {
-        couleur = melange(couleur, CREME, alphaTrait)
-        alpha = Math.max(alpha, alphaTrait)
+      const cx = x / u
+      const cy = y / u
+      let dessus = traits.some(
+        ([ax, ay, bx, by]) => distanceSegment(cx, cy, ax, ay, bx, by) * u < trait / 2,
+      )
+      // La vague : deux arcs de sinus, comme le lagon devant la maison.
+      if (!dessus) {
+        const vague = 78 + Math.sin((cx - 20) / 7) * 3.4
+        if (cx > 20 && cx < 80 && Math.abs(cy - vague) * u < trait / 2) dessus = true
       }
+      if (dessus) couleur = CREME
 
-      const i = (y * taille + x) * 4
-      pixels[i] = Math.round(couleur[0])
-      pixels[i + 1] = Math.round(couleur[1])
-      pixels[i + 2] = Math.round(couleur[2])
-      pixels[i + 3] = Math.round(alpha * 255)
+      pixels[i] = couleur[0]
+      pixels[i + 1] = couleur[1]
+      pixels[i + 2] = couleur[2]
+      pixels[i + 3] = 255
     }
   }
-  return encoderPng(taille, taille, pixels)
+  return png(cote, cote, pixels)
 }
 
-mkdirSync(dossierPublic, { recursive: true })
-const aFabriquer = [
-  ['icon-192.png', 192, {}],
-  ['icon-512.png', 512, {}],
-  // découpée par Android : le dessin reste dans la zone sûre du centre
-  ['icon-maskable-512.png', 512, { arrondi: 0, echelle: 0.78 }],
-  ['apple-touch-icon.png', 180, { arrondi: 0 }],
-  ['favicon.png', 48, {}],
-  ['favicon-32.png', 32, {}],
-]
-for (const [nom, taille, options] of aFabriquer) {
-  writeFileSync(join(dossierPublic, nom), dessiner(taille, options))
-  console.log('écrit', nom, taille + 'px')
+for (const [nom, cote] of [
+  ['public/favicon-32.png', 32],
+  ['public/favicon.png', 48],
+  ['public/apple-touch-icon.png', 180],
+  ['public/icone-192.png', 192],
+  ['public/icone-512.png', 512],
+]) {
+  writeFileSync(nom, dessiner(cote))
+  console.log('écrit', nom)
 }

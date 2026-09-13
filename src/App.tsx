@@ -5,36 +5,23 @@
 import { useEffect, useState } from 'react'
 import BarreOnglets from './composants/BarreOnglets'
 import type { Onglet } from './composants/BarreOnglets'
+import { BandeauErreur, BandeauEssai } from './composants/Bandeaux'
 import FeuilleActions from './composants/FeuilleActions'
 import Accueil from './ecrans/Accueil'
-import Activite from './ecrans/Activite'
-import AjoutAliment from './ecrans/AjoutAliment'
-import Bienvenue from './ecrans/Bienvenue'
-import ComposerPlat from './ecrans/ComposerPlat'
-import EcranCorps from './ecrans/Corps'
-import Defis from './ecrans/Defis'
-import EcranEau from './ecrans/Eau'
-import EcranJeune from './ecrans/Jeune'
-import { ListeLecons, UneLecon } from './ecrans/Lecons'
-import MaRecette from './ecrans/MaRecette'
-import MaSeance from './ecrans/MaSeance'
-import Moi from './ecrans/Moi'
-import PhotoRepas from './ecrans/PhotoRepas'
-import NoterSeance from './ecrans/NoterSeance'
-import EcranProgramme, { NouveauProgramme } from './ecrans/Programme'
-import Progres from './ecrans/Progres'
-import EcranRecette from './ecrans/Recette'
-import Recettes from './ecrans/Recettes'
-import EcranReglages from './ecrans/Reglages'
-import Repas from './ecrans/Repas'
-import EcranSeance from './ecrans/Seance'
-import Sortie from './ecrans/Sortie'
-import Sport from './ecrans/Sport'
-import { useApp } from './lib/etat'
+import Ardoise from './ecrans/Ardoise'
+import Caisse from './ecrans/Caisse'
+import Charges from './ecrans/Charges'
+import Connexion from './ecrans/Connexion'
+import Maisonnee from './ecrans/Maisonnee'
+import NouvelAchat from './ecrans/NouvelAchat'
+import NouvelleArdoise from './ecrans/NouvelleArdoise'
+import NouvelleCharge from './ecrans/NouvelleCharge'
+import UneCharge from './ecrans/UneCharge'
+import { useMaison } from './lib/maison'
 import type { Vue } from './lib/navigation'
 
 export default function App() {
-  const { etat } = useApp()
+  const { chargement, erreur, partagee, connecte } = useMaison()
   const [onglet, setOnglet] = useState<Onglet>('accueil')
   const [pile, setPile] = useState<Vue[]>([])
   const [ajout, setAjout] = useState(false)
@@ -43,73 +30,49 @@ export default function App() {
   const ouvrir = (nouvelle: Vue) => setPile((p) => [...p, nouvelle])
   const fermer = () => setPile((p) => p.slice(0, -1))
 
-  // Chaque changement d'écran repart du haut : sinon on arrive au milieu
-  // de la page suivante, à l'endroit où on avait laissé la précédente.
+  // Chaque changement d'écran repart du haut : sinon on arrive au milieu de
+  // la page suivante, à l'endroit où on avait laissé la précédente.
   useEffect(() => {
     window.scrollTo(0, 0)
   }, [onglet, pile.length])
 
-  if (!etat.demarre) return <Bienvenue />
+  if (!connecte) return <Connexion />
+
+  if (chargement) {
+    return (
+      <div className="page">
+        <p className="vide" style={{ paddingTop: 60 }}>
+          Un instant, on ouvre la maison…
+        </p>
+      </div>
+    )
+  }
 
   if (vue) {
     switch (vue.nom) {
-      case 'sport':
-        return <Sport ouvrir={ouvrir} fermer={fermer} />
-      case 'noter-seance':
-        return (
-          <NoterSeance
-            programmeId={vue.programmeId}
-            numeroJour={vue.numeroJour}
-            fermer={fermer}
-          />
-        )
-      case 'programme':
-        return <EcranProgramme id={vue.id} ouvrir={ouvrir} fermer={fermer} />
-      case 'nouveau-programme':
-        return <NouveauProgramme fermer={fermer} />
-      case 'seance':
-        return <EcranSeance id={vue.id} fermer={fermer} />
-      case 'sortie':
-        return <Sortie fermer={fermer} />
-      case 'ajout':
-        return <AjoutAliment moment={vue.moment} fermer={fermer} ouvrir={ouvrir} />
-      case 'composer':
-        return <ComposerPlat moment={vue.moment} fermer={fermer} />
-      case 'photo-repas':
-        return <PhotoRepas moment={vue.moment} fermer={fermer} />
-      case 'defis':
-        return <Defis fermer={fermer} />
-      case 'moi':
-        return <Moi ouvrir={ouvrir} fermer={fermer} />
-      case 'recettes':
-        return <Recettes ouvrir={ouvrir} fermer={fermer} />
-      case 'recette':
-        return <EcranRecette id={vue.id} fermer={fermer} />
-      case 'ma-recette':
-        return <MaRecette id={vue.id} fermer={fermer} />
-      case 'ma-seance':
-        return <MaSeance id={vue.id} categorie={vue.categorie} fermer={fermer} />
-      case 'lecons':
-        return <ListeLecons ouvrir={ouvrir} fermer={fermer} />
-      case 'lecon':
-        return <UneLecon id={vue.id} fermer={fermer} />
-      case 'corps':
-        return <EcranCorps fermer={fermer} />
-      case 'eau':
-        return <EcranEau fermer={fermer} />
-      case 'activite':
-        return <Activite fermer={fermer} />
-      case 'reglages':
-        return <EcranReglages fermer={fermer} />
+      case 'charge':
+        return <UneCharge id={vue.id} fermer={fermer} />
+      case 'nouvelle-charge':
+        return <NouvelleCharge fermer={fermer} />
+      case 'nouvel-achat':
+        return <NouvelAchat fermer={fermer} />
+      case 'nouvelle-ardoise':
+        return <NouvelleArdoise fermer={fermer} />
+      case 'maisonnee':
+        return <Maisonnee fermer={fermer} />
     }
   }
 
   return (
     <>
+      <div style={{ maxWidth: 560, margin: '0 auto', padding: '10px 16px 0' }}>
+        {!partagee && <BandeauEssai />}
+        {erreur && <BandeauErreur message={erreur} />}
+      </div>
       {onglet === 'accueil' && <Accueil ouvrir={ouvrir} allerA={setOnglet} />}
-      {onglet === 'repas' && <Repas ouvrir={ouvrir} />}
-      {onglet === 'jeune' && <EcranJeune ouvrir={ouvrir} />}
-      {onglet === 'progres' && <Progres ouvrir={ouvrir} />}
+      {onglet === 'charges' && <Charges ouvrir={ouvrir} />}
+      {onglet === 'caisse' && <Caisse ouvrir={ouvrir} />}
+      {onglet === 'ardoise' && <Ardoise ouvrir={ouvrir} />}
       <BarreOnglets actif={onglet} changer={setOnglet} ouvrirAjout={() => setAjout(true)} />
       {ajout && <FeuilleActions fermer={() => setAjout(false)} ouvrir={ouvrir} />}
     </>
