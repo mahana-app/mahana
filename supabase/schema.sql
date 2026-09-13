@@ -51,6 +51,21 @@ insert into public.foyers (id, nom, couleur, part, ordre) values
   ('lenoir',     'LENOIR',     'var(--corail)', 0.5, 2)
 on conflict (id) do nothing;
 
+-- Les six personnes de la maison, telles que Maru les a données.
+--
+-- « on conflict do nothing » : si un prénom ou un rôle a été corrigé depuis
+-- l'application, recoller ce fichier ne doit surtout pas écraser la
+-- correction. Adulte ou enfant se change d'une touche dans Maisonnée — seuls
+-- les adultes apparaissent dans la question « qui es-tu ? ».
+insert into public.membres (id, foyer_id, prenom, role) values
+  ('maru',     'lai-ah-che', 'Maru',     'adulte'),
+  ('will',     'lai-ah-che', 'Will',     'adulte'),
+  ('manahiti', 'lai-ah-che', 'Manahiti', 'enfant'),
+  ('mana',     'lenoir',     'Mana',     'adulte'),
+  ('miti',     'lenoir',     'Miti',     'adulte'),
+  ('mia',      'lenoir',     'Mia',      'enfant')
+on conflict (id) do nothing;
+
 -- =====================================================================
 --  Les charges de la maison
 -- =====================================================================
