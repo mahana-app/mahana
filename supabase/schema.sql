@@ -171,6 +171,7 @@ create table if not exists public.reglages (
 do $droits$
 declare
   t text;
+  supabase boolean := exists (select 1 from pg_roles where rolname = 'authenticated');
 begin
   foreach t in array array[
     'foyers', 'membres', 'charges', 'parts_charge', 'reglements',
@@ -179,12 +180,27 @@ begin
   loop
     execute format('alter table public.%I enable row level security', t);
     execute format('drop policy if exists "la maisonnee" on public.%I', t);
-    if exists (select 1 from pg_roles where rolname = 'authenticated') then
+    if supabase then
       execute format(
         'create policy "la maisonnee" on public.%I for all to authenticated using (true) with check (true)',
         t
       );
+      -- Le droit d'atteindre la table à travers l'API. Supabase le donne tout
+      -- seul quand l'option « Automatically expose new tables » est cochée à
+      -- la création du projet — mais on ne veut pas en dépendre : avec
+      -- l'option décochée, l'app se heurterait à « permission denied » alors
+      -- que tout le reste est en place, et l'erreur ne dirait pas pourquoi.
+      execute format('grant select, insert, update, delete on public.%I to authenticated', t);
+      -- Et surtout pas au visiteur non connecté. La politique ci-dessus le
+      -- bloque déjà ; lui retirer aussi le droit d'atteindre la table, c'est
+      -- la deuxième serrure — celle qui tient si quelqu'un ajoute un jour une
+      -- politique trop large sans y penser.
+      execute format('revoke all on public.%I from anon', t);
     end if;
   end loop;
+
+  if supabase then
+    execute 'grant usage on schema public to authenticated';
+  end if;
 end
 $droits$;
