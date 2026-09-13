@@ -11,6 +11,7 @@ import Accueil from './ecrans/Accueil'
 import Ardoise from './ecrans/Ardoise'
 import Caisse from './ecrans/Caisse'
 import Charges from './ecrans/Charges'
+import Enfant from './ecrans/Enfant'
 import Connexion from './ecrans/Connexion'
 import Maisonnee from './ecrans/Maisonnee'
 import NouvelAchat from './ecrans/NouvelAchat'
@@ -51,8 +52,18 @@ export default function App() {
 
   // La question ne se pose que s'il y a des prénoms à proposer : à la toute
   // première ouverture, la maison est vide et l'accueil invite à la remplir.
-  const aDuMonde = maison.membres.some((m) => m.role === 'adulte' && m.actif)
+  const aDuMonde = maison.membres.some((m) => m.aUnTelephone && m.actif)
   if (aDuMonde && !moiId) return <QuiEsTu />
+
+  /* Les ados n'ont qu'un écran : noter ce qu'ils prennent à la roulotte. Les
+     factures et les comptes entre les deux familles ne les regardent pas.
+
+     C'est une convenance, pas une serrure : le code de la maison est le même
+     pour tous, et rien n'empêche de répondre « Maru » à la question « qui
+     es-tu ? ». Séparer pour de bon demanderait un code par personne — ce que
+     la maison a justement refusé. */
+  const moi = maison.membres.find((m) => m.id === moiId)
+  if (moi && moi.role === 'enfant') return <Enfant />
 
   if (vue) {
     switch (vue.nom) {

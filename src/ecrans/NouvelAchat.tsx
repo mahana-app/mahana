@@ -18,7 +18,7 @@ export default function NouvelAchat({ fermer }: { fermer: () => void }) {
   const [le, setLe] = useState(jourDe())
 
   const montant = lireMontant(montantTexte)
-  const adultes = maison.membres.filter((m) => m.role === 'adulte' && m.actif)
+  const adultes = maison.membres.filter((m) => m.aUnTelephone && m.actif)
 
   return (
     <div className="page">

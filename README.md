@@ -105,6 +105,30 @@ d'avance qui est allé faire les courses ou chercher à manger à la roulotte.
 
 Ça se change dans **Maisonnée → Ce téléphone → Ce n'est pas moi**.
 
+### Les ados n'ont qu'un écran
+
+Mia et Manahiti prennent à manger à la roulotte comme tout le monde, et c'est
+à eux de le noter — personne d'autre ne sait ce qu'ils ont pris. Mais les
+factures, les cotisations et les comptes entre les deux familles ne les
+regardent pas.
+
+Quand la personne identifiée sur ce téléphone est marquée **Enfant**, l'app
+n'affiche donc **que** l'écran de la roulotte : deux champs, un bouton, et le
+total de son mois. Pas d'onglets, pas de charges.
+
+⚠️ **C'est une convenance, pas une serrure.** Le code de la maison est le même
+pour tout le monde ; rien n'empêche de répondre « Maru » à la question « qui
+es-tu ? ». Séparer pour de bon demanderait un code par personne — ce que la
+maison a justement écarté. L'écran des ados range les choses, il ne les
+verrouille pas.
+
+Deux réglages, deux questions différentes, dans **Maisonnée** :
+
+| Réglage | Ce qu'il décide |
+|---|---|
+| **A l'app / Sans app** | Apparaît-il dans « qui es-tu ? ». Eva a quatre ans : sans app. |
+| **Adulte / Enfant** | Voit-il toute la maison, ou seulement l'écran de la roulotte. |
+
 ### Brancher le serveur
 
 1. Sur [supabase.com](https://supabase.com), créer un projet — gratuit.

@@ -119,6 +119,21 @@ change d'une touche, et ne sert qu'au confort : dire bonjour par le prénom,
 cocher d'avance qui a fait les courses. Ne rien y accrocher qui demande de la
 confiance.
 
+## Deux réglages par personne, deux questions distinctes
+
+Ne jamais les reconfondre — l'app le faisait au début, et c'était faux :
+
+- **`aUnTelephone`** : cette personne se sert-elle de l'app ? Décide de qui
+  apparaît dans « qui es-tu ? » et dans les listes « qui y est allé ». Eva a
+  quatre ans : non. Mia et Manahiti sont des ados : oui.
+- **`role`** (`adulte` | `enfant`) : voit-elle toute la maison, ou seulement
+  l'écran de la roulotte (`src/ecrans/Enfant.tsx`) ? Servira aussi au module
+  des écoles et des activités.
+
+L'écran des ados est une **convenance, pas une serrure** : le code est commun,
+on peut répondre « Maru » à la question. Ne pas l'écrire comme s'il protégeait
+quelque chose, et ne rien y accrocher qui demande de la confiance.
+
 ## La sécurité, en une phrase
 
 La clé « anon » est dans la page : ce n'est pas un secret. Ce qui protège les

@@ -18,7 +18,7 @@ export default function NouvelleArdoise({ fermer }: { fermer: () => void }) {
   const [le, setLe] = useState(jourDe())
 
   const montant = lireMontant(montantTexte)
-  const membres = maison.membres.filter((m) => m.foyerId === foyerId && m.actif)
+  const membres = maison.membres.filter((m) => m.foyerId === foyerId && m.aUnTelephone && m.actif)
 
   return (
     <div className="page">

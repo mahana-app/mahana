@@ -109,6 +109,21 @@ export default function Maisonnee({ fermer }: { fermer: () => void }) {
                 >
                   {membre.role === 'adulte' ? 'Adulte' : 'Enfant'}
                 </button>
+                {/* Être un enfant et se servir de l'app sont deux choses
+                    différentes : Mia et Manahiti notent eux-mêmes ce qu'ils
+                    prennent à la roulotte, Eva a quatre ans. */}
+                <button
+                  type="button"
+                  className={`pilule${membre.aUnTelephone ? ' lagon' : ''}`}
+                  title={
+                    membre.aUnTelephone
+                      ? "Se sert de l'app sur son téléphone"
+                      : "Ne se sert pas de l'app"
+                  }
+                  onClick={() => void modifierMembre(membre.id, { aUnTelephone: !membre.aUnTelephone })}
+                >
+                  {membre.aUnTelephone ? 'A l’app' : 'Sans app'}
+                </button>
                 <button
                   type="button"
                   className="bouton-fin"
@@ -157,6 +172,9 @@ export default function Maisonnee({ fermer }: { fermer: () => void }) {
                         foyerId: foyer.id,
                         prenom: prenom.trim(),
                         role,
+                        // Proposition de départ, corrigeable d'une touche : un
+                        // adulte se sert de l'app, un enfant pas forcément.
+                        aUnTelephone: role === 'adulte',
                         code: '',
                         actif: true,
                       })

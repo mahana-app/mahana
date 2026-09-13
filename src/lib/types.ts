@@ -24,13 +24,23 @@ export type Foyer = {
 
 export type RoleMembre = 'adulte' | 'enfant'
 
-/** Une personne de la maison. Les enfants n'ont pas de code d'accès. */
+/**
+ * Une personne de la maison.
+ *
+ * `role` et `aUnTelephone` disent deux choses différentes, et il ne faut pas
+ * les confondre : Mia et Manahiti sont des enfants qui notent eux-mêmes ce
+ * qu'ils prennent à la roulotte, Eva a quatre ans et ne notera rien. C'est
+ * `aUnTelephone` qui décide de qui apparaît dans « qui es-tu ? » et dans les
+ * listes « qui y est allé » ; `role` servira aux écoles et aux activités.
+ */
 export type Membre = {
   id: Identifiant
   foyerId: Identifiant
   prenom: string
   role: RoleMembre
-  /** Le code que la personne tape une fois sur son téléphone. Vide = pas d'accès. */
+  /** Se sert de l'app sur son propre téléphone. */
+  aUnTelephone: boolean
+  /** Réservé : un code personnel, si un jour on en veut un par personne. */
   code: string
   actif: boolean
 }

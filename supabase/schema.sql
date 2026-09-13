@@ -41,6 +41,14 @@ create table if not exists public.membres (
   actif    boolean not null default true
 );
 
+-- Se sert de l'app sur son propre téléphone. Ce n'est pas la même chose
+-- qu'être adulte : Mia et Manahiti sont des ados qui notent eux-mêmes ce
+-- qu'ils prennent à la roulotte, Eva a quatre ans et ne notera rien.
+-- « add column if not exists » : la table existe peut-être déjà, et
+-- « create table if not exists » ne sait pas lui ajouter une colonne.
+alter table public.membres
+  add column if not exists a_un_telephone boolean not null default true;
+
 create index if not exists membres_foyer on public.membres(foyer_id);
 
 -- Les deux foyers de départ. « on conflict do nothing » : si Maru les a
@@ -51,19 +59,21 @@ insert into public.foyers (id, nom, couleur, part, ordre) values
   ('lenoir',     'LENOIR',     'var(--corail)', 0.5, 2)
 on conflict (id) do nothing;
 
--- Les six personnes de la maison, telles que Maru les a données.
+-- Les sept personnes de la maison, telles que Maru les a données.
 --
 -- « on conflict do nothing » : si un prénom ou un rôle a été corrigé depuis
 -- l'application, recoller ce fichier ne doit surtout pas écraser la
--- correction. Adulte ou enfant se change d'une touche dans Maisonnée — seuls
--- les adultes apparaissent dans la question « qui es-tu ? ».
-insert into public.membres (id, foyer_id, prenom, role) values
-  ('maru',     'lai-ah-che', 'Maru',     'adulte'),
-  ('will',     'lai-ah-che', 'Will',     'adulte'),
-  ('manahiti', 'lai-ah-che', 'Manahiti', 'enfant'),
-  ('mana',     'lenoir',     'Mana',     'adulte'),
-  ('miti',     'lenoir',     'Miti',     'adulte'),
-  ('mia',      'lenoir',     'Mia',      'enfant')
+-- correction. Tout se change d'une touche dans Maisonnée — et c'est la
+-- colonne « a_un_telephone », pas l'âge, qui décide de qui apparaît dans la
+-- question « qui es-tu ? ».
+insert into public.membres (id, foyer_id, prenom, role, a_un_telephone) values
+  ('maru',     'lai-ah-che', 'Maru',     'adulte', true),
+  ('will',     'lai-ah-che', 'Will',     'adulte', true),
+  ('manahiti', 'lai-ah-che', 'Manahiti', 'enfant', true),
+  ('mana',     'lenoir',     'Mana',     'adulte', true),
+  ('miti',     'lenoir',     'Miti',     'adulte', true),
+  ('mia',      'lenoir',     'Mia',      'enfant', true),
+  ('eva',      'lenoir',     'Eva',      'enfant', false)
 on conflict (id) do nothing;
 
 -- =====================================================================

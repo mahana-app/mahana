@@ -11,7 +11,9 @@ import { salutation } from '../lib/moi'
 
 export default function QuiEsTu() {
   const { maison, direQuiJeSuis } = useMaison()
-  const adultes = maison.membres.filter((m) => m.role === 'adulte' && m.actif)
+  // Ceux qui se servent de l'app, quel que soit leur âge : Mia et Manahiti
+  // ont un téléphone, Eva a quatre ans.
+  const gens = maison.membres.filter((m) => m.aUnTelephone && m.actif)
 
   return (
     <div className="page" style={{ paddingTop: 60 }}>
@@ -26,7 +28,7 @@ export default function QuiEsTu() {
       </div>
 
       {maison.foyers.map((foyer) => {
-        const siens = adultes.filter((m) => m.foyerId === foyer.id)
+        const siens = gens.filter((m) => m.foyerId === foyer.id)
         if (siens.length === 0) return null
         return (
           <div className="carte" key={foyer.id}>
