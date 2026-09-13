@@ -168,6 +168,23 @@ create table if not exists public.reglages (
 -- Le bloc est gardé : sur une base PostgreSQL ordinaire (celle du script de
 -- vérification), le rôle « authenticated » de Supabase n'existe pas.
 
+-- Le verrou, table par table, écrit en clair.
+--
+-- Il tiendrait tout aussi bien dans la boucle ci-dessous, mais l'éditeur SQL
+-- de Supabase LIT le texte du fichier sans l'exécuter, pour vérifier qu'aucune
+-- table ne reste ouverte. Il ne voit pas ce qui se passe dans une boucle : il
+-- avertissait donc, à chaque collage, d'un danger qui n'existait pas. Un
+-- avertissement qu'on apprend à ignorer est pire que pas d'avertissement.
+alter table public.foyers       enable row level security;
+alter table public.membres      enable row level security;
+alter table public.charges      enable row level security;
+alter table public.parts_charge enable row level security;
+alter table public.reglements   enable row level security;
+alter table public.cotisations  enable row level security;
+alter table public.achats       enable row level security;
+alter table public.ardoise      enable row level security;
+alter table public.reglages     enable row level security;
+
 do $droits$
 declare
   t text;
@@ -178,7 +195,6 @@ begin
     'cotisations', 'achats', 'ardoise', 'reglages'
   ]
   loop
-    execute format('alter table public.%I enable row level security', t);
     execute format('drop policy if exists "la maisonnee" on public.%I', t);
     if supabase then
       execute format(
