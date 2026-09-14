@@ -6,6 +6,7 @@
 import { useState } from 'react'
 import Entete from '../composants/Entete'
 import Symbole from '../composants/Symbole'
+import PiecesCharge from '../composants/PiecesCharge'
 import { chargeSoldee, fcfp, jourCourt, jourDe, lireMontant, moisEnMots, resteSurCharge } from '../lib/argent'
 import { useMaison } from '../lib/maison'
 import { foyerDe, natureDe } from '../lib/types'
@@ -85,6 +86,9 @@ export default function UneCharge({ id, fermer }: { id: string; fermer: () => vo
           </>
         )}
       </div>
+
+      {/* ---------- la facture elle-même ---------- */}
+      <PiecesCharge chargeId={charge.id} />
 
       {/* ---------- les parts ---------- */}
       <div className="carte">

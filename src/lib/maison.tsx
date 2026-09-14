@@ -11,6 +11,8 @@ import { SERVEUR_BRANCHE, base, client, nouvelId, rubriqueDe } from './base'
 import type { NomTable } from './base'
 import { jourDe, repartir } from './argent'
 import { ecrireMoi, lireMoi } from './moi'
+import { retirerFichier } from './fichiers'
+import type { Fichier } from './fichiers'
 import type {
   Achat,
   Charge,
@@ -37,6 +39,9 @@ type Actions = {
   noterPaiement: (chargeId: Identifiant, foyerId: Identifiant, le: string) => Promise<void>
   annulerPaiement: (chargeId: Identifiant) => Promise<void>
   ajouterReglement: (reglement: Omit<Reglement, 'id'>) => Promise<void>
+  /* les factures scannées */
+  ajouterPiece: (chargeId: Identifiant, fichier: Fichier) => Promise<void>
+  supprimerPiece: (id: Identifiant) => Promise<void>
   supprimerReglement: (id: Identifiant) => Promise<void>
   /* la caisse */
   ajouterCotisation: (cotisation: Omit<Cotisation, 'id'>) => Promise<void>
@@ -199,6 +204,10 @@ export function FournisseurMaison({ children }: { children: ReactNode }) {
       for (const r of maisonRef.current.reglements.filter((r) => r.chargeId === id)) {
         await retirer('reglements', r.id)
       }
+      for (const piece of maisonRef.current.piecesCharge.filter((p) => p.chargeId === id)) {
+        await retirerFichier(piece.chemin)
+        await retirer('pieces_charge', piece.id)
+      }
       await retirer('charges', id)
     },
     [retirer],
@@ -226,6 +235,23 @@ export function FournisseurMaison({ children }: { children: ReactNode }) {
 
   const supprimerReglement = useCallback<Actions['supprimerReglement']>(
     (id) => retirer('reglements', id),
+    [retirer],
+  )
+
+  const ajouterPiece = useCallback<Actions['ajouterPiece']>(
+    (chargeId, fichier) =>
+      poser('pieces_charge', { ...fichier, id: nouvelId(), chargeId, ajouteeLe: jourDe() }),
+    [poser],
+  )
+
+  const supprimerPiece = useCallback<Actions['supprimerPiece']>(
+    async (id) => {
+      // Le fichier part avec la ligne : sinon la réserve se remplit de
+      // factures que plus rien ne désigne, et personne ne saura les retrouver.
+      const piece = maisonRef.current.piecesCharge.find((p) => p.id === id)
+      if (piece) await retirerFichier(piece.chemin)
+      await retirer('pieces_charge', id)
+    },
     [retirer],
   )
 
@@ -332,6 +358,8 @@ export function FournisseurMaison({ children }: { children: ReactNode }) {
       annulerPaiement,
       ajouterReglement,
       supprimerReglement,
+      ajouterPiece,
+      supprimerPiece,
       ajouterCotisation,
       modifierCotisation,
       supprimerCotisation,
@@ -362,6 +390,8 @@ export function FournisseurMaison({ children }: { children: ReactNode }) {
       annulerPaiement,
       ajouterReglement,
       supprimerReglement,
+      ajouterPiece,
+      supprimerPiece,
       ajouterCotisation,
       modifierCotisation,
       supprimerCotisation,

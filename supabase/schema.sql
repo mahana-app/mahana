@@ -121,6 +121,23 @@ create table if not exists public.reglements (
 
 create index if not exists reglements_charge on public.reglements(charge_id);
 
+-- Les pièces jointes d'une facture : la photo ou le PDF reçu du fournisseur.
+-- Seul le CHEMIN du fichier est ici ; le fichier lui-même vit dans la réserve
+-- (Storage), dans le panier « factures » qui n'est pas public. Une facture
+-- d'électricité porte le nom, l'adresse et le numéro de contrat de la maison :
+-- elle ne doit pas être lisible par quelqu'un qui devinerait son adresse.
+create table if not exists public.pieces_charge (
+  id         text primary key,
+  charge_id  text not null references public.charges(id) on delete cascade,
+  chemin     text not null,
+  nom        text not null default '',
+  type       text not null default '',
+  taille     integer not null default 0,
+  ajoutee_le date not null default current_date
+);
+
+create index if not exists pieces_charge_charge on public.pieces_charge(charge_id);
+
 -- =====================================================================
 --  La caisse commune des courses
 -- =====================================================================
@@ -205,6 +222,7 @@ alter table public.membres      enable row level security;
 alter table public.charges      enable row level security;
 alter table public.parts_charge enable row level security;
 alter table public.reglements   enable row level security;
+alter table public.pieces_charge enable row level security;
 alter table public.cotisations  enable row level security;
 alter table public.achats       enable row level security;
 alter table public.ardoise      enable row level security;
@@ -216,7 +234,7 @@ declare
   supabase boolean := exists (select 1 from pg_roles where rolname = 'authenticated');
 begin
   foreach t in array array[
-    'foyers', 'membres', 'charges', 'parts_charge', 'reglements',
+    'foyers', 'membres', 'charges', 'parts_charge', 'reglements', 'pieces_charge',
     'cotisations', 'achats', 'ardoise', 'reglages'
   ]
   loop
@@ -245,3 +263,51 @@ begin
   end if;
 end
 $droits$;
+
+-- =====================================================================
+--  La réserve des pièces jointes
+-- =====================================================================
+--
+-- Le panier « factures » garde les photos et les PDF des factures. Il n'est
+-- PAS public : l'application demande à Supabase une adresse temporaire (une
+-- heure) chaque fois qu'on ouvre une pièce. Une facture d'électricité porte le
+-- nom et l'adresse de la maison ; une adresse publique et permanente, une fois
+-- partagée par erreur, ne se reprend pas.
+--
+-- Tout le bloc est gardé : sur une base PostgreSQL ordinaire — celle du script
+-- de vérification — le schéma « storage » de Supabase n'existe pas, et le
+-- fichier doit quand même se rejouer sans broncher.
+do $reserve$
+declare
+  panier text := 'factures';
+  regle  text;
+begin
+  if to_regclass('storage.buckets') is null then
+    return;
+  end if;
+
+  execute format(
+    'insert into storage.buckets (id, name, public) values (%L, %L, false) on conflict (id) do nothing',
+    panier, panier
+  );
+
+  -- Une règle par geste : Supabase n'accepte pas « for all » sur les objets.
+  foreach regle in array array['select', 'insert', 'update', 'delete']
+  loop
+    execute format('drop policy if exists "factures de la maisonnee %s" on storage.objects', regle);
+    if exists (select 1 from pg_roles where rolname = 'authenticated') then
+      if regle = 'insert' then
+        execute format(
+          'create policy "factures de la maisonnee %s" on storage.objects for insert to authenticated with check (bucket_id = %L)',
+          regle, panier
+        );
+      else
+        execute format(
+          'create policy "factures de la maisonnee %s" on storage.objects for %s to authenticated using (bucket_id = %L)',
+          regle, regle, panier
+        );
+      end if;
+    end if;
+  end loop;
+end
+$reserve$;

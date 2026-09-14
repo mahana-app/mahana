@@ -123,6 +123,7 @@ function LigneCharge({ charge, ouvrir }: { charge: Charge; ouvrir: (vue: Vue) =>
   const soldee = chargeSoldee(maison, charge)
   const reste = maison.foyers.reduce((somme, f) => somme + resteSurCharge(maison, charge, f.id), 0)
   const avancee = foyerDe(maison, charge.avanceePar)
+  const pieces = maison.piecesCharge.filter((p) => p.chargeId === charge.id).length
 
   return (
     <button
@@ -152,6 +153,14 @@ function LigneCharge({ charge, ouvrir }: { charge: Charge; ouvrir: (vue: Vue) =>
               <span className="pilule ocre">À payer</span>
             ) : (
               <span className="pilule corail">Reste {fcfp(reste)}</span>
+            )}
+            {/* Un repère discret : d'un coup d'œil on sait quelles factures
+                ont leur papier et lesquelles restent à photographier. */}
+            {pieces > 0 && (
+              <span className="pilule lagon" title={`${pieces} pièce${pieces > 1 ? 's' : ''} jointe${pieces > 1 ? 's' : ''}`}>
+                <Symbole nom="papier" taille={13} />
+                {pieces > 1 ? pieces : ''}
+              </span>
             )}
           </div>
         </div>

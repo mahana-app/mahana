@@ -20,6 +20,7 @@ export type NomSymbole =
   | 'echange'
   | 'calendrier'
   | 'crayon'
+  | 'papier'
 
 const TRACES: Record<NomSymbole, JSX.Element> = {
   /* le logo : le toit du fare, et la ligne du lagon dessous */
@@ -79,6 +80,14 @@ const TRACES: Record<NomSymbole, JSX.Element> = {
     <>
       <path d="M4 20l1.1-4 10-10a2.1 2.1 0 013 3l-10 10z" />
       <path d="M13.4 7.6l3 3" />
+    </>
+  ),
+  /* une feuille au coin corné : la facture reçue du fournisseur */
+  papier: (
+    <>
+      <path d="M6 2.8h7.6l4.4 4.4v14H6z" />
+      <path d="M13.6 2.8v4.4H18" />
+      <path d="M8.8 12.6h6.4M8.8 16.2h6.4" />
     </>
   ),
 }

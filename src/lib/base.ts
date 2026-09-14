@@ -26,6 +26,7 @@ export type NomTable =
   | 'membres'
   | 'charges'
   | 'parts_charge'
+  | 'pieces_charge'
   | 'reglements'
   | 'cotisations'
   | 'achats'
@@ -37,6 +38,7 @@ const RUBRIQUE: Record<NomTable, keyof Maison> = {
   membres: 'membres',
   charges: 'charges',
   parts_charge: 'partsCharge',
+  pieces_charge: 'piecesCharge',
   reglements: 'reglements',
   cotisations: 'cotisations',
   achats: 'achats',

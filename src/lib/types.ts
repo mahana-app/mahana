@@ -93,6 +93,29 @@ export type PartCharge = {
   montant: number
 }
 
+/**
+ * La facture elle-même : le PDF du fournisseur, ou la photo du papier.
+ *
+ * Une facture peut avoir plusieurs pièces — un relevé tient souvent sur deux
+ * pages, et on photographie parfois le recto puis le verso. D'où une table à
+ * part plutôt qu'une colonne sur la charge.
+ *
+ * Le fichier ne vit pas ici : seul son chemin dans la réserve est gardé.
+ */
+export type PieceCharge = {
+  id: Identifiant
+  chargeId: Identifiant
+  /** Le chemin du fichier dans la réserve. */
+  chemin: string
+  /** Le nom d'origine, pour que la personne s'y retrouve. */
+  nom: string
+  /** « image/jpeg », « application/pdf »… */
+  type: string
+  /** En octets, pour l'afficher et pour surveiller la place occupée. */
+  taille: number
+  ajouteeLe: string
+}
+
 /** Un remboursement entre foyers, pour solder une part de charge. */
 export type Reglement = {
   id: Identifiant
@@ -174,6 +197,7 @@ export type Maison = {
   membres: Membre[]
   charges: Charge[]
   partsCharge: PartCharge[]
+  piecesCharge: PieceCharge[]
   reglements: Reglement[]
   cotisations: Cotisation[]
   achats: Achat[]
@@ -186,6 +210,7 @@ export const MAISON_VIDE: Maison = {
   membres: [],
   charges: [],
   partsCharge: [],
+  piecesCharge: [],
   reglements: [],
   cotisations: [],
   achats: [],
