@@ -46,7 +46,8 @@ déjà soldés se remettraient à bouger tout seuls.
 
 ### La facture en image
 
-Chaque facture peut porter sa **photo ou son PDF**. Une facture d'électricité
+Chaque facture peut porter sa **photo ou son PDF** — à la saisie, pendant
+qu'elle est encore dans la main, ou plus tard depuis l'écran de la facture. Une facture d'électricité
 se règle entre les deux foyers des semaines après son arrivée, et le papier,
 lui, s'égare : quand quelqu'un demande « c'est quoi ce montant ? », la réponse
 doit être dans l'app. La liste des factures porte un petit repère 📄 sur celles

@@ -36,7 +36,9 @@ type Actions = {
   ajouterCharge: (
     charge: Omit<Charge, 'id' | 'creeeLe' | 'avanceePar' | 'payeeLe'>,
     partsChoisies?: Record<Identifiant, number>,
-  ) => Promise<void>
+    /* Rend l'identifiant de la facture créée : l'écran de saisie s'en sert
+       pour y accrocher la photo prise juste avant. */
+  ) => Promise<Identifiant>
   modifierCharge: (id: Identifiant, changements: Partial<Charge>) => Promise<void>
   supprimerCharge: (id: Identifiant) => Promise<void>
   /** Entre d'un coup les factures d'un relevé de fournisseur. Rend le nombre
@@ -202,6 +204,7 @@ export function FournisseurMaison({ children }: { children: ReactNode }) {
         const part: PartCharge = { id: nouvelId(), chargeId: id, foyerId, montant }
         await poser('parts_charge', part as unknown as Record<string, unknown>)
       }
+      return id
     },
     [poser],
   )

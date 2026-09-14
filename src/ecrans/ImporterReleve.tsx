@@ -84,7 +84,8 @@ export default function ImporterReleve({ fermer }: { fermer: () => void }) {
         <input
           ref={champ}
           type="file"
-          accept=".csv,text/csv,text/plain"
+          // Pas de filtre sur le type : sur Android, « .csv » grise le fichier
+          // qu'on vient de télécharger et on ne peut plus le choisir.
           style={{ display: 'none' }}
           onChange={(e) => void recevoir(e.target.files?.[0])}
         />
