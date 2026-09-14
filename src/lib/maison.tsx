@@ -13,6 +13,7 @@ import { jourDe, repartir } from './argent'
 import { ecrireMoi, lireMoi } from './moi'
 import { retirerFichier } from './fichiers'
 import type { Fichier } from './fichiers'
+import type { LigneRelevee } from './releve'
 import type {
   Achat,
   Charge,
@@ -22,6 +23,7 @@ import type {
   LigneArdoise,
   Maison,
   Membre,
+  NatureCharge,
   PartCharge,
   Reglement,
 } from './types'
@@ -36,6 +38,12 @@ type Actions = {
   ) => Promise<void>
   modifierCharge: (id: Identifiant, changements: Partial<Charge>) => Promise<void>
   supprimerCharge: (id: Identifiant) => Promise<void>
+  /** Entre d'un coup les factures d'un relevé de fournisseur. Rend le nombre
+      réellement ajouté : celles déjà connues sont passées. */
+  importerCharges: (
+    lignes: LigneRelevee[],
+    choix: { nature: NatureCharge; avanceePar: Identifiant | null; dejaRemboursees: boolean },
+  ) => Promise<number>
   noterPaiement: (chargeId: Identifiant, foyerId: Identifiant, le: string) => Promise<void>
   annulerPaiement: (chargeId: Identifiant) => Promise<void>
   ajouterReglement: (reglement: Omit<Reglement, 'id'>) => Promise<void>
@@ -192,6 +200,62 @@ export function FournisseurMaison({ children }: { children: ReactNode }) {
         const part: PartCharge = { id: nouvelId(), chargeId: id, foyerId, montant }
         await poser('parts_charge', part as unknown as Record<string, unknown>)
       }
+    },
+    [poser],
+  )
+
+  const importerCharges = useCallback<Actions['importerCharges']>(
+    async (lignes, choix) => {
+      // Le relevé d'EDT contient toute l'année : on le reprend en septembre
+      // comme en mars, et il ne doit jamais créer de doublon. Le numéro de
+      // facture du fournisseur est ce qui permet de reconnaître une facture
+      // déjà entrée.
+      const connues = new Set(
+        maisonRef.current.charges.map((c) => c.reference).filter((r) => r !== ''),
+      )
+      let ajoutees = 0
+
+      for (const ligne of lignes) {
+        if (ligne.reference && connues.has(ligne.reference)) continue
+        connues.add(ligne.reference)
+
+        const id = nouvelId()
+        const charge: Charge = {
+          id,
+          nature: choix.nature,
+          libelle: '',
+          periode: ligne.periode,
+          montant: ligne.montant,
+          avanceePar: choix.avanceePar,
+          payeeLe: choix.avanceePar ? ligne.date : null,
+          note: '',
+          reference: ligne.reference,
+          creeeLe: jourDe(),
+        }
+        await poser('charges', charge as unknown as Record<string, unknown>)
+
+        const parts = repartir(ligne.montant, maisonRef.current.foyers)
+        for (const [foyerId, montant] of Object.entries(parts)) {
+          const part: PartCharge = { id: nouvelId(), chargeId: id, foyerId, montant }
+          await poser('parts_charge', part as unknown as Record<string, unknown>)
+          // Des factures d'il y a six mois sont presque toujours déjà réglées
+          // entre les deux foyers. Les entrer sans le dire ferait apparaître
+          // une dette qui n'existe pas — et c'est le genre de chiffre faux
+          // qu'on ne remarque qu'après une dispute.
+          if (choix.dejaRemboursees && choix.avanceePar && foyerId !== choix.avanceePar && montant > 0) {
+            await poser('reglements', {
+              id: nouvelId(),
+              chargeId: id,
+              foyerId,
+              montant,
+              le: ligne.date,
+              note: 'relevé importé',
+            })
+          }
+        }
+        ajoutees++
+      }
+      return ajoutees
     },
     [poser],
   )
@@ -358,6 +422,7 @@ export function FournisseurMaison({ children }: { children: ReactNode }) {
       annulerPaiement,
       ajouterReglement,
       supprimerReglement,
+      importerCharges,
       ajouterPiece,
       supprimerPiece,
       ajouterCotisation,
@@ -390,6 +455,7 @@ export function FournisseurMaison({ children }: { children: ReactNode }) {
       annulerPaiement,
       ajouterReglement,
       supprimerReglement,
+      importerCharges,
       ajouterPiece,
       supprimerPiece,
       ajouterCotisation,

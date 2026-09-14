@@ -4,6 +4,7 @@
 export type Vue =
   | { nom: 'charge'; id: string }
   | { nom: 'nouvelle-charge' }
+  | { nom: 'importer-releve' }
   | { nom: 'nouvel-achat' }
   | { nom: 'nouvelle-ardoise' }
   | { nom: 'maisonnee' }

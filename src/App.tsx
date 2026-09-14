@@ -12,6 +12,7 @@ import Ardoise from './ecrans/Ardoise'
 import Caisse from './ecrans/Caisse'
 import Charges from './ecrans/Charges'
 import Enfant from './ecrans/Enfant'
+import ImporterReleve from './ecrans/ImporterReleve'
 import Connexion from './ecrans/Connexion'
 import Maisonnee from './ecrans/Maisonnee'
 import NouvelAchat from './ecrans/NouvelAchat'
@@ -71,6 +72,8 @@ export default function App() {
         return <UneCharge id={vue.id} fermer={fermer} />
       case 'nouvelle-charge':
         return <NouvelleCharge fermer={fermer} />
+      case 'importer-releve':
+        return <ImporterReleve fermer={fermer} />
       case 'nouvel-achat':
         return <NouvelAchat fermer={fermer} />
       case 'nouvelle-ardoise':

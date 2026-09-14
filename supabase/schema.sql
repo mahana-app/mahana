@@ -96,6 +96,14 @@ create table if not exists public.charges (
 
 create index if not exists charges_periode on public.charges(periode);
 
+-- Le numéro de la facture chez le fournisseur. Il sert à reconnaître une
+-- facture déjà entrée : le relevé qu'on télécharge chez EDT contient toute
+-- l'année, et on doit pouvoir le reprendre sans créer de doublons.
+alter table public.charges
+  add column if not exists reference text not null default '';
+
+create index if not exists charges_reference on public.charges(reference);
+
 -- La part d'un foyer dans une facture, FIGÉE au moment de la saisie.
 -- Elle n'est jamais recalculée : si la répartition de la maison change en
 -- janvier, les factures de décembre gardent l'ancienne, sinon des comptes

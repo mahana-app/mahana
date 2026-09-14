@@ -27,7 +27,8 @@ export const estUneImage = (type: string) => type.startsWith('image/')
 /** « 1,2 Mo », « 340 ko ». */
 export function poids(octets: number): string {
   if (octets >= 1024 * 1024) return `${(octets / 1024 / 1024).toFixed(1).replace('.', ',')} Mo`
-  return `${Math.round(octets / 1024)} ko`
+  // Jamais « 0 ko » : un fichier qui pèse zéro, ça ne rassure personne.
+  return `${Math.max(1, Math.round(octets / 1024))} ko`
 }
 
 /**

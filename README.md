@@ -44,6 +44,45 @@ Les parts sont **figées au moment de la saisie**. Changer la répartition de la
 maison en janvier ne touche pas aux factures de décembre — sinon des comptes
 déjà soldés se remettraient à bouger tout seuls.
 
+### La facture en image
+
+Chaque facture peut porter sa **photo ou son PDF**. Une facture d'électricité
+se règle entre les deux foyers des semaines après son arrivée, et le papier,
+lui, s'égare : quand quelqu'un demande « c'est quoi ce montant ? », la réponse
+doit être dans l'app. La liste des factures porte un petit repère 📄 sur celles
+qui ont leur papier.
+
+Les fichiers ne sont **jamais publics**. L'app demande à Supabase une adresse
+valable une heure à chaque ouverture — une facture porte le nom, l'adresse et
+le numéro de contrat de la maison, et une adresse publique et permanente, une
+fois partagée par erreur, ne se reprend pas. Les photos sont réduites à
+1400 pixels avant l'envoi : un téléphone sort 4 Mo là où 400 ko suffisent à
+relire un montant, et la réserve gratuite fait un gigaoctet.
+
+### Importer une année d'un coup
+
+EDT met à disposition, dans l'espace client, un fichier qui liste **toutes les
+factures de l'année** avec leur date et leur montant. Le bouton *Importer un
+relevé du fournisseur*, en bas de l'écran des charges, le lit et en fait des
+factures.
+
+Deux précautions tiennent cet écran :
+
+- **On montre ce qu'on a compris avant d'écrire quoi que ce soit.** Un import
+  qui se fait tout seul et se trompe coûte plus cher que la saisie à la main.
+- **Une facture déjà entrée est reconnue** par son numéro chez le fournisseur
+  (`F202609010958`) et laissée de côté. Le même fichier peut donc être repris
+  chaque mois sans jamais créer de doublon.
+
+Une case, cochée par défaut, dit que ces vieilles factures sont **déjà
+remboursées entre les deux foyers** : les entrer sans le dire ferait
+apparaître une dette qui n'existe pas, et c'est le genre de chiffre faux qu'on
+ne remarque qu'après une dispute.
+
+Le fichier n'a pas besoin d'être celui d'EDT : les colonnes sont cherchées par
+leur intitulé, pas par leur position, et les deux écritures de date
+(`2026-09-07` et `07/09/2026`) sont comprises.
+
 ## La caisse commune
 
 Chacun fait ses courses de son côté, mais certaines choses s'achètent en gros
@@ -193,6 +232,8 @@ src/
     base.ts           où vivent les données — serveur ou mode essai
     maison.tsx        l'état partagé par tous les écrans
     argent.ts         les francs, les mois, et tous les calculs
+    fichiers.ts       les photos et PDF des factures — réserve ou navigateur
+    releve.ts         lire le relevé de factures du fournisseur
     navigation.ts     les écrans qui s'ouvrent par-dessus les onglets
   composants/         en-tête, onglets, symboles, bandeaux
   ecrans/             un fichier par écran

@@ -77,6 +77,12 @@ export type Charge = {
   /** Le jour où le fournisseur a été payé. */
   payeeLe: string | null
   note: string
+  /**
+   * Le numéro de la facture chez le fournisseur — « F202609010958 » chez EDT.
+   * Vide pour une facture saisie à la main. Il sert à ne pas importer deux
+   * fois le même relevé : on le compare avant d'ajouter quoi que ce soit.
+   */
+  reference: string
   creeeLe: string
 }
 

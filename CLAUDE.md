@@ -96,9 +96,41 @@ fois**. Le passage 1 ne prouve rien (base vierge) ; ce sont les passages 2 et 3
 qui attrapent les bugs. **Aucun changement de schéma ne part sans ce script au
 vert.**
 
-Ce qui est propre à Supabase (le rôle `authenticated`) doit être **gardé** par
-un `if exists (select 1 from pg_roles …)`, sinon le script de vérification, qui
-tourne sur un PostgreSQL ordinaire, échoue à tort.
+Ce qui est propre à Supabase (le rôle `authenticated`, le schéma `storage`)
+doit être **gardé** — par un `if exists (select 1 from pg_roles …)`, ou par un
+`if to_regclass('storage.buckets') is null then return; end if;` — sinon le
+script de vérification, qui tourne sur un PostgreSQL ordinaire, échoue à tort.
+
+## Les fichiers des factures
+
+Les photos et PDF des factures ne vivent pas dans la base mais dans la réserve
+(Storage), panier `factures`, qui **n'est pas public** : `src/lib/fichiers.ts`
+demande une adresse signée valable une heure à chaque ouverture. Une facture
+porte le nom, l'adresse et le numéro de contrat de la maison ; une adresse
+publique et permanente, une fois partagée par erreur, ne se reprend pas.
+
+Comme pour les données, il existe une deuxième version qui garde tout dans le
+navigateur (IndexedDB) : elle sert au mode essai, et surtout à mettre les
+écrans à l'épreuve dans un vrai navigateur sans dépendre d'un serveur.
+
+Supprimer une facture ou une pièce **retire aussi le fichier**. Sans ça la
+réserve se remplit de factures que plus rien ne désigne, et personne ne saura
+les retrouver.
+
+## Importer un relevé de fournisseur
+
+`src/lib/releve.ts` lit le CSV qu'on télécharge chez EDT. Deux règles :
+
+- Les colonnes se cherchent **par leur intitulé**, jamais par leur position :
+  le séparateur, l'ordre et l'écriture des dates changent d'un fournisseur à
+  l'autre, et parfois d'une année à l'autre chez le même.
+- Une facture entrée porte le **numéro du fournisseur** (`Charge.reference`).
+  C'est lui qui empêche d'importer deux fois le même relevé — le fichier
+  contient toute l'année et sera repris chaque mois.
+
+Et une règle d'écran : on montre ce qu'on a compris **avant** d'écrire quoi que
+ce soit. Un import qui se fait tout seul et se trompe coûte plus cher que la
+saisie à la main.
 
 ## L'entrée : un code, puis une politesse
 

@@ -67,6 +67,17 @@ export default function Charges({ ouvrir }: { ouvrir: (vue: Vue) => void }) {
       <button type="button" className="bouton" onClick={() => ouvrir({ nom: 'nouvelle-charge' })}>
         + Ajouter une facture
       </button>
+
+      {/* Le relevé du fournisseur contient toute l'année : douze factures
+          entrées d'un coup plutôt que douze saisies à la main. */}
+      <button
+        type="button"
+        className="bouton-fin"
+        style={{ width: '100%', marginTop: 10 }}
+        onClick={() => ouvrir({ nom: 'importer-releve' })}
+      >
+        Importer un relevé du fournisseur
+      </button>
     </div>
   )
 }

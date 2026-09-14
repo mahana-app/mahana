@@ -11,6 +11,8 @@
   site `sweet-home-mahina.netlify.app` peut être supprimé quand on y pensera.
 - **L'entrée se fait avec un seul code**, le même pour toute la maison, suivi
   d'une question « qui es-tu ? » posée une fois par téléphone.
+- **Chaque facture peut porter sa photo ou son PDF**, et le relevé annuel du
+  fournisseur s'importe d'un coup depuis l'écran des charges.
 
 ## Ce qui reste à faire, tout de suite
 
@@ -25,6 +27,10 @@ Authentication → Users → Add user → **Create new user** :
 | Password | le code choisi, six caractères minimum |
 | Auto Confirm User | **coché** |
 
+**Recoller `supabase/schema.sql` en entier** dans l'éditeur SQL : il crée la
+table des pièces jointes et le panier `factures` de la réserve, sans quoi
+l'ajout d'une photo de facture échouera.
+
 L'ancien compte `maifanoyolande@gmail.com` ne sert plus : on peut le
 supprimer ou le laisser dormir, l'app ne s'en sert pas.
 
@@ -34,7 +40,9 @@ supprimer ou le laisser dormir, l'app ne s'en sert pas.
    de Mahana, figés au jour de l'installation) : appui long → Désinstaller,
    puis Chrome → `sweet-home.vercel.app` → menu ⋮ → Installer l'application.
 2. Donner le code aux trois autres.
-3. Renseigner la maisonnée dans l'app : les prénoms, la part de chaque foyer
+3. Importer le relevé EDT de l'année (Charges → *Importer un relevé du
+   fournisseur*) : les douze factures de 2026 entrent d'un coup.
+4. Renseigner la maisonnée dans l'app : les prénoms, la part de chaque foyer
    dans les charges, ce que chacun verse dans la caisse.
 
 ## Ce qui n'est pas encore construit

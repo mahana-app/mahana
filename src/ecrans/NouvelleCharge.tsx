@@ -165,7 +165,7 @@ export default function NouvelleCharge({ fermer }: { fermer: () => void }) {
         disabled={montant <= 0 || ecart !== 0}
         onClick={() => {
           void ajouterCharge(
-            { nature, libelle: libelle.trim(), periode, montant, note: note.trim() },
+            { nature, libelle: libelle.trim(), periode, montant, note: note.trim(), reference: '' },
             parts,
           )
           fermer()
