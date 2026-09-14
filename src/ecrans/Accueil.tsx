@@ -7,9 +7,25 @@
 import Entete from '../composants/Entete'
 import Symbole from '../composants/Symbole'
 import { QuiDoitQuoi } from './Charges'
-import { chargeSoldee, duALaRoulotte, etatCaisse, fcfp, moisDe, moisEnMots } from '../lib/argent'
+import {
+  chargeSoldee,
+  duALaRoulotte,
+  etatCaisse,
+  fcfp,
+  jourDe,
+  moisDe,
+  moisEnMots,
+} from '../lib/argent'
 import { useMaison } from '../lib/maison'
 import { salutation } from '../lib/moi'
+import {
+  dansCombien,
+  joursAvant,
+  jourEnMots,
+  passagesAVenir,
+  sortirCeWeekEnd,
+  tourneeDe,
+} from '../lib/dechets'
 import { membreDe } from '../lib/types'
 import type { Onglet } from '../composants/BarreOnglets'
 import type { Vue } from '../lib/navigation'
@@ -29,6 +45,13 @@ export default function Accueil({
   const moi = membreDe(maison, moiId)
   const enAttente = maison.charges.filter((c) => !chargeSoldee(maison, c))
   const aPayer = enAttente.filter((c) => !c.avanceePar)
+
+  // Le ramassage des encombrants ne passe qu'une semaine par mois : manqué,
+  // c'est un mois de plus avec le vieux canapé sous l'auvent.
+  const dechets = maison.reglages.dechets
+  const prochainRamassage = passagesAVenir(dechets, jourDe())[0]
+  const dansCombienDeJours = prochainRamassage ? joursAvant(prochainRamassage, jourDe()) : null
+  const aSortir = dansCombienDeJours !== null && sortirCeWeekEnd(dansCombienDeJours)
 
   return (
     <div className="page">
@@ -106,6 +129,55 @@ export default function Accueil({
               {aPayer.length > 0
                 ? `dont ${aPayer.length} pas encore payée${aPayer.length > 1 ? 's' : ''} au fournisseur`
                 : 'électricité, eau, internet, impôts, déchets'}
+            </div>
+          </div>
+          <Symbole nom="fleche" taille={18} couleur="var(--estompe)" />
+        </div>
+      </button>
+
+
+      {/* Les déchets verts : la carte ne prend le devant que quand le passage
+          approche. Le reste du mois, elle reste discrète. */}
+      <button
+        type="button"
+        className="carte"
+        style={{
+          width: '100%',
+          border: 0,
+          textAlign: 'left',
+          background: aSortir ? 'var(--corail-pale)' : undefined,
+        }}
+        onClick={() => ouvrir({ nom: 'dechets' })}
+      >
+        <div className="rangee">
+          <span
+            className="pastille"
+            style={{
+              width: 46,
+              height: 46,
+              background: aSortir ? 'var(--creme)' : 'var(--feuille-pale)',
+              color: 'var(--feuille)',
+            }}
+          >
+            <Symbole nom="poubelle" taille={21} />
+          </span>
+          <div style={{ flex: 1, minWidth: 0 }}>
+            <div className="kicker">Déchets verts et encombrants</div>
+            <div style={{ fontWeight: 700 }}>
+              {!dechets.tournee
+                ? 'Choisir notre tournée'
+                : !prochainRamassage
+                  ? 'Pas de date connue'
+                  : aSortir
+                    ? 'À sortir maintenant'
+                    : `Passage le ${jourEnMots(prochainRamassage)}`}
+            </div>
+            <div className="doux mini">
+              {!dechets.tournee
+                ? 'pour connaître le jour de passage'
+                : !prochainRamassage
+                  ? 'ajouter les semaines du prochain calendrier'
+                  : `${tourneeDe(dechets.tournee)?.jour} · ${dansCombienDeJours === null ? '' : dansCombien(dansCombienDeJours)}`}
             </div>
           </div>
           <Symbole nom="fleche" taille={18} couleur="var(--estompe)" />

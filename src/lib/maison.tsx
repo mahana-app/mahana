@@ -14,6 +14,7 @@ import { ecrireMoi, lireMoi } from './moi'
 import { retirerFichier } from './fichiers'
 import type { Fichier } from './fichiers'
 import type { LigneRelevee } from './releve'
+import type { ReglagesDechets } from './dechets'
 import type {
   Achat,
   Charge,
@@ -66,6 +67,7 @@ type Actions = {
   ajouterMembre: (membre: Omit<Membre, 'id'>) => Promise<void>
   modifierMembre: (id: Identifiant, changements: Partial<Membre>) => Promise<void>
   supprimerMembre: (id: Identifiant) => Promise<void>
+  reglerDechets: (dechets: ReglagesDechets) => Promise<void>
   reglerCotisationMensuelle: (montants: Record<Identifiant, number>) => Promise<void>
   /* le reste */
   recharger: () => Promise<void>
@@ -392,6 +394,16 @@ export function FournisseurMaison({ children }: { children: ReactNode }) {
     setMoiId(id)
   }, [])
 
+  const reglerDechets = useCallback<Actions['reglerDechets']>(async (dechets) => {
+    try {
+      await base.reglerLe('dechets', dechets)
+      setMaison((p) => ({ ...p, reglages: { ...p.reglages, dechets } }))
+      setErreur(null)
+    } catch (e) {
+      setErreur(e instanceof Error ? e.message : String(e))
+    }
+  }, [])
+
   const reglerCotisationMensuelle = useCallback<Actions['reglerCotisationMensuelle']>(
     async (montants) => {
       try {
@@ -437,6 +449,7 @@ export function FournisseurMaison({ children }: { children: ReactNode }) {
       ajouterMembre,
       modifierMembre,
       supprimerMembre,
+      reglerDechets,
       reglerCotisationMensuelle,
       recharger,
     }),
@@ -470,6 +483,7 @@ export function FournisseurMaison({ children }: { children: ReactNode }) {
       ajouterMembre,
       modifierMembre,
       supprimerMembre,
+      reglerDechets,
       reglerCotisationMensuelle,
       recharger,
     ],

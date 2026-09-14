@@ -11,6 +11,9 @@
   site `sweet-home-mahina.netlify.app` peut être supprimé quand on y pensera.
 - **L'entrée se fait avec un seul code**, le même pour toute la maison, suivi
   d'une question « qui es-tu ? » posée une fois par téléphone.
+- **Le ramassage des déchets verts et des encombrants** est dans l'app :
+  calendrier de la commune, tournée de la maison, et un rappel sur l'accueil
+  cinq jours avant le passage.
 - **Chaque facture peut porter sa photo ou son PDF**, et le relevé annuel du
   fournisseur s'importe d'un coup depuis l'écran des charges.
 
@@ -42,7 +45,9 @@ supprimer ou le laisser dormir, l'app ne s'en sert pas.
 2. Donner le code aux trois autres.
 3. Importer le relevé EDT de l'année (Charges → *Importer un relevé du
    fournisseur*) : les douze factures de 2026 entrent d'un coup.
-4. Renseigner la maisonnée dans l'app : les prénoms, la part de chaque foyer
+4. Choisir la tournée de la maison (Accueil → *Déchets verts et encombrants*) :
+   P1 à P4 selon le quartier.
+5. Renseigner la maisonnée dans l'app : les prénoms, la part de chaque foyer
    dans les charges, ce que chacun verse dans la caisse.
 
 ## Ce qui n'est pas encore construit

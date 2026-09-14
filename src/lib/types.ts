@@ -9,6 +9,9 @@
    le franc CFP n'en a pas, et un arrondi à la virgule finirait par créer des
    écarts que personne ne saurait expliquer. */
 
+import { DECHETS_PAR_DEFAUT } from './dechets'
+import type { ReglagesDechets } from './dechets'
+
 export type Identifiant = string
 
 /** Un foyer : une famille de la maison. */
@@ -193,9 +196,14 @@ export type LigneArdoise = {
 export type Reglages = {
   /** Ce que chaque foyer doit verser dans la caisse chaque mois. */
   cotisationMensuelle: Record<Identifiant, number>
+  /** La tournée de la maison et les semaines de ramassage de la commune. */
+  dechets: ReglagesDechets
 }
 
-export const REGLAGES_PAR_DEFAUT: Reglages = { cotisationMensuelle: {} }
+export const REGLAGES_PAR_DEFAUT: Reglages = {
+  cotisationMensuelle: {},
+  dechets: DECHETS_PAR_DEFAUT,
+}
 
 /** Tout ce que l'app garde. Une seule maison, donc un seul objet. */
 export type Maison = {

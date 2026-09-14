@@ -21,6 +21,7 @@ export type NomSymbole =
   | 'calendrier'
   | 'crayon'
   | 'papier'
+  | 'poubelle'
 
 const TRACES: Record<NomSymbole, JSX.Element> = {
   /* le logo : le toit du fare, et la ligne du lagon dessous */
@@ -80,6 +81,15 @@ const TRACES: Record<NomSymbole, JSX.Element> = {
     <>
       <path d="M4 20l1.1-4 10-10a2.1 2.1 0 013 3l-10 10z" />
       <path d="M13.4 7.6l3 3" />
+    </>
+  ),
+  /* un bac roulant : le ramassage des déchets verts et des encombrants */
+  poubelle: (
+    <>
+      <path d="M4.6 7.4h13.6v10.2a2 2 0 01-2 2H6.6a2 2 0 01-2-2z" />
+      <path d="M3 7.4h16.8" />
+      <path d="M9 4.4h4.8v3H9z" />
+      <path d="M9.4 11v5M13.4 11v5" />
     </>
   ),
   /* une feuille au coin corné : la facture reçue du fournisseur */

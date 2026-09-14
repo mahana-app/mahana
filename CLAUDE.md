@@ -117,6 +117,18 @@ Supprimer une facture ou une pièce **retire aussi le fichier**. Sans ça la
 réserve se remplit de factures que plus rien ne désigne, et personne ne saura
 les retrouver.
 
+## Le calendrier des déchets
+
+Le calendrier de ramassage de la commune est une **donnée**, rangée dans les
+réglages (`reglages.dechets`), avec celui du 2ᵉ semestre 2026 comme point de
+départ dans `src/lib/dechets.ts`. Il s'édite depuis l'écran. Ne pas le figer
+dans le code : la commune en publie un nouveau tous les six mois, et Maru ne
+doit pas dépendre de nous pour l'entrer.
+
+Et une honnêteté à garder : la commune décale ses tournées les semaines de
+jours fériés. L'écran le dit, avec le numéro du Centre technique. Une date
+affichée sans réserve serait une promesse qu'on ne tient pas.
+
 ## Importer un relevé de fournisseur
 
 `src/lib/releve.ts` lit le CSV qu'on télécharge chez EDT. Deux règles :

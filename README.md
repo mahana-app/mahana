@@ -83,6 +83,37 @@ Le fichier n'a pas besoin d'être celui d'EDT : les colonnes sont cherchées par
 leur intitulé, pas par leur position, et les deux écritures de date
 (`2026-09-07` et `07/09/2026`) sont comprises.
 
+## Les déchets verts et les encombrants
+
+La commune de Mahina passe **une semaine par mois**, et un seul jour dans cette
+semaine selon le quartier. Le calendrier papier finit sur le frigo puis à la
+poubelle, et on rate le passage — qui ne revient que le mois suivant.
+
+Secteur **Pointe-Vénus**, l'ordre de ramassage dans la semaine :
+
+| | quartiers | jour |
+|---|---|---|
+| **P1** | Fond de la Pointe Vénus jusqu'au cimetière catholique, Taputuarai 1 & 2, Bontan, Auguste, Coulon, Helme | lundi |
+| **P2** | Titine, Paofai, Aumeran | mardi |
+| **P3** | Raveino, quartier Tafai jusqu'à la Socredo | mercredi |
+| **P4** | Route du stade et bords de route | jeudi |
+
+On choisit sa tournée une fois. L'accueil affiche ensuite le prochain passage,
+et **passe au corail cinq jours avant** — les déchets peuvent être déposés le
+week-end précédent, c'est le seul moment où toute la maison est là pour porter
+un canapé.
+
+Le calendrier est une **donnée, pas du code** : celui du 2ᵉ semestre 2026 est
+le point de départ, et les semaines s'ajoutent ou se retirent depuis l'écran.
+Quand la commune publiera celui de 2027, personne n'aura besoin de toucher au
+code.
+
+L'écran rappelle aussi ce qui est ramassé, ce qui ne l'est pas (le verre, les
+batteries, la peinture, les gravats) et le numéro du Centre technique. Et il
+dit ce que la commune écrit elle-même : **les semaines de jours fériés, les
+tournées sont décalées** et l'annonce passe sur la page Facebook de la commune.
+Mieux vaut le dire que laisser croire à une date sûre.
+
 ## La caisse commune
 
 Chacun fait ses courses de son côté, mais certaines choses s'achètent en gros
@@ -234,6 +265,7 @@ src/
     argent.ts         les francs, les mois, et tous les calculs
     fichiers.ts       les photos et PDF des factures — réserve ou navigateur
     releve.ts         lire le relevé de factures du fournisseur
+    dechets.ts        le calendrier de ramassage de la commune
     navigation.ts     les écrans qui s'ouvrent par-dessus les onglets
   composants/         en-tête, onglets, symboles, bandeaux
   ecrans/             un fichier par écran
