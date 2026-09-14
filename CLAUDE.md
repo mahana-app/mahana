@@ -101,6 +101,22 @@ doit être **gardé** — par un `if exists (select 1 from pg_roles …)`, ou pa
 `if to_regclass('storage.buckets') is null then return; end if;` — sinon le
 script de vérification, qui tourne sur un PostgreSQL ordinaire, échoue à tort.
 
+## La roulotte partage les charges, et rien d'autre
+
+Ils sont **trois** à se partager les factures de la maison : LA ROULOTTE la
+moitié, chaque famille un quart. La roulotte est l'entreprise, à la même
+adresse — elle consomme sa part d'électricité et d'eau.
+
+Mais elle **ne vit pas ici** : pas de courses en commun, pas d'ardoise, pas de
+personnes. Le drapeau `Foyer.estUneEntreprise` la tient hors de ces écrans, et
+`foyersFamille(maison)` est à utiliser partout où il est question de vivre ici
+(caisse, ardoise, « qui es-tu ? »). Les charges, elles, prennent
+`maison.foyers` en entier.
+
+Conséquence à ne pas oublier : **un écran qui suppose deux participants est
+faux**. Quand un seul avance la facture, DEUX lui doivent — c'est ce qui a fait
+réécrire `QuiDoitQuoi`, qui nommait un débiteur et un seul.
+
 ## Les fichiers des factures
 
 Les photos et PDF des factures ne vivent pas dans la base mais dans la réserve

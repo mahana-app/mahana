@@ -23,6 +23,13 @@ export type Foyer = {
   /** Sa part des charges communes, de 0 à 1. Les parts font 1 au total. */
   part: number
   ordre: number
+  /**
+   * La roulotte n'est pas un foyer : c'est l'entreprise, installée à la même
+   * adresse, qui paie la moitié des charges de la maison. Elle partage donc
+   * les factures — mais elle ne fait pas les courses en commun et ne prend
+   * rien à sa propre ardoise. Ce drapeau la tient hors de ces écrans-là.
+   */
+  estUneEntreprise: boolean
 }
 
 export type RoleMembre = 'adulte' | 'enfant'
@@ -234,8 +241,9 @@ export const MAISON_VIDE: Maison = {
 
 /** Les deux foyers de départ, pour que l'app ne s'ouvre pas sur du vide. */
 export const FOYERS_DE_DEPART: Foyer[] = [
-  { id: 'lai-ah-che', nom: 'LAI AH CHE', couleur: 'var(--lagon)', part: 0.5, ordre: 1 },
-  { id: 'lenoir', nom: 'LENOIR', couleur: 'var(--corail)', part: 0.5, ordre: 2 },
+  { id: 'lai-ah-che', nom: 'LAI AH CHE', couleur: 'var(--lagon)', part: 0.25, ordre: 1, estUneEntreprise: false },
+  { id: 'lenoir', nom: 'LENOIR', couleur: 'var(--corail)', part: 0.25, ordre: 2, estUneEntreprise: false },
+  { id: 'roulotte', nom: 'LA ROULOTTE', couleur: 'var(--ocre)', part: 0.5, ordre: 3, estUneEntreprise: true },
 ]
 
 /* ---------- quelques lectures, à côté des listes qu'elles interrogent ---------- */
@@ -244,6 +252,16 @@ export const natureDe = (id: string) => NATURES.find((n) => n.id === id) ?? NATU
 
 export const categorieDe = (id: string) =>
   CATEGORIES_ACHAT.find((c) => c.id === id) ?? CATEGORIES_ACHAT[5]
+
+/**
+ * Les deux familles, sans la roulotte.
+ *
+ * À utiliser partout où il est question de vivre ici : la caisse des courses,
+ * l'ardoise de la roulotte, les personnes. Les charges, elles, se partagent
+ * entre TOUS les participants, roulotte comprise.
+ */
+export const foyersFamille = (maison: Maison): Foyer[] =>
+  maison.foyers.filter((f) => !f.estUneEntreprise)
 
 export const foyerDe = (maison: Maison, id: Identifiant | null): Foyer | undefined =>
   maison.foyers.find((f) => f.id === id)

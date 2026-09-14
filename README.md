@@ -26,13 +26,27 @@ chercher le bon écran.
 
 ## Les charges : payer et rembourser sont deux choses différentes
 
+### Trois participants, pas deux
+
+Les charges de la maison se partagent à trois : **LA ROULOTTE la moitié**, et
+**chaque famille un quart**. La roulotte n'est pas un foyer — c'est
+l'entreprise, installée à la même adresse, qui consomme sa part d'électricité
+et d'eau. Elle partage donc les factures, mais elle ne fait pas les courses en
+commun et ne prend rien à sa propre ardoise : elle n'apparaît ni dans la
+caisse, ni dans l'ardoise, ni dans « qui est-ce ? ».
+
+C'est le drapeau `estUneEntreprise` sur le foyer qui la tient hors de ces
+écrans-là, et `foyersFamille(maison)` qui sert partout où il est question de
+vivre ici. Les pourcentages se changent dans les réglages ; les factures déjà
+saisies gardent le partage qu'elles avaient.
+
 C'est la règle qui a façonné cet écran. À la maison, c'est presque toujours
 **un seul foyer qui règle le fournisseur**, et l'autre lui rend sa part
 ensuite. L'app suit donc les deux séparément :
 
 1. La facture est saisie : 24 600 F d'électricité pour septembre. Le partage
-   est proposé d'après les parts de la maison (50/50 par défaut) et se corrige
-   à la main quand cette facture-là se partage autrement.
+   est proposé d'après les parts de la maison et se corrige à la main quand
+   cette facture-là se partage autrement.
 2. Quelqu'un paie le fournisseur : on note **qui a avancé**.
 3. L'autre foyer rend sa part — en une fois, ou en plusieurs.
 

@@ -13,7 +13,7 @@ import Symbole from '../composants/Symbole'
 import { ardoiseDuMois, duALaRoulotte, fcfp, jourCourt, moisDe, moisEnMots } from '../lib/argent'
 import { useMaison } from '../lib/maison'
 import type { Vue } from '../lib/navigation'
-import { membreDe } from '../lib/types'
+import { foyersFamille, membreDe } from '../lib/types'
 
 export default function Ardoise({ ouvrir }: { ouvrir: (vue: Vue) => void }) {
   const { maison, supprimerArdoise, rembourserArdoise } = useMaison()
@@ -58,7 +58,7 @@ export default function Ardoise({ ouvrir }: { ouvrir: (vue: Vue) => void }) {
       {totalDu > 0 && (
         <div className="carte">
           <div className="kicker">Par foyer</div>
-          {maison.foyers.map((foyer) => (
+          {foyersFamille(maison).map((foyer) => (
             <div key={foyer.id} className="ligne-liste">
               <div style={{ fontWeight: 700, color: foyer.couleur }}>{foyer.nom}</div>
               <span className="chiffre">{fcfp(du[foyer.id] ?? 0)}</span>
@@ -70,7 +70,7 @@ export default function Ardoise({ ouvrir }: { ouvrir: (vue: Vue) => void }) {
       <ChoixMois periode={periode} changer={setPeriode} />
 
       {/* le solde du mois affiché, foyer par foyer */}
-      {maison.foyers.map((foyer) => {
+      {foyersFamille(maison).map((foyer) => {
         const duFoyer = lignes.filter((l) => l.foyerId === foyer.id)
         const reste = duFoyer.filter((l) => !l.rembourseeLe).reduce((s, l) => s + l.montant, 0)
         const total = duFoyer.reduce((s, l) => s + l.montant, 0)

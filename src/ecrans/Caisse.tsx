@@ -16,7 +16,7 @@ import Symbole from '../composants/Symbole'
 import { achatsDuMois, etatCaisse, fcfp, jourCourt, jourDe, moisDe } from '../lib/argent'
 import { useMaison } from '../lib/maison'
 import type { Vue } from '../lib/navigation'
-import { categorieDe, membreDe } from '../lib/types'
+import { categorieDe, foyersFamille, membreDe } from '../lib/types'
 
 export default function Caisse({ ouvrir }: { ouvrir: (vue: Vue) => void }) {
   const { maison, ajouterCotisation, modifierCotisation, supprimerAchat } = useMaison()
@@ -63,7 +63,7 @@ export default function Caisse({ ouvrir }: { ouvrir: (vue: Vue) => void }) {
       {/* ---------- les cotisations du mois ---------- */}
       <div className="carte">
         <div className="kicker">Les cotisations du mois</div>
-        {maison.foyers.map((foyer) => {
+        {foyersFamille(maison).map((foyer) => {
           const cotisation = maison.cotisations.find(
             (c) => c.foyerId === foyer.id && c.periode === periode,
           )
@@ -117,7 +117,7 @@ export default function Caisse({ ouvrir }: { ouvrir: (vue: Vue) => void }) {
             </div>
           )
         })}
-        {maison.foyers.every((f) => !maison.reglages.cotisationMensuelle[f.id]) && (
+        {foyersFamille(maison).every((f) => !maison.reglages.cotisationMensuelle[f.id]) && (
           <p className="doux mini" style={{ margin: '10px 0 0' }}>
             Réglez d'abord combien chaque foyer verse par mois, dans les réglages de la maison.
           </p>

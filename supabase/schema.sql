@@ -49,6 +49,13 @@ create table if not exists public.membres (
 alter table public.membres
   add column if not exists a_un_telephone boolean not null default true;
 
+-- La roulotte n'est pas un foyer : c'est l'entreprise, installée à la même
+-- adresse, qui paie sa part des charges de la maison. Elle partage donc les
+-- factures — mais elle ne fait pas les courses en commun et ne prend rien à
+-- sa propre ardoise. Ce drapeau la tient hors de ces écrans-là.
+alter table public.foyers
+  add column if not exists est_une_entreprise boolean not null default false;
+
 create index if not exists membres_foyer on public.membres(foyer_id);
 
 -- Les deux foyers de départ. « on conflict do nothing » : si Maru les a
@@ -58,6 +65,34 @@ insert into public.foyers (id, nom, couleur, part, ordre) values
   ('lai-ah-che', 'LAI AH CHE', 'var(--lagon)',  0.5, 1),
   ('lenoir',     'LENOIR',     'var(--corail)', 0.5, 2)
 on conflict (id) do nothing;
+
+-- Le registre des corrections qui ne doivent tourner qu'UNE fois.
+--
+-- Sans lui, un « update » posé ici réécraserait à chaque collage du fichier
+-- ce que l'app a changé depuis. Une part des charges corrigée dans les
+-- réglages reviendrait à sa valeur d'origine sans que personne comprenne.
+create table if not exists public.deja_fait (
+  cle text primary key,
+  le  timestamptz not null default now()
+);
+
+do $roulotte$
+begin
+  if not exists (select 1 from public.deja_fait where cle = 'roulotte-sur-les-charges') then
+    insert into public.foyers (id, nom, couleur, part, ordre, est_une_entreprise)
+    values ('roulotte', 'LA ROULOTTE', 'var(--ocre)', 0.50, 3, true)
+    on conflict (id) do nothing;
+
+    -- Les charges de la maison se partagent à trois : la roulotte la moitié,
+    -- chaque famille un quart. Une seule fois : la suite appartient à l'app.
+    update public.foyers set part = 0.25 where id in ('lai-ah-che', 'lenoir');
+    update public.foyers set part = 0.50, est_une_entreprise = true where id = 'roulotte';
+
+    insert into public.deja_fait (cle) values ('roulotte-sur-les-charges');
+  end if;
+end
+$roulotte$;
+
 
 -- Les sept personnes de la maison, telles que Maru les a données.
 --
@@ -226,6 +261,7 @@ create table if not exists public.reglages (
 -- avertissait donc, à chaque collage, d'un danger qui n'existait pas. Un
 -- avertissement qu'on apprend à ignorer est pire que pas d'avertissement.
 alter table public.foyers       enable row level security;
+alter table public.deja_fait    enable row level security;
 alter table public.membres      enable row level security;
 alter table public.charges      enable row level security;
 alter table public.parts_charge enable row level security;
@@ -242,7 +278,8 @@ declare
   supabase boolean := exists (select 1 from pg_roles where rolname = 'authenticated');
 begin
   foreach t in array array[
-    'foyers', 'membres', 'charges', 'parts_charge', 'reglements', 'pieces_charge',
+    'foyers', 'deja_fait', 'membres', 'charges', 'parts_charge', 'reglements',
+    'pieces_charge',
     'cotisations', 'achats', 'ardoise', 'reglages'
   ]
   loop

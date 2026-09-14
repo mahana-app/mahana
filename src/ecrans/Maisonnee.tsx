@@ -62,6 +62,16 @@ export default function Maisonnee({ fermer }: { fermer: () => void }) {
               }}
             />
 
+            {/* La roulotte paie sa part des charges, et rien d'autre : elle ne
+                fait pas les courses en commun et ne prend rien à sa propre
+                ardoise. Inutile de lui demander une cotisation ou des gens. */}
+            {foyer.estUneEntreprise ? (
+              <p className="doux mini" style={{ margin: '14px 0 0' }}>
+                La roulotte est à la même adresse et paie sa part des charges. Elle ne
+                participe ni à la caisse des courses, ni à l'ardoise.
+              </p>
+            ) : (
+              <>
             <label className="etiquette" style={{ marginTop: 14 }} htmlFor={`cotis-${foyer.id}`}>
               Ce qu'il verse dans la caisse chaque mois
             </label>
@@ -206,6 +216,8 @@ export default function Maisonnee({ fermer }: { fermer: () => void }) {
               >
                 + Ajouter quelqu'un
               </button>
+            )}
+              </>
             )}
           </div>
         )

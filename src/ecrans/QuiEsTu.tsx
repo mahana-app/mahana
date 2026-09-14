@@ -8,6 +8,7 @@
 import Symbole from '../composants/Symbole'
 import { useMaison } from '../lib/maison'
 import { salutation } from '../lib/moi'
+import { foyersFamille } from '../lib/types'
 
 export default function QuiEsTu() {
   const { maison, direQuiJeSuis } = useMaison()
@@ -27,7 +28,7 @@ export default function QuiEsTu() {
         </p>
       </div>
 
-      {maison.foyers.map((foyer) => {
+      {foyersFamille(maison).map((foyer) => {
         const siens = gens.filter((m) => m.foyerId === foyer.id)
         if (siens.length === 0) return null
         return (

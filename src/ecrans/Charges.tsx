@@ -82,20 +82,25 @@ export default function Charges({ ouvrir }: { ouvrir: (vue: Vue) => void }) {
   )
 }
 
-/* ---------- le solde entre les deux foyers ---------- */
+/* ---------- le solde entre les participants ---------- */
+
+/* Ils sont trois à partager les charges depuis que la roulotte y participe :
+   les deux familles et l'entreprise. On ne peut donc plus dire « X doit à Y »
+   et s'arrêter là — quand un seul avance la facture, DEUX lui doivent. La
+   carte nomme chaque débiteur et son montant. */
 
 export function QuiDoitQuoi() {
   const { maison } = useMaison()
   const soldes = soldesCharges(maison)
-  const creancier = soldes.find((s) => s.solde > 0)
-  const debiteur = soldes.find((s) => s.solde < 0)
+  const debiteurs = soldes.filter((s) => s.solde < 0).sort((a, b) => a.solde - b.solde)
+  const creanciers = soldes.filter((s) => s.solde > 0)
 
-  if (!creancier || !debiteur || creancier.solde === 0) {
+  if (debiteurs.length === 0 || creanciers.length === 0) {
     return (
       <div className="carte" style={{ background: 'var(--feuille-pale)' }}>
         <div className="rangee">
           <div>
-            <div className="kicker">Entre les foyers</div>
+            <div className="kicker">Entre les participants</div>
             <div style={{ fontWeight: 700, fontSize: 17, marginTop: 2 }}>Tout est à jour</div>
             <div className="doux mini">Personne ne doit rien à personne.</div>
           </div>
@@ -105,23 +110,44 @@ export function QuiDoitQuoi() {
     )
   }
 
-  const qui = foyerDe(maison, debiteur.foyerId)
-  const aQui = foyerDe(maison, creancier.foyerId)
+  // Le cas de tous les jours : un seul a avancé, et on peut le nommer.
+  const seul = creanciers.length === 1 ? foyerDe(maison, creanciers[0].foyerId) : undefined
+  const total = debiteurs.reduce((somme, d) => somme - d.solde, 0)
 
   return (
     <div className="carte" style={{ background: 'var(--corail-pale)' }}>
       <div className="rangee">
         <div style={{ minWidth: 0 }}>
-          <div className="kicker">Entre les foyers</div>
-          <div className="chiffre" style={{ fontSize: 26, marginTop: 2 }}>
-            {fcfp(-debiteur.solde)}
-          </div>
+          <div className="kicker">Entre les participants</div>
+          <div className="chiffre" style={{ fontSize: 26, marginTop: 2 }}>{fcfp(total)}</div>
           <div className="doux mini" style={{ lineHeight: 1.6 }}>
-            <b>{qui?.nom}</b> doit à <b>{aQui?.nom}</b>, toutes factures confondues.
+            {seul ? (
+              <>
+                à rendre à <b>{seul.nom}</b>, toutes factures confondues.
+              </>
+            ) : (
+              'à rendre, toutes factures confondues.'
+            )}
           </div>
         </div>
         <Symbole nom="echange" taille={26} couleur="var(--corail)" />
       </div>
+
+      {/* Le détail n'apparaît que s'il y a plusieurs débiteurs : à deux, le
+          montant du dessus suffit et la répétition ferait du bruit. */}
+      {debiteurs.length > 1 && (
+        <div style={{ marginTop: 10 }}>
+          {debiteurs.map((d) => {
+            const foyer = foyerDe(maison, d.foyerId)
+            return (
+              <div key={d.foyerId} className="ligne-liste">
+                <span style={{ fontWeight: 700, color: foyer?.couleur }}>{foyer?.nom}</span>
+                <span className="chiffre mini">{fcfp(-d.solde)}</span>
+              </div>
+            )
+          })}
+        </div>
+      )}
     </div>
   )
 }
