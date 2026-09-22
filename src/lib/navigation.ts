@@ -10,5 +10,8 @@ export type Vue =
   | { nom: 'depenses-perso' }
   | { nom: 'nouvelle-depense-perso' }
   | { nom: 'budget' }
+  | { nom: 'rapport' }
+  | { nom: 'importer-banque' }
+  | { nom: 'comptes' }
   | { nom: 'dechets' }
   | { nom: 'maisonnee' }

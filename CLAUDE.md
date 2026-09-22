@@ -152,6 +152,22 @@ Supprimer une facture ou une pièce **retire aussi le fichier**. Sans ça la
 réserve se remplit de factures que plus rien ne désigne, et personne ne saura
 les retrouver.
 
+## Le relevé de banque et les comptes : du privé, jamais dans le code
+
+`src/lib/banque.ts` range les lignes du relevé par enseigne. Les règles sont
+sorties du premier relevé de Maru ; une enseigne inconnue va dans « autre »,
+c'est là qu'on regarde pour enrichir la liste. **L'ordre des règles compte** :
+« RET DAB … GAB SOC SHELL » est un retrait, pas de l'essence.
+
+L'empreinte d'une ligne (date, libellé, débit, crédit, **solde**, rang) est ce
+qui empêche les doublons : sans le solde, deux virements identiques le même
+jour n'en feraient qu'un.
+
+Les numéros de compte, les soldes, les relevés sont des données de personnes
+réelles : rien de tout cela dans le code, les tests, les captures du dépôt.
+Le SQL qui pose les comptes de Maru lui est donné dans la conversation, pas
+dans `schema.sql`.
+
 ## Le calendrier des déchets
 
 Le calendrier de ramassage de la commune est une **donnée**, rangée dans les

@@ -13,6 +13,9 @@ import Caisse from './ecrans/Caisse'
 import Charges from './ecrans/Charges'
 import Dechets from './ecrans/Dechets'
 import Budget from './ecrans/Budget'
+import Rapport from './ecrans/Rapport'
+import Comptes from './ecrans/Comptes'
+import ImporterBanque from './ecrans/ImporterBanque'
 import DepensesPerso from './ecrans/DepensesPerso'
 import NouvelleDepensePerso from './ecrans/NouvelleDepensePerso'
 import Enfant from './ecrans/Enfant'
@@ -82,6 +85,12 @@ export default function App() {
         return <NouvelAchat fermer={fermer} />
       case 'nouvelle-ardoise':
         return <NouvelleArdoise fermer={fermer} />
+      case 'comptes':
+        return <Comptes ouvrir={ouvrir} fermer={fermer} />
+      case 'rapport':
+        return <Rapport ouvrir={ouvrir} fermer={fermer} />
+      case 'importer-banque':
+        return <ImporterBanque fermer={fermer} />
       case 'budget':
         return <Budget fermer={fermer} />
       case 'depenses-perso':

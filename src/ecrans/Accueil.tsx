@@ -56,7 +56,7 @@ export default function Accueil({
   // Nos dépenses du mois : celles de notre foyer, que la base est seule à
   // nous rendre. L'autre famille a la même carte avec ses chiffres à elle.
   const nosDepenses = maison.depensesPerso
-    .filter((d) => d.foyerId === monFoyerId && d.le.startsWith(periode))
+    .filter((d) => d.foyerId === monFoyerId && d.sens !== 'revenu' && d.le.startsWith(periode))
     .reduce((somme, d) => somme + d.montant, 0)
 
   return (

@@ -219,7 +219,7 @@ export function reelParCategorie(
 ): Record<string, number> {
   const total: Record<string, number> = {}
   for (const d of maison.depensesPerso) {
-    if (d.foyerId !== foyerId || !d.le.startsWith(periode)) continue
+    if (d.foyerId !== foyerId || d.sens === 'revenu' || !d.le.startsWith(periode)) continue
     total[d.categorie] = (total[d.categorie] ?? 0) + d.montant
   }
   return total

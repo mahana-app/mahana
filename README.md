@@ -220,6 +220,34 @@ Le modèle tient en une table, `budget_perso`, une ligne par élément avec son
 `genre` (revenu, fixe, prevu, epargne, note) et sa `cle` (la catégorie pour un
 prévu, le nom pour une note).
 
+### Importer le relevé de la banque, et le rapport de l'année
+
+Sept cents lignes par an : on ne les note pas à la main. Depuis *Nos
+dépenses* → *Le rapport de l'année* → *Importer le relevé de la banque*, le
+fichier de mouvements de la Banque de Polynésie (« Date ; Libellé ; Débit ;
+Crédit ; Solde », en latin-1) se lit et **chaque ligne est rangée dans son
+poste** d'après l'enseigne reconnue dans le libellé (`src/lib/banque.ts`). Ce
+qui a été compris s'affiche avant d'écrire quoi que ce soit, et chaque ligne
+garde l'empreinte de sa ligne de banque : le même relevé se reprend chaque
+mois sans doublon. Les rentrées d'argent sont gardées aussi (`sens = revenu`),
+le rapport en a besoin.
+
+Le **rapport** refait, depuis ces lignes, les tableaux du premier rapport fait
+à la main : mois par mois, où part l'argent (avec l'essentiel en sauge et le
+reste en rose), les virements et à qui, les enseignes qui reviennent, et ce
+que je remarque. Une enseigne mal rangée se corrige depuis la liste, le
+rapport suit.
+
+### Nos comptes
+
+Courants, crédits, livret, compte pro — le solde de chacun, la part
+remboursée d'un crédit et sa prochaine échéance. Le solde d'un compte se met
+à jour tout seul à l'import de son relevé : le numéro dans le nom du fichier
+(`Mouvement_compte_23858500051.csv`) dit de quel compte il s'agit.
+
+Les numéros de compte sont des données privées : ils ne sont **jamais dans
+le code**, seulement dans la base, dans le tiroir de la famille.
+
 ## La caisse commune
 
 Chacun fait ses courses de son côté, mais certaines choses s'achètent en gros
@@ -374,6 +402,8 @@ src/
     dechets.ts        le calendrier de ramassage de la commune
     pdf.ts            trouver le numéro de facture écrit dans un PDF
     comptes.ts        un compte Supabase par famille, et le code à 4 chiffres
+    banque.ts         lire le relevé de la banque et ranger chaque ligne
+    rapport.ts        le rapport de l'année, calculé depuis nos dépenses
     navigation.ts     les écrans qui s'ouvrent par-dessus les onglets
   composants/         en-tête, onglets, symboles, bandeaux
   ecrans/             un fichier par écran

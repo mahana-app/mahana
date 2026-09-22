@@ -25,7 +25,7 @@ export default function DepensesPerso({
   const foyer = foyerDe(maison, monFoyerId)
 
   const duMois = maison.depensesPerso
-    .filter((d) => d.foyerId === monFoyerId && d.le.startsWith(periode))
+    .filter((d) => d.foyerId === monFoyerId && d.sens !== 'revenu' && d.le.startsWith(periode))
     .sort((a, b) => b.le.localeCompare(a.le))
   const total = duMois.reduce((somme, d) => somme + d.montant, 0)
   const parCategorie = CATEGORIES_DEPENSE.map((c) => ({
@@ -82,6 +82,14 @@ export default function DepensesPerso({
           >
             Notre budget du mois — la fiche
           </button>
+          <div style={{ display: 'flex', gap: 8, marginBottom: 14 }}>
+            <button type="button" className="bouton-fin" style={{ flex: 1 }} onClick={() => ouvrir({ nom: 'rapport' })}>
+              Le rapport de l'année
+            </button>
+            <button type="button" className="bouton-fin" style={{ flex: 1 }} onClick={() => ouvrir({ nom: 'comptes' })}>
+              Nos comptes
+            </button>
+          </div>
 
           <ChoixMois periode={periode} changer={setPeriode} />
 

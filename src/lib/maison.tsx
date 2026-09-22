@@ -15,11 +15,13 @@ import { foyerDuCompte } from './comptes'
 import { retirerFichier } from './fichiers'
 import type { Fichier } from './fichiers'
 import type { LigneRelevee } from './releve'
+import type { LigneBanque } from './banque'
 import type { ReglagesDechets } from './dechets'
 import type {
   Achat,
   Charge,
   Cotisation,
+  ComptePerso,
   DepensePerso,
   Foyer,
   LigneBudget,
@@ -85,10 +87,18 @@ type Actions = {
   /* les dépenses de la famille */
   ajouterDepensePerso: (depense: Omit<DepensePerso, 'id'>) => Promise<void>
   supprimerDepensePerso: (id: Identifiant) => Promise<void>
+  /** Entre d'un coup les lignes d'un relevé de banque. Rend le nombre ajouté :
+      les lignes déjà connues (même empreinte) sont passées. */
+  importerDepenses: (lignes: LigneBanque[]) => Promise<number>
+  modifierDepensePerso: (id: Identifiant, changements: Partial<DepensePerso>) => Promise<void>
   /* la fiche budget de la famille */
   ajouterLigneBudget: (ligne: Omit<LigneBudget, 'id'>) => Promise<void>
   modifierLigneBudget: (id: Identifiant, changements: Partial<LigneBudget>) => Promise<void>
   supprimerLigneBudget: (id: Identifiant) => Promise<void>
+  /* les comptes de la famille */
+  ajouterCompte: (compte: Omit<ComptePerso, 'id'>) => Promise<void>
+  modifierCompte: (id: Identifiant, changements: Partial<ComptePerso>) => Promise<void>
+  supprimerCompte: (id: Identifiant) => Promise<void>
   reglerDechets: (dechets: ReglagesDechets) => Promise<void>
   reglerPartsParNature: (parts: Reglages['partsParNature']) => Promise<void>
   reglerCotisationMensuelle: (montants: Record<Identifiant, number>) => Promise<void>
@@ -528,6 +538,52 @@ export function FournisseurMaison({ children }: { children: ReactNode }) {
     [retirer],
   )
 
+  const importerDepenses = useCallback<Actions['importerDepenses']>(
+    async (lignes) => {
+      const foyerId = monFoyerId
+      if (!foyerId) return 0
+      const connues = new Set(maisonRef.current.depensesPerso.map((d) => d.reference).filter(Boolean))
+      let ajoutees = 0
+      for (const l of lignes) {
+        if (connues.has(l.reference)) continue
+        connues.add(l.reference)
+        await poser('depenses_perso', {
+          id: nouvelId(),
+          foyerId,
+          le: l.le,
+          libelle: l.libelle,
+          montant: l.montant,
+          categorie: l.categorie,
+          parMembreId: null,
+          note: l.brut,
+          sens: l.sens,
+          reference: l.reference,
+        })
+        ajoutees++
+      }
+      return ajoutees
+    },
+    [poser, monFoyerId],
+  )
+
+  const modifierDepensePerso = useCallback<Actions['modifierDepensePerso']>(
+    (id, changements) => changer('depenses_perso', id, changements),
+    [changer],
+  )
+
+  const ajouterCompte = useCallback<Actions['ajouterCompte']>(
+    (compte) => poser('comptes_perso', { ...compte, id: nouvelId() }),
+    [poser],
+  )
+  const modifierCompte = useCallback<Actions['modifierCompte']>(
+    (id, changements) => changer('comptes_perso', id, changements),
+    [changer],
+  )
+  const supprimerCompte = useCallback<Actions['supprimerCompte']>(
+    (id) => retirer('comptes_perso', id),
+    [retirer],
+  )
+
   const reglerDechets = useCallback<Actions['reglerDechets']>(async (dechets) => {
     try {
       await base.reglerLe('dechets', dechets)
@@ -598,9 +654,14 @@ export function FournisseurMaison({ children }: { children: ReactNode }) {
       supprimerMembre,
       ajouterDepensePerso,
       supprimerDepensePerso,
+      importerDepenses,
+      modifierDepensePerso,
       ajouterLigneBudget,
       modifierLigneBudget,
       supprimerLigneBudget,
+      ajouterCompte,
+      modifierCompte,
+      supprimerCompte,
       reglerDechets,
       reglerPartsParNature,
       reglerCotisationMensuelle,
@@ -641,9 +702,14 @@ export function FournisseurMaison({ children }: { children: ReactNode }) {
       supprimerMembre,
       ajouterDepensePerso,
       supprimerDepensePerso,
+      importerDepenses,
+      modifierDepensePerso,
       ajouterLigneBudget,
       modifierLigneBudget,
       supprimerLigneBudget,
+      ajouterCompte,
+      modifierCompte,
+      supprimerCompte,
       reglerDechets,
       reglerPartsParNature,
       reglerCotisationMensuelle,

@@ -248,6 +248,14 @@ create table if not exists public.depenses_perso (
 
 create index if not exists depenses_perso_foyer_le on public.depenses_perso(foyer_id, le);
 
+-- Le relevé de banque a des rentrées et des sorties ; le rapport a besoin des
+-- deux. Et chaque ligne importée garde l'empreinte de sa ligne de banque,
+-- pour ne jamais importer deux fois le même relevé.
+alter table public.depenses_perso
+  add column if not exists sens text not null default 'depense';
+alter table public.depenses_perso
+  add column if not exists reference text not null default '';
+
 -- La fiche budget d'une famille, pour un mois : revenus, dépenses fixes,
 -- budgets prévus par catégorie, objectifs d'épargne, notes. Même serrure que
 -- les dépenses perso.
@@ -263,6 +271,21 @@ create table if not exists public.budget_perso (
 );
 
 create index if not exists budget_perso_foyer_periode on public.budget_perso(foyer_id, periode);
+
+-- Les comptes en banque d'une famille : courant, crédit, livret, compte pro.
+-- Le solde se met à jour à la main, ou tout seul à l'import du relevé.
+create table if not exists public.comptes_perso (
+  id         text primary key,
+  foyer_id   text not null references public.foyers(id) on delete cascade,
+  genre      text not null default 'courant',   -- courant, credit, epargne, entreprise
+  numero     text not null default '',
+  nom        text not null default '',
+  titulaire  text not null default '',
+  solde      integer not null default 0,
+  rembourse  numeric not null default 0,         -- crédit : part remboursée, en %
+  echeance   date,
+  maj_le     date not null default current_date
+);
 
 -- Le foyer du compte qui appelle, lu dans le jeton de session. Sur une base
 -- PostgreSQL ordinaire (le script de vérification) il n'y a pas de jeton :
@@ -367,6 +390,7 @@ alter table public.achats       enable row level security;
 alter table public.ardoise      enable row level security;
 alter table public.depenses_perso enable row level security;
 alter table public.budget_perso   enable row level security;
+alter table public.comptes_perso  enable row level security;
 alter table public.reglages     enable row level security;
 
 do $droits$
@@ -404,7 +428,7 @@ begin
   -- Les dépenses et le budget perso : pas « la maisonnée », mais chaque
   -- famille la sienne. Le droit d'atteindre la table est donné comme aux
   -- autres ; c'est la politique qui trie les lignes.
-  foreach t in array array['depenses_perso', 'budget_perso']
+  foreach t in array array['depenses_perso', 'budget_perso', 'comptes_perso']
   loop
     execute format('drop policy if exists "la maisonnee" on public.%I', t);
     execute format('drop policy if exists "chaque famille la sienne" on public.%I', t);

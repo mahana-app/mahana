@@ -189,20 +189,58 @@ export type CategorieDepense =
   | 'ecole'
   | 'sante'
   | 'vetements'
+  | 'credit'
+  | 'loyer'
+  | 'electricite'
+  | 'eau'
+  | 'assurances'
+  | 'sport'
+  | 'voyages'
+  | 'abonnements'
+  | 'virements'
+  | 'compte-euros'
+  | 'roulotte'
+  | 'especes'
+  | 'cheques'
+  | 'banque'
+  | 'dons'
+  | 'veto'
   | 'autre'
 
-/* Ce que Maru a nommé en premier : les téléphones, les sorties, les courses
-   de la famille. Le reste vient de ce qu'une famille de Mahina paie sans le
-   partager avec l'autre. */
-export const CATEGORIES_DEPENSE: Array<{ id: CategorieDepense; nom: string; emoji: string }> = [
-  { id: 'courses', nom: 'Courses perso', emoji: '🛒' },
-  { id: 'telephone', nom: 'Téléphones', emoji: '📱' },
-  { id: 'sorties', nom: 'Sorties', emoji: '🍽️' },
-  { id: 'essence', nom: 'Essence', emoji: '⛽' },
-  { id: 'ecole', nom: 'École', emoji: '🎒' },
-  { id: 'sante', nom: 'Santé', emoji: '💊' },
-  { id: 'vetements', nom: 'Vêtements', emoji: '👕' },
-  { id: 'autre', nom: 'Autre', emoji: '💸' },
+/* Les postes du relevé de banque, tels qu'ils sont ressortis du premier
+   rapport de Maru. « essentiel » sépare ce qu'on ne choisit pas (le crédit,
+   les factures, les courses) de ce qu'on choisit — c'est la seule ligne de
+   partage qui ait un sens dans un budget. */
+export const CATEGORIES_DEPENSE: Array<{
+  id: CategorieDepense
+  nom: string
+  emoji: string
+  essentiel: boolean
+}> = [
+  { id: 'courses', nom: 'Courses', emoji: '🛒', essentiel: true },
+  { id: 'telephone', nom: 'Téléphone & internet', emoji: '📱', essentiel: true },
+  { id: 'sorties', nom: 'Restaurants & sorties', emoji: '🍽️', essentiel: false },
+  { id: 'essence', nom: 'Essence', emoji: '⛽', essentiel: true },
+  { id: 'ecole', nom: 'École & église', emoji: '🎒', essentiel: true },
+  { id: 'sante', nom: 'Santé', emoji: '💊', essentiel: true },
+  { id: 'vetements', nom: 'Vêtements', emoji: '👕', essentiel: false },
+  { id: 'credit', nom: 'Crédit', emoji: '🏦', essentiel: true },
+  { id: 'loyer', nom: 'Loyer', emoji: '🏠', essentiel: true },
+  { id: 'electricite', nom: 'Électricité', emoji: '⚡', essentiel: true },
+  { id: 'eau', nom: 'Eau', emoji: '💧', essentiel: true },
+  { id: 'assurances', nom: 'Assurances', emoji: '🛡️', essentiel: true },
+  { id: 'sport', nom: 'Sport & loisirs', emoji: '🏋️', essentiel: false },
+  { id: 'voyages', nom: 'Voyages', emoji: '✈️', essentiel: false },
+  { id: 'abonnements', nom: 'Abonnements & numérique', emoji: '📺', essentiel: false },
+  { id: 'virements', nom: 'Virements sortants', emoji: '💸', essentiel: false },
+  { id: 'compte-euros', nom: 'Vers le compte en euros', emoji: '💶', essentiel: false },
+  { id: 'roulotte', nom: 'Frais de la roulotte', emoji: '🚚', essentiel: false },
+  { id: 'especes', nom: 'Retraits en espèces', emoji: '💵', essentiel: false },
+  { id: 'cheques', nom: 'Chèques', emoji: '🧾', essentiel: false },
+  { id: 'banque', nom: 'Frais bancaires', emoji: '🏧', essentiel: true },
+  { id: 'dons', nom: 'Dons', emoji: '🎁', essentiel: false },
+  { id: 'veto', nom: 'Vétérinaire', emoji: '🐾', essentiel: true },
+  { id: 'autre', nom: 'Autre', emoji: '📦', essentiel: false },
 ]
 
 /**
@@ -220,6 +258,12 @@ export type DepensePerso = {
   categorie: CategorieDepense
   parMembreId: Identifiant | null
   note: string
+  /** Une rentrée d'argent plutôt qu'une sortie : le relevé de banque a les
+      deux, et le rapport a besoin des deux. */
+  sens: 'depense' | 'revenu'
+  /** L'empreinte de la ligne de banque dont elle vient — pour ne jamais
+      importer deux fois le même relevé. Vide pour une saisie à la main. */
+  reference: string
 }
 
 /**
@@ -247,6 +291,38 @@ export type LigneBudget = {
   libelle: string
   montant: number
   realise: number
+}
+
+/**
+ * Un compte en banque de la famille — courant, crédit, livret, compte pro.
+ * Privé comme les dépenses. Le solde se met à jour à la main, ou tout seul
+ * quand on importe le relevé de ce compte-là.
+ */
+export type GenreCompte = 'courant' | 'credit' | 'epargne' | 'entreprise'
+
+export const GENRES_COMPTE: Array<{ id: GenreCompte; nom: string; emoji: string }> = [
+  { id: 'courant', nom: 'Compte courant', emoji: '🏦' },
+  { id: 'credit', nom: 'Crédit', emoji: '📉' },
+  { id: 'epargne', nom: 'Épargne', emoji: '🐷' },
+  { id: 'entreprise', nom: 'Compte pro', emoji: '🚚' },
+]
+
+export type ComptePerso = {
+  id: Identifiant
+  foyerId: Identifiant
+  genre: GenreCompte
+  /** Le numéro chez la banque — c'est lui que l'import reconnaît. */
+  numero: string
+  nom: string
+  titulaire: string
+  /** Le solde pour un compte ; pour un crédit, ce qu'il reste à rembourser
+      si on le connaît, sinon 0. */
+  solde: number
+  /** Pour un crédit : la part déjà remboursée, en pour cent. */
+  rembourse: number
+  /** Pour un crédit : la prochaine échéance. */
+  echeance: string | null
+  majLe: string
 }
 
 /* ---------- l'ardoise de la roulotte ---------- */
@@ -313,6 +389,7 @@ export type Maison = {
   ardoise: LigneArdoise[]
   depensesPerso: DepensePerso[]
   budgetPerso: LigneBudget[]
+  comptesPerso: ComptePerso[]
   reglages: Reglages
 }
 
@@ -328,6 +405,7 @@ export const MAISON_VIDE: Maison = {
   ardoise: [],
   depensesPerso: [],
   budgetPerso: [],
+  comptesPerso: [],
   reglages: REGLAGES_PAR_DEFAUT,
 }
 
@@ -343,7 +421,7 @@ export const FOYERS_DE_DEPART: Foyer[] = [
 export const natureDe = (id: string) => NATURES.find((n) => n.id === id) ?? NATURES[5]
 
 export const categorieDepenseDe = (id: string) =>
-  CATEGORIES_DEPENSE.find((c) => c.id === id) ?? CATEGORIES_DEPENSE[7]
+  CATEGORIES_DEPENSE.find((c) => c.id === id) ?? CATEGORIES_DEPENSE[CATEGORIES_DEPENSE.length - 1]
 
 export const categorieDe = (id: string) =>
   CATEGORIES_ACHAT.find((c) => c.id === id) ?? CATEGORIES_ACHAT[5]

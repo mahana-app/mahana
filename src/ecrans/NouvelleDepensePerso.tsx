@@ -115,6 +115,8 @@ export default function NouvelleDepensePerso({ fermer }: { fermer: () => void })
             categorie,
             parMembreId,
             note: '',
+            sens: 'depense',
+            reference: '',
           })
           fermer()
         }}
