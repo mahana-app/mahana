@@ -194,6 +194,12 @@ passe complet qu'on donne au compte dans Supabase. L'ancien compte commun ouvre
 encore tout ce qui est partagé, mais ne voit les dépenses de personne : il
 n'est d'aucune famille.
 
+Et Maru ne doit pas connaître le code des LENOIR. Elle crée leur compte avec
+un code provisoire ; eux le changent dans l'app (réglages → *Le code des
+LENOIR*), et après ça personne d'autre ne le sait. Ce que Maru garde, comme
+tout administrateur, c'est le pouvoir de le **réinitialiser** depuis Supabase
+— pas de le lire.
+
 ## La caisse commune
 
 Chacun fait ses courses de son côté, mais certaines choses s'achètent en gros

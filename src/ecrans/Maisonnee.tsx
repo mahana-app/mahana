@@ -9,6 +9,7 @@
 import { useState } from 'react'
 import Entete from '../composants/Entete'
 import Symbole from '../composants/Symbole'
+import ChangerCode from '../composants/ChangerCode'
 import { fcfp, lireMontant } from '../lib/argent'
 import { useMaison } from '../lib/maison'
 import { NATURES, membreDe } from '../lib/types'
@@ -382,15 +383,16 @@ export default function Maisonnee({ fermer }: { fermer: () => void }) {
         )}
       </div>
 
+      {partagee && <ChangerCode />}
+
       <div className="carte">
         <div className="kicker">Où sont les données</div>
         <p className="doux mini" style={{ margin: '8px 0 0', lineHeight: 1.75 }}>
           {partagee ? (
             <>
-              L'application est <b>partagée</b> : tout ce que vous notez ici est visible par
-              chaque personne de la maison qui ouvre l'app, sur son propre téléphone. Toute la
-              maison entre avec <b>le même code</b> — pour le changer, il faut modifier le mot de
-              passe du compte de la maison dans Supabase.
+              L'application est <b>partagée</b> : ce que vous notez ici est visible par toute
+              la maison — sauf <b>nos dépenses</b>, que la base ne montre qu'à notre famille.
+              Chaque famille entre avec <b>son code</b>, qu'elle change ci-dessus.
             </>
           ) : (
             <>

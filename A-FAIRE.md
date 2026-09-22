@@ -27,7 +27,7 @@ Authentication → Users → Add user → **Create new user**, deux fois :
 | | LAI AH CHE | LENOIR |
 |---|---|---|
 | Email | `lai-ah-che@sweet-home.pf` | `lenoir@sweet-home.pf` |
-| Password | le code à 4 chiffres choisi, **suivi de `-fare`** (ex. `1234-fare`) | idem avec l'autre code |
+| Password | le code à 4 chiffres choisi, **suivi de `-fare`** (ex. `1234-fare`) | un code **provisoire** suivi de `-fare` (ex. `0000-fare`) — les LENOIR le changent eux-mêmes dans l'app, réglages → *Le code des LENOIR* |
 | Auto Confirm User | **coché** | **coché** |
 
 Dans l'app, on tape seulement les 4 chiffres : c'est elle qui ajoute `-fare`.
