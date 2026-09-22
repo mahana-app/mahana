@@ -42,6 +42,26 @@ export default function ImporterReleve({ fermer }: { fermer: () => void }) {
   async function recevoir(fichier: File | undefined) {
     if (!fichier) return
     setFait(null)
+    setLignes([])
+
+    // Le piège de cet écran : « importer » fait penser à la facture qu'on a
+    // sous les yeux. Or ce bouton attend le TABLEAU de toutes les factures de
+    // l'année, pas une facture. Le dire ici, en nommant l'endroit où aller,
+    // plutôt que de laisser un message de tableau illisible.
+    if (
+      fichier.type === 'application/pdf' ||
+      fichier.type.startsWith('image/') ||
+      /\.(pdf|jpe?g|png|heic|webp)$/i.test(fichier.name)
+    ) {
+      setSouci(
+        `« ${fichier.name} » est une facture, pas un relevé. Pour la garder en image, ` +
+          'ouvrez la facture concernée et utilisez « La facture en image » — ou ajoutez-la ' +
+          'avec sa photo depuis « + Ajouter une facture ». Ce bouton-ci attend le tableau ' +
+          'de toutes les factures de l\'année, celui qui se télécharge chez le fournisseur.',
+      )
+      return
+    }
+
     const releve = lireReleve(await fichier.text())
     setSouci(releve.souci)
     setLignes(releve.lignes)
@@ -77,9 +97,13 @@ export default function ImporterReleve({ fermer }: { fermer: () => void }) {
 
       <div className="carte">
         <p className="doux mini" style={{ margin: '4px 0 12px' }}>
-          Sur le site d'EDT, espace client, la liste des factures se télécharge en un
-          fichier. Prenez-le tel quel : les factures déjà entrées ici seront reconnues
-          et laissées de côté.
+          Ici on entre <b>toute une année d'un coup</b>, à partir du tableau des
+          factures qui se télécharge chez EDT, dans l'espace client. Prenez-le tel quel :
+          les factures déjà entrées seront reconnues et laissées de côté.
+        </p>
+        <p className="doux mini" style={{ margin: '0 0 12px' }}>
+          Ce n'est pas ici qu'on ajoute le PDF d'une facture : ça se fait sur la facture
+          elle-même.
         </p>
         <input
           ref={champ}
