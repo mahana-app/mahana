@@ -40,6 +40,29 @@ C'est le drapeau `estUneEntreprise` sur le foyer qui la tient hors de ces
 vivre ici. Les pourcentages se changent dans les réglages ; les factures déjà
 saisies gardent le partage qu'elles avaient.
 
+### L'électricité ne se partage pas comme les impôts
+
+Ce sont les frigos et les congélateurs de la roulotte qui tournent jour et
+nuit : sur l'électricité, **la roulotte paie deux tiers**, et le tiers restant
+se partage en deux. Les autres charges suivent le partage habituel.
+
+Ça se règle dans la maisonnée, *Un partage à part pour certaines charges* :
+chaque nature peut avoir ses propres pour cent, ou rester « habituel ». Les
+pour cent sont ramenés à leur total, donc 67 / 17 / 17 partage aussi bien que
+66,7 / 16,7 / 16,7 — et le franc en trop va au dernier de la liste.
+
+### Corriger une facture
+
+Une faute de frappe sur le montant, un mauvais mois, la mauvaise nature : la
+facture se corrige sur place (*Corriger la facture*, en bas de son écran).
+Supprimer pour ressaisir ferait perdre les remboursements déjà notés et la
+photo.
+
+Si le montant change, **les parts suivent dans les mêmes proportions** : une
+part corrigée à la main le reste, et une facture partagée à deux avant
+l'arrivée de la roulotte reste partagée à deux. Si quelqu'un avait déjà rendu
+plus que sa nouvelle part, l'écran le dit avant d'enregistrer.
+
 C'est la règle qui a façonné cet écran. À la maison, c'est presque toujours
 **un seul foyer qui règle le fournisseur**, et l'autre lui rend sa part
 ensuite. L'app suit donc les deux séparément :

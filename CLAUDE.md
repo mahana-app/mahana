@@ -113,6 +113,17 @@ personnes. Le drapeau `Foyer.estUneEntreprise` la tient hors de ces écrans, et
 (caisse, ardoise, « qui es-tu ? »). Les charges, elles, prennent
 `maison.foyers` en entier.
 
+Le partage peut être **propre à une nature de charge**
+(`reglages.partsParNature`) : l'électricité, c'est deux tiers pour la
+roulotte. `repartir()` prend ces poids en troisième argument, et
+`partsDeLaNature(maison, nature)` les retrouve. Ce sont des poids ramenés à
+leur total, pas des pourcentages qui doivent faire 100 — et le réglage de
+départ est posé une fois par `deja_fait`, jamais réécrasé.
+
+Corriger le montant d'une facture (`corrigerCharge`) **reporte les parts
+existantes dans leurs proportions** : ne pas les recalculer d'après les parts
+du jour, on effacerait une correction faite à la main.
+
 Conséquence à ne pas oublier : **un écran qui suppose deux participants est
 faux**. Quand un seul avance la facture, DEUX lui doivent — c'est ce qui a fait
 réécrire `QuiDoitQuoi`, qui nommait un débiteur et un seul.

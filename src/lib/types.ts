@@ -203,12 +203,30 @@ export type LigneArdoise = {
 export type Reglages = {
   /** Ce que chaque foyer doit verser dans la caisse chaque mois. */
   cotisationMensuelle: Record<Identifiant, number>
+  /**
+   * Le partage propre à une charge, quand il n'est pas celui de la maison.
+   *
+   * L'électricité ne se partage pas comme les impôts : ce sont les frigos et
+   * les congélateurs de la roulotte qui tournent jour et nuit. Une nature
+   * absente d'ici suit le partage habituel ; une nature présente l'ignore
+   * complètement — un participant qui n'y figure pas ne paie rien pour
+   * celle-là.
+   */
+  partsParNature: Partial<Record<NatureCharge, Record<Identifiant, number>>>
   /** La tournée de la maison et les semaines de ramassage de la commune. */
   dechets: ReglagesDechets
 }
 
+/* Deux tiers pour la roulotte, le tiers restant partagé en deux. Ce sont des
+   fractions et non des pourcentages : 66,67 % trois fois ne font pas un
+   tiers chacun, et sur une facture de 92 046 F l'écart se voit. */
+export const PARTS_PAR_NATURE_DE_DEPART: Reglages['partsParNature'] = {
+  electricite: { roulotte: 2 / 3, 'lai-ah-che': 1 / 6, lenoir: 1 / 6 },
+}
+
 export const REGLAGES_PAR_DEFAUT: Reglages = {
   cotisationMensuelle: {},
+  partsParNature: PARTS_PAR_NATURE_DE_DEPART,
   dechets: DECHETS_PAR_DEFAUT,
 }
 

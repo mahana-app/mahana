@@ -9,7 +9,7 @@ import { createContext, useCallback, useContext, useEffect, useMemo, useRef, use
 import type { ReactNode } from 'react'
 import { SERVEUR_BRANCHE, base, client, nouvelId, rubriqueDe } from './base'
 import type { NomTable } from './base'
-import { jourDe, repartir } from './argent'
+import { jourDe, partsDeLaNature, repartir } from './argent'
 import { ecrireMoi, lireMoi } from './moi'
 import { retirerFichier } from './fichiers'
 import type { Fichier } from './fichiers'
@@ -25,6 +25,7 @@ import type {
   Maison,
   Membre,
   NatureCharge,
+  Reglages,
   PartCharge,
   Reglement,
 } from './types'
@@ -40,6 +41,12 @@ type Actions = {
        pour y accrocher la photo prise juste avant. */
   ) => Promise<Identifiant>
   modifierCharge: (id: Identifiant, changements: Partial<Charge>) => Promise<void>
+  /** Corrige une facture déjà entrée. Si le montant change, les parts suivent
+      en gardant leurs proportions : une part corrigée à la main le reste. */
+  corrigerCharge: (
+    id: Identifiant,
+    changements: Partial<Pick<Charge, 'montant' | 'libelle' | 'nature' | 'periode' | 'note'>>,
+  ) => Promise<void>
   supprimerCharge: (id: Identifiant) => Promise<void>
   /** Entre d'un coup les factures d'un relevé de fournisseur. Rend le nombre
       réellement ajouté : celles déjà connues sont passées. */
@@ -70,6 +77,7 @@ type Actions = {
   modifierMembre: (id: Identifiant, changements: Partial<Membre>) => Promise<void>
   supprimerMembre: (id: Identifiant) => Promise<void>
   reglerDechets: (dechets: ReglagesDechets) => Promise<void>
+  reglerPartsParNature: (parts: Reglages['partsParNature']) => Promise<void>
   reglerCotisationMensuelle: (montants: Record<Identifiant, number>) => Promise<void>
   /* le reste */
   recharger: () => Promise<void>
@@ -199,7 +207,13 @@ export function FournisseurMaison({ children }: { children: ReactNode }) {
       await poser('charges', ligne as unknown as Record<string, unknown>)
       // Les parts sont figées maintenant : changer la répartition de la maison
       // plus tard ne doit pas faire bouger des comptes déjà soldés.
-      const parts = partsChoisies ?? repartir(charge.montant, maisonRef.current.foyers)
+      const parts =
+        partsChoisies ??
+        repartir(
+          charge.montant,
+          maisonRef.current.foyers,
+          partsDeLaNature(maisonRef.current, charge.nature),
+        )
       for (const [foyerId, montant] of Object.entries(parts)) {
         const part: PartCharge = { id: nouvelId(), chargeId: id, foyerId, montant }
         await poser('parts_charge', part as unknown as Record<string, unknown>)
@@ -239,7 +253,11 @@ export function FournisseurMaison({ children }: { children: ReactNode }) {
         }
         await poser('charges', charge as unknown as Record<string, unknown>)
 
-        const parts = repartir(ligne.montant, maisonRef.current.foyers)
+        const parts = repartir(
+          ligne.montant,
+          maisonRef.current.foyers,
+          partsDeLaNature(maisonRef.current, choix.nature),
+        )
         for (const [foyerId, montant] of Object.entries(parts)) {
           const part: PartCharge = { id: nouvelId(), chargeId: id, foyerId, montant }
           await poser('parts_charge', part as unknown as Record<string, unknown>)
@@ -285,6 +303,44 @@ export function FournisseurMaison({ children }: { children: ReactNode }) {
   const modifierCharge = useCallback<Actions['modifierCharge']>(
     (id, changements) => changer('charges', id, changements),
     [changer],
+  )
+
+  const corrigerCharge = useCallback<Actions['corrigerCharge']>(
+    async (id, changements) => {
+      const charge = maisonRef.current.charges.find((c) => c.id === id)
+      if (!charge) return
+      await changer('charges', id, changements)
+
+      const nouveauMontant = changements.montant
+      if (nouveauMontant === undefined || nouveauMontant === charge.montant) return
+
+      // Une faute de frappe sur le montant ne doit pas défaire le partage : on
+      // reporte les parts existantes sur le nouveau montant, dans les mêmes
+      // proportions. Une facture partagée à deux avant l'arrivée de la
+      // roulotte reste partagée à deux.
+      const anciennes = maisonRef.current.partsCharge.filter((p) => p.chargeId === id)
+      const total = anciennes.reduce((somme, p) => somme + p.montant, 0)
+      const poids =
+        total > 0
+          ? (Object.fromEntries(anciennes.map((p) => [p.foyerId, p.montant])) as Record<
+              Identifiant,
+              number
+            >)
+          : partsDeLaNature(maisonRef.current, changements.nature ?? charge.nature)
+      const nouvelles = repartir(nouveauMontant, maisonRef.current.foyers, poids)
+
+      for (const foyer of maisonRef.current.foyers) {
+        const existante = anciennes.find((p) => p.foyerId === foyer.id)
+        const montant = nouvelles[foyer.id] ?? 0
+        if (existante) {
+          if (existante.montant !== montant) await changer('parts_charge', existante.id, { montant })
+        } else if (montant > 0) {
+          const part: PartCharge = { id: nouvelId(), chargeId: id, foyerId: foyer.id, montant }
+          await poser('parts_charge', part as unknown as Record<string, unknown>)
+        }
+      }
+    },
+    [changer, poser],
   )
 
   const noterPaiement = useCallback<Actions['noterPaiement']>(
@@ -407,6 +463,16 @@ export function FournisseurMaison({ children }: { children: ReactNode }) {
     }
   }, [])
 
+  const reglerPartsParNature = useCallback<Actions['reglerPartsParNature']>(async (parts) => {
+    try {
+      await base.reglerLe('partsParNature', parts)
+      setMaison((p) => ({ ...p, reglages: { ...p.reglages, partsParNature: parts } }))
+      setErreur(null)
+    } catch (e) {
+      setErreur(e instanceof Error ? e.message : String(e))
+    }
+  }, [])
+
   const reglerCotisationMensuelle = useCallback<Actions['reglerCotisationMensuelle']>(
     async (montants) => {
       try {
@@ -432,6 +498,7 @@ export function FournisseurMaison({ children }: { children: ReactNode }) {
       direQuiJeSuis,
       ajouterCharge,
       modifierCharge,
+      corrigerCharge,
       supprimerCharge,
       noterPaiement,
       annulerPaiement,
@@ -453,6 +520,7 @@ export function FournisseurMaison({ children }: { children: ReactNode }) {
       modifierMembre,
       supprimerMembre,
       reglerDechets,
+      reglerPartsParNature,
       reglerCotisationMensuelle,
       recharger,
     }),
@@ -466,6 +534,7 @@ export function FournisseurMaison({ children }: { children: ReactNode }) {
       direQuiJeSuis,
       ajouterCharge,
       modifierCharge,
+      corrigerCharge,
       supprimerCharge,
       noterPaiement,
       annulerPaiement,
@@ -487,6 +556,7 @@ export function FournisseurMaison({ children }: { children: ReactNode }) {
       modifierMembre,
       supprimerMembre,
       reglerDechets,
+      reglerPartsParNature,
       reglerCotisationMensuelle,
       recharger,
     ],

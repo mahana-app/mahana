@@ -238,6 +238,26 @@ create table if not exists public.reglages (
   valeur jsonb not null
 );
 
+-- L'électricité ne se partage pas comme les impôts : ce sont les frigos et
+-- les congélateurs de la roulotte qui tournent jour et nuit. Deux tiers pour
+-- elle, le tiers restant en deux. Des fractions et non des pourcentages :
+-- 66,67 % trois fois ne font pas un tiers chacun, et sur une facture de
+-- 92 046 F l'écart se voit. Une seule fois : ensuite c'est réglable dans l'app.
+do $electricite$
+begin
+  if not exists (select 1 from public.deja_fait where cle = 'electricite-deux-tiers') then
+    insert into public.reglages (cle, valeur)
+    values ('parts_par_nature', jsonb_build_object(
+      'electricite', jsonb_build_object(
+        'roulotte',   2.0 / 3.0,
+        'lai-ah-che', 1.0 / 6.0,
+        'lenoir',     1.0 / 6.0)))
+    on conflict (cle) do update set valeur = excluded.valeur;
+    insert into public.deja_fait (cle) values ('electricite-deux-tiers');
+  end if;
+end
+$electricite$;
+
 -- =====================================================================
 --  Qui a le droit de lire et d'écrire
 -- =====================================================================

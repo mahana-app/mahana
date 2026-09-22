@@ -11,8 +11,8 @@ import Entete from '../composants/Entete'
 import Symbole from '../composants/Symbole'
 import { fcfp, lireMontant } from '../lib/argent'
 import { useMaison } from '../lib/maison'
-import { membreDe } from '../lib/types'
-import type { Identifiant, RoleMembre } from '../lib/types'
+import { NATURES, membreDe } from '../lib/types'
+import type { Identifiant, NatureCharge, RoleMembre } from '../lib/types'
 
 export default function Maisonnee({ fermer }: { fermer: () => void }) {
   const {
@@ -26,14 +26,26 @@ export default function Maisonnee({ fermer }: { fermer: () => void }) {
     modifierMembre,
     supprimerMembre,
     reglerCotisationMensuelle,
+    reglerPartsParNature,
   } = useMaison()
   const [nouveau, setNouveau] = useState<Identifiant | null>(null)
+  const [natureOuverte, setNatureOuverte] = useState<NatureCharge | null>(null)
   const [prenom, setPrenom] = useState('')
   const [role, setRole] = useState<RoleMembre>('adulte')
 
   const moi = membreDe(maison, moiId)
   const cotisations = maison.reglages.cotisationMensuelle
   const totalCotisations = maison.foyers.reduce((s, f) => s + (cotisations[f.id] ?? 0), 0)
+  const partsParNature = maison.reglages.partsParNature ?? {}
+
+  /* Les poids d'une nature, en pour cent lisibles : 2/3 s'affiche « 66,7 ». */
+  const enPourcent = (poids: Record<Identifiant, number>, foyerId: Identifiant) => {
+    const total = maison.foyers.reduce((somme, f) => somme + (poids[f.id] ?? 0), 0) || 1
+    const valeur = ((poids[foyerId] ?? 0) / total) * 100
+    return (Math.round(valeur * 10) / 10).toLocaleString('fr-FR')
+  }
+  const partsHabituelles = () =>
+    Object.fromEntries(maison.foyers.map((f) => [f.id, f.part])) as Record<Identifiant, number>
 
   return (
     <div className="page">
@@ -222,6 +234,106 @@ export default function Maisonnee({ fermer }: { fermer: () => void }) {
           </div>
         )
       })}
+
+
+      {/* ---------- le partage, charge par charge ---------- */}
+      <div className="carte">
+        <div className="kicker">Un partage à part pour certaines charges</div>
+        <p className="doux mini" style={{ margin: '6px 0 4px', lineHeight: 1.7 }}>
+          L'électricité ne se partage pas comme les impôts : ce sont les frigos de la
+          roulotte qui tournent jour et nuit. Une charge marquée « habituel » suit les parts
+          ci-dessus.
+        </p>
+        {NATURES.map((n) => {
+          const propre = partsParNature[n.id]
+          const ouvert = natureOuverte === n.id
+          return (
+            <div key={n.id} style={{ borderBottom: '1px solid var(--bord)', padding: '10px 0' }}>
+              <button
+                type="button"
+                onClick={() => setNatureOuverte(ouvert ? null : n.id)}
+                style={{
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'space-between',
+                  gap: 10,
+                  width: '100%',
+                  background: 'none',
+                  border: 0,
+                  padding: 0,
+                  color: 'inherit',
+                  font: 'inherit',
+                  textAlign: 'left',
+                  cursor: 'pointer',
+                }}
+                aria-expanded={ouvert}
+              >
+                <span>
+                  {n.emoji} <b>{n.nom}</b>
+                </span>
+                <span className={`pilule${propre ? ' lagon' : ''}`}>
+                  {propre
+                    ? maison.foyers.map((f) => enPourcent(propre, f.id)).join(' / ') + ' %'
+                    : 'habituel'}
+                </span>
+              </button>
+
+              {ouvert && (
+                <div style={{ marginTop: 8 }}>
+                  {maison.foyers.map((foyer) => (
+                    <div key={foyer.id} style={{ marginTop: 8 }}>
+                      <label
+                        className="etiquette"
+                        htmlFor={`nature-${n.id}-${foyer.id}`}
+                        style={{ color: foyer.couleur }}
+                      >
+                        {foyer.nom}, en pour cent
+                      </label>
+                      {/* Non contrôlé exprès : un champ qu'on arrondit pendant
+                          la frappe se bat avec la personne qui tape. On lit la
+                          valeur quand elle a fini. */}
+                      <input
+                        key={`${n.id}-${foyer.id}-${propre ? 'propre' : 'habituel'}`}
+                        id={`nature-${n.id}-${foyer.id}`}
+                        className="champ"
+                        inputMode="decimal"
+                        defaultValue={enPourcent(propre ?? partsHabituelles(), foyer.id)}
+                        onBlur={(e) => {
+                          const pourcent = Number(e.target.value.replace(',', '.'))
+                          if (!Number.isFinite(pourcent) || pourcent < 0) return
+                          const base = propre ?? partsHabituelles()
+                          void reglerPartsParNature({
+                            ...partsParNature,
+                            [n.id]: { ...base, [foyer.id]: pourcent / 100 },
+                          })
+                        }}
+                      />
+                    </div>
+                  ))}
+                  <p className="doux mini" style={{ margin: '8px 0 0' }}>
+                    Les pour cent sont ramenés à leur total : 67 / 17 / 17 partage aussi bien
+                    que 66,7 / 16,7 / 16,7. Le franc en trop va au dernier de la liste.
+                  </p>
+                  {propre && (
+                    <button
+                      type="button"
+                      className="bouton-fin"
+                      style={{ width: '100%', marginTop: 10 }}
+                      onClick={() => {
+                        const reste = { ...partsParNature }
+                        delete reste[n.id]
+                        void reglerPartsParNature(reste)
+                      }}
+                    >
+                      Revenir au partage habituel
+                    </button>
+                  )}
+                </div>
+              )}
+            </div>
+          )
+        })}
+      </div>
 
       {/* À qui est ce téléphone : posé une fois, changeable ici. */}
       <div className="carte">

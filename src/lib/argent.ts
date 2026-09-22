@@ -3,7 +3,7 @@
    Tout est ici plutôt que dans la base : une règle de partage écrite à un
    seul endroit ne peut pas se contredire elle-même, et elle se relit. */
 
-import type { Achat, Charge, Foyer, Identifiant, LigneArdoise, Maison } from './types'
+import type { Achat, Charge, Foyer, Identifiant, LigneArdoise, Maison, NatureCharge } from './types'
 
 /* ---------- les francs ---------- */
 
@@ -57,6 +57,14 @@ export function moisDecale(periode: string, pas: number): string {
 
 /* ---------- le partage d'une facture ---------- */
 
+/** Le partage propre à cette nature de charge, ou rien si c'est l'habituel. */
+export function partsDeLaNature(
+  maison: Maison,
+  nature: string,
+): Record<Identifiant, number> | undefined {
+  return maison.reglages.partsParNature?.[nature as NatureCharge]
+}
+
 /**
  * Répartit un montant entre les foyers selon leurs parts.
  *
@@ -65,13 +73,21 @@ export function moisDecale(periode: string, pas: number): string {
  * Un franc, ce n'est rien ; un compte qui ne tombe jamais juste, c'est ce qui
  * fait qu'on cesse de faire confiance à l'application.
  */
-export function repartir(montant: number, foyers: Foyer[]): Record<Identifiant, number> {
+export function repartir(
+  montant: number,
+  foyers: Foyer[],
+  /* Le partage propre à cette charge, s'il y en a un. Ce sont des poids, pas
+     des pourcentages : on les ramène à leur total, donc 4 / 1 / 1 partage
+     aussi bien que 66,7 / 16,7 / 16,7 — et sans perdre de franc en route. */
+  poids?: Record<Identifiant, number>,
+): Record<Identifiant, number> {
   const parts: Record<Identifiant, number> = {}
-  const total = foyers.reduce((somme, f) => somme + f.part, 0) || 1
+  const poidsDe = (foyer: Foyer) => (poids ? (poids[foyer.id] ?? 0) : foyer.part)
+  const total = foyers.reduce((somme, f) => somme + poidsDe(f), 0) || 1
   let distribue = 0
   foyers.forEach((foyer, index) => {
     const dernier = index === foyers.length - 1
-    const valeur = dernier ? montant - distribue : Math.round((montant * foyer.part) / total)
+    const valeur = dernier ? montant - distribue : Math.round((montant * poidsDe(foyer)) / total)
     parts[foyer.id] = valeur
     distribue += valeur
   })

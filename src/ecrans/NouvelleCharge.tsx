@@ -6,7 +6,7 @@ import { useRef, useState } from 'react'
 import Entete from '../composants/Entete'
 import ChoixMois from '../composants/ChoixMois'
 import Symbole from '../composants/Symbole'
-import { fcfp, lireMontant, moisDe, repartir } from '../lib/argent'
+import { fcfp, lireMontant, moisDe, partsDeLaNature, repartir } from '../lib/argent'
 import { useMaison } from '../lib/maison'
 import { TAILLE_MAXIMUM, estUneImage, poids, televerser } from '../lib/fichiers'
 import { NATURES } from '../lib/types'
@@ -28,7 +28,7 @@ export default function NouvelleCharge({ fermer }: { fermer: () => void }) {
   const champ = useRef<HTMLInputElement>(null)
 
   const montant = lireMontant(montantTexte)
-  const proposees = repartir(montant, maison.foyers)
+  const proposees = repartir(montant, maison.foyers, partsDeLaNature(maison, nature))
 
   const parts: Record<Identifiant, number> = partsCorrigees
     ? Object.fromEntries(
