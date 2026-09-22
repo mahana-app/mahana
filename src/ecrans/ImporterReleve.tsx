@@ -20,12 +20,23 @@ import Symbole from '../composants/Symbole'
 import { useMaison } from '../lib/maison'
 import { fcfp, jourCourt, moisEnMots } from '../lib/argent'
 import { lireReleve } from '../lib/releve'
+import { numerosDansPdf } from '../lib/pdf'
+import { televerser } from '../lib/fichiers'
 import type { LigneRelevee } from '../lib/releve'
-import { NATURES } from '../lib/types'
+import { natureDe, NATURES } from '../lib/types'
 import type { Identifiant, NatureCharge } from '../lib/types'
 
+type Rattachement = {
+  nom: string
+  numero: string | null
+  /** jointe : rangée sur sa facture. deja : elle y était déjà. inconnue : le
+      numéro ne correspond à aucune facture entrée. illisible : un scan. */
+  etat: 'jointe' | 'deja' | 'inconnue' | 'illisible'
+  chargeId?: string
+}
+
 export default function ImporterReleve({ fermer }: { fermer: () => void }) {
-  const { maison, importerCharges } = useMaison()
+  const { maison, importerCharges, ajouterPiece } = useMaison()
   const champ = useRef<HTMLInputElement>(null)
 
   const [lignes, setLignes] = useState<LigneRelevee[]>([])
@@ -34,44 +45,92 @@ export default function ImporterReleve({ fermer }: { fermer: () => void }) {
   const [avanceePar, setAvanceePar] = useState<Identifiant | null>(maison.foyers[0]?.id ?? null)
   const [dejaRemboursees, setDejaRemboursees] = useState(true)
   const [fait, setFait] = useState<number | null>(null)
+  // Le deuxième usage de cet écran : déposer les PDF des factures pour qu'ils
+  // aillent se ranger chacun sur la sienne.
+  const [rattachements, setRattachements] = useState<Rattachement[] | null>(null)
+  const [enCours, setEnCours] = useState('')
 
   const dejaConnues = new Set(maison.charges.map((c) => c.reference).filter((r) => r !== ''))
   const nouvelles = lignes.filter((l) => !l.reference || !dejaConnues.has(l.reference))
   const total = nouvelles.reduce((somme, l) => somme + l.montant, 0)
 
-  async function recevoir(fichier: File | undefined) {
-    if (!fichier) return
+  async function recevoir(fichiers: File[]) {
+    if (fichiers.length === 0) return
     setFait(null)
-    setLignes([])
+    setSouci('')
 
-    // Le piège de cet écran : « importer » fait penser à la facture qu'on a
-    // sous les yeux. Or ce bouton attend le TABLEAU de toutes les factures de
-    // l'année, pas une facture. Le dire ici, en nommant l'endroit où aller,
-    // plutôt que de laisser un message de tableau illisible.
-    if (
-      fichier.type === 'application/pdf' ||
-      fichier.type.startsWith('image/') ||
-      /\.(pdf|jpe?g|png|heic|webp)$/i.test(fichier.name)
-    ) {
+    // Deux usages, un seul bouton : le tableau de l'année, ou les PDF des
+    // factures. On regarde ce qui arrive plutôt que de le demander.
+    const pdf = fichiers.filter(
+      (f) => f.type === 'application/pdf' || /\.pdf$/i.test(f.name),
+    )
+    if (pdf.length > 0) {
+      setLignes([])
+      await rattacherLesPdf(pdf)
+      const images = fichiers.filter((f) => f.type.startsWith('image/'))
+      if (images.length > 0) {
+        setSouci(
+          'Les photos ne portent pas de numéro lisible : ouvrez la facture concernée et ' +
+            'utilisez « La facture en image ».',
+        )
+      }
+      return
+    }
+    if (fichiers.some((f) => f.type.startsWith('image/'))) {
+      setLignes([])
+      setRattachements(null)
       setSouci(
-        `« ${fichier.name} » est une facture, pas un relevé. Pour la garder en image, ` +
-          'ouvrez la facture concernée et utilisez « La facture en image » — ou ajoutez-la ' +
-          'avec sa photo depuis « + Ajouter une facture ». Ce bouton-ci attend le tableau ' +
-          'de toutes les factures de l\'année, celui qui se télécharge chez le fournisseur.',
+        'Une photo ne porte pas de numéro lisible. Ouvrez la facture concernée et utilisez ' +
+          '« La facture en image », ou ajoutez-la avec sa photo depuis « + Ajouter une facture ».',
       )
       return
     }
 
-    const releve = lireReleve(await fichier.text())
+    setRattachements(null)
+    const releve = lireReleve(await fichiers[0].text())
     setSouci(releve.souci)
     setLignes(releve.lignes)
+  }
+
+  /* Chaque PDF va sur la facture qui porte le même numéro. Douze PDF déposés
+     d'un coup se rangent donc tout seuls — sans jamais demander lequel est
+     lequel, ce qui serait douze occasions de se tromper. */
+  async function rattacherLesPdf(fichiers: File[]) {
+    const resultats: Rattachement[] = []
+    setRattachements([])
+    try {
+      for (const fichier of fichiers) {
+        setEnCours(fichier.name)
+        const numeros = await numerosDansPdf(fichier)
+        const charge = maison.charges.find((c) => c.reference && numeros.includes(c.reference))
+
+        if (!charge) {
+          resultats.push({
+            nom: fichier.name,
+            numero: numeros[0] ?? null,
+            etat: numeros.length > 0 ? 'inconnue' : 'illisible',
+          })
+        } else if (maison.piecesCharge.some((p) => p.chargeId === charge.id && p.nom === fichier.name)) {
+          resultats.push({ nom: fichier.name, numero: charge.reference, etat: 'deja', chargeId: charge.id })
+        } else {
+          const depose = await televerser(fichier, charge.id)
+          await ajouterPiece(charge.id, depose)
+          resultats.push({ nom: fichier.name, numero: charge.reference, etat: 'jointe', chargeId: charge.id })
+        }
+        setRattachements([...resultats])
+      }
+    } catch (erreur) {
+      setSouci(erreur instanceof Error ? erreur.message : "L'envoi n'a pas abouti.")
+    } finally {
+      setEnCours('')
+    }
   }
 
   /* ---------- l'écran de fin ---------- */
   if (fait !== null) {
     return (
       <div className="page">
-        <Entete kicker="Relevé" titre="C'est entré" retour={fermer} />
+        <Entete kicker="Factures" titre="C'est entré" retour={fermer} />
         <div className="carte" style={{ textAlign: 'center' }}>
           <Symbole nom="coche" taille={40} couleur="var(--feuille)" />
           <div className="chiffre" style={{ fontSize: 30, marginTop: 8 }}>
@@ -93,7 +152,7 @@ export default function ImporterReleve({ fermer }: { fermer: () => void }) {
 
   return (
     <div className="page">
-      <Entete kicker="Les charges" titre="Importer un relevé" retour={fermer} />
+      <Entete kicker="Les charges" titre="Importer les factures" retour={fermer} />
 
       <div className="carte">
         <p className="doux mini" style={{ margin: '4px 0 12px' }}>
@@ -102,8 +161,8 @@ export default function ImporterReleve({ fermer }: { fermer: () => void }) {
           les factures déjà entrées seront reconnues et laissées de côté.
         </p>
         <p className="doux mini" style={{ margin: '0 0 12px' }}>
-          Ce n'est pas ici qu'on ajoute le PDF d'une facture : ça se fait sur la facture
-          elle-même.
+          Vous pouvez aussi déposer ici <b>les PDF des factures</b>, autant que vous
+          voulez : chacun porte son numéro et ira se ranger tout seul sur sa facture.
         </p>
         <input
           ref={champ}
@@ -111,7 +170,15 @@ export default function ImporterReleve({ fermer }: { fermer: () => void }) {
           // Pas de filtre sur le type : sur Android, « .csv » grise le fichier
           // qu'on vient de télécharger et on ne peut plus le choisir.
           style={{ display: 'none' }}
-          onChange={(e) => void recevoir(e.target.files?.[0])}
+          multiple
+          onChange={(e) => {
+            // Le tableau AVANT de vider le champ : vider efface aussi la liste
+            // que le champ tient. Et il faut le vider, sinon rechoisir le MÊME
+            // fichier ne déclenche rien et on croit que l'app n'a pas réagi.
+            const fichiers = Array.from(e.target.files ?? [])
+            e.target.value = ''
+            void recevoir(fichiers)
+          }}
         />
         <button
           type="button"
@@ -127,6 +194,71 @@ export default function ImporterReleve({ fermer }: { fermer: () => void }) {
           </p>
         )}
       </div>
+
+
+      {/* ---------- les PDF rangés ---------- */}
+      {rattachements !== null && (
+        <>
+          <div className="titre-section">
+            {rattachements.filter((r) => r.etat === 'jointe').length} facture
+            {rattachements.filter((r) => r.etat === 'jointe').length > 1 ? 's' : ''} en image
+          </div>
+          <div className="carte">
+            {rattachements.map((r) => {
+              const charge = maison.charges.find((c) => c.id === r.chargeId)
+              return (
+                <div key={r.nom} className="ligne-liste">
+                  <div style={{ minWidth: 0 }}>
+                    <div
+                      style={{
+                        fontWeight: 600,
+                        fontSize: 15,
+                        overflow: 'hidden',
+                        textOverflow: 'ellipsis',
+                        whiteSpace: 'nowrap',
+                      }}
+                    >
+                      {charge
+                        ? `${natureDe(charge.nature).nom} · ${moisEnMots(charge.periode)}`
+                        : r.nom}
+                    </div>
+                    <div className="doux mini">
+                      {r.etat === 'jointe' && `rangée · ${r.numero}`}
+                      {r.etat === 'deja' && `elle y était déjà · ${r.numero}`}
+                      {r.etat === 'inconnue' &&
+                        `${r.numero} : aucune facture entrée ne porte ce numéro`}
+                      {r.etat === 'illisible' &&
+                        "numéro illisible — c'est peut-être un scan, ouvrez la facture pour l'y joindre"}
+                    </div>
+                  </div>
+                  <span
+                    className={`pilule${r.etat === 'jointe' ? ' vert' : r.etat === 'deja' ? '' : ' ocre'}`}
+                  >
+                    {r.etat === 'jointe'
+                      ? 'Rangée'
+                      : r.etat === 'deja'
+                        ? 'Déjà là'
+                        : r.etat === 'inconnue'
+                          ? 'Sans facture'
+                          : 'Illisible'}
+                  </span>
+                </div>
+              )
+            })}
+            {enCours && (
+              <p className="doux mini" style={{ margin: '10px 0 0' }}>
+                Lecture de {enCours}…
+              </p>
+            )}
+            {rattachements.some((r) => r.etat === 'inconnue') && (
+              <p className="doux mini" style={{ margin: '12px 0 0' }}>
+                Une facture « sans facture », c'est qu'elle n'a pas encore été entrée :
+                importez d'abord le tableau de l'année, puis redéposez ces PDF.
+              </p>
+            )}
+          </div>
+        </>
+      )}
 
       {lignes.length > 0 && (
         <>

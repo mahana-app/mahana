@@ -69,14 +69,15 @@ export default function Charges({ ouvrir }: { ouvrir: (vue: Vue) => void }) {
       </button>
 
       {/* Le relevé du fournisseur contient toute l'année : douze factures
-          entrées d'un coup plutôt que douze saisies à la main. */}
+          entrées d'un coup plutôt que douze saisies à la main. Et les PDF
+          déposés là se rangent chacun sur la sienne, par leur numéro. */}
       <button
         type="button"
         className="bouton-fin"
         style={{ width: '100%', marginTop: 10 }}
         onClick={() => ouvrir({ nom: 'importer-releve' })}
       >
-        Importer un relevé du fournisseur
+        Importer le relevé ou les PDF d'EDT
       </button>
     </div>
   )

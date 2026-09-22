@@ -160,6 +160,16 @@ Et une règle d'écran : on montre ce qu'on a compris **avant** d'écrire quoi q
 ce soit. Un import qui se fait tout seul et se trompe coûte plus cher que la
 saisie à la main.
 
+Le même écran range les **PDF** des factures : `src/lib/pdf.ts` y cherche le
+numéro du fournisseur et l'app le rapproche de `Charge.reference`. Deux pièges
+déjà payés, à ne pas réintroduire :
+
+- `new Response(flux).arrayBuffer()` sur un `DecompressionStream` échoue ici
+  sans rien dire, et le PDF passe pour illisible. Lire le flux au `getReader()`.
+- Le saut de ligne qui précède `endstream` ne fait pas partie des données :
+  le laisser fait échouer la décompression sur « junk found after end of
+  compressed data ».
+
 ## L'entrée : un code, puis une politesse
 
 **Le code de la maison est le mot de passe d'un compte Supabase unique**

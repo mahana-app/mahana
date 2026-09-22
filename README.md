@@ -98,6 +98,21 @@ Le fichier n'a pas besoin d'être celui d'EDT : les colonnes sont cherchées par
 leur intitulé, pas par leur position, et les deux écritures de date
 (`2026-09-07` et `07/09/2026`) sont comprises.
 
+### Les PDF se rangent tout seuls
+
+Le même écran accepte **les PDF des factures**, autant qu'on veut d'un coup.
+Chaque facture d'EDT porte son numéro (`F202608005989`) — le même que celui du
+relevé — et l'app le lit dans le PDF pour aller la ranger sur **sa** facture.
+Ouvrir douze fois le bon écran, c'est douze occasions de se tromper.
+
+Un PDF dont le numéro ne correspond à rien est signalé « sans facture » : c'est
+qu'elle n'a pas encore été entrée. Un scan sans texte est signalé « illisible »
+et se joint alors à la main, depuis la facture.
+
+Aucune bibliothèque pour lire les PDF : un PDF, c'est des morceaux compressés à
+la zlib, et le navigateur sait les décompresser (`DecompressionStream`). On ne
+cherche pas à comprendre la page, juste à y trouver un numéro.
+
 ## Les déchets verts et les encombrants
 
 La commune de Mahina passe **une semaine par mois**, et un seul jour dans cette
@@ -281,6 +296,7 @@ src/
     fichiers.ts       les photos et PDF des factures — réserve ou navigateur
     releve.ts         lire le relevé de factures du fournisseur
     dechets.ts        le calendrier de ramassage de la commune
+    pdf.ts            trouver le numéro de facture écrit dans un PDF
     navigation.ts     les écrans qui s'ouvrent par-dessus les onglets
   composants/         en-tête, onglets, symboles, bandeaux
   ecrans/             un fichier par écran
