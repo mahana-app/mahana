@@ -63,6 +63,11 @@ part corrigée à la main le reste, et une facture partagée à deux avant
 l'arrivée de la roulotte reste partagée à deux. Si quelqu'un avait déjà rendu
 plus que sa nouvelle part, l'écran le dit avant d'enregistrer.
 
+Quand une facture n'est pas partagée comme le réglage du jour le voudrait
+(entrée avant les deux tiers de la roulotte, par exemple), la carte le signale
+d'elle-même et propose **« Repartager selon le réglage d'aujourd'hui »**. Les
+parts figées ne bougent que par ce geste-là, jamais toutes seules.
+
 C'est la règle qui a façonné cet écran. À la maison, c'est presque toujours
 **un seul foyer qui règle le fournisseur**, et l'autre lui rend sa part
 ensuite. L'app suit donc les deux séparément :

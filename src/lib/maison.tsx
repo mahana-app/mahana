@@ -47,6 +47,9 @@ type Actions = {
     id: Identifiant,
     changements: Partial<Pick<Charge, 'montant' | 'libelle' | 'nature' | 'periode' | 'note'>>,
   ) => Promise<void>
+  /** Refait les parts d'une facture d'après le partage du jour pour sa nature.
+      C'est le seul geste qui touche à des parts figées — et il est volontaire. */
+  repartagerCharge: (id: Identifiant) => Promise<void>
   supprimerCharge: (id: Identifiant) => Promise<void>
   /** Entre d'un coup les factures d'un relevé de fournisseur. Rend le nombre
       réellement ajouté : celles déjà connues sont passées. */
@@ -343,6 +346,30 @@ export function FournisseurMaison({ children }: { children: ReactNode }) {
     [changer, poser],
   )
 
+  const repartagerCharge = useCallback<Actions['repartagerCharge']>(
+    async (id) => {
+      const charge = maisonRef.current.charges.find((c) => c.id === id)
+      if (!charge) return
+      const nouvelles = repartir(
+        charge.montant,
+        maisonRef.current.foyers,
+        partsDeLaNature(maisonRef.current, charge.nature),
+      )
+      const anciennes = maisonRef.current.partsCharge.filter((p) => p.chargeId === id)
+      for (const foyer of maisonRef.current.foyers) {
+        const existante = anciennes.find((p) => p.foyerId === foyer.id)
+        const montant = nouvelles[foyer.id] ?? 0
+        if (existante) {
+          if (existante.montant !== montant) await changer('parts_charge', existante.id, { montant })
+        } else if (montant > 0) {
+          const part: PartCharge = { id: nouvelId(), chargeId: id, foyerId: foyer.id, montant }
+          await poser('parts_charge', part as unknown as Record<string, unknown>)
+        }
+      }
+    },
+    [changer, poser],
+  )
+
   const noterPaiement = useCallback<Actions['noterPaiement']>(
     (chargeId, foyerId, le) => changer('charges', chargeId, { avanceePar: foyerId, payeeLe: le }),
     [changer],
@@ -499,6 +526,7 @@ export function FournisseurMaison({ children }: { children: ReactNode }) {
       ajouterCharge,
       modifierCharge,
       corrigerCharge,
+      repartagerCharge,
       supprimerCharge,
       noterPaiement,
       annulerPaiement,
@@ -535,6 +563,7 @@ export function FournisseurMaison({ children }: { children: ReactNode }) {
       ajouterCharge,
       modifierCharge,
       corrigerCharge,
+      repartagerCharge,
       supprimerCharge,
       noterPaiement,
       annulerPaiement,
