@@ -179,6 +179,49 @@ export type Achat = {
   note: string
 }
 
+/* ---------- les dépenses de chaque famille ---------- */
+
+export type CategorieDepense =
+  | 'courses'
+  | 'telephone'
+  | 'sorties'
+  | 'essence'
+  | 'ecole'
+  | 'sante'
+  | 'vetements'
+  | 'autre'
+
+/* Ce que Maru a nommé en premier : les téléphones, les sorties, les courses
+   de la famille. Le reste vient de ce qu'une famille de Mahina paie sans le
+   partager avec l'autre. */
+export const CATEGORIES_DEPENSE: Array<{ id: CategorieDepense; nom: string; emoji: string }> = [
+  { id: 'courses', nom: 'Courses perso', emoji: '🛒' },
+  { id: 'telephone', nom: 'Téléphones', emoji: '📱' },
+  { id: 'sorties', nom: 'Sorties', emoji: '🍽️' },
+  { id: 'essence', nom: 'Essence', emoji: '⛽' },
+  { id: 'ecole', nom: 'École', emoji: '🎒' },
+  { id: 'sante', nom: 'Santé', emoji: '💊' },
+  { id: 'vetements', nom: 'Vêtements', emoji: '👕' },
+  { id: 'autre', nom: 'Autre', emoji: '💸' },
+]
+
+/**
+ * Une dépense propre à une famille — celle-là, l'autre famille ne la voit
+ * pas. Ce n'est pas l'écran qui la cache : c'est la base, qui ne rend à
+ * chaque compte que les lignes de son foyer. Sans ça, ce serait une porte
+ * peinte sur un mur.
+ */
+export type DepensePerso = {
+  id: Identifiant
+  foyerId: Identifiant
+  le: string
+  libelle: string
+  montant: number
+  categorie: CategorieDepense
+  parMembreId: Identifiant | null
+  note: string
+}
+
 /* ---------- l'ardoise de la roulotte ---------- */
 
 /**
@@ -241,6 +284,7 @@ export type Maison = {
   cotisations: Cotisation[]
   achats: Achat[]
   ardoise: LigneArdoise[]
+  depensesPerso: DepensePerso[]
   reglages: Reglages
 }
 
@@ -254,6 +298,7 @@ export const MAISON_VIDE: Maison = {
   cotisations: [],
   achats: [],
   ardoise: [],
+  depensesPerso: [],
   reglages: REGLAGES_PAR_DEFAUT,
 }
 
@@ -267,6 +312,9 @@ export const FOYERS_DE_DEPART: Foyer[] = [
 /* ---------- quelques lectures, à côté des listes qu'elles interrogent ---------- */
 
 export const natureDe = (id: string) => NATURES.find((n) => n.id === id) ?? NATURES[5]
+
+export const categorieDepenseDe = (id: string) =>
+  CATEGORIES_DEPENSE.find((c) => c.id === id) ?? CATEGORIES_DEPENSE[7]
 
 export const categorieDe = (id: string) =>
   CATEGORIES_ACHAT.find((c) => c.id === id) ?? CATEGORIES_ACHAT[5]

@@ -19,6 +19,21 @@
 
 ## Ce qui reste à faire, tout de suite
 
+**Créer les deux comptes de famille dans Supabase** — sans eux, les dépenses
+perso ne s'ouvrent pas (l'ancien code commun continue d'ouvrir le reste).
+
+Authentication → Users → Add user → **Create new user**, deux fois :
+
+| | LAI AH CHE | LENOIR |
+|---|---|---|
+| Email | `lai-ah-che@sweet-home.pf` | `lenoir@sweet-home.pf` |
+| Password | le code à 4 chiffres choisi, **suivi de `-fare`** (ex. `1234-fare`) | idem avec l'autre code |
+| Auto Confirm User | **coché** | **coché** |
+
+Dans l'app, on tape seulement les 4 chiffres : c'est elle qui ajoute `-fare`.
+Puis recoller `supabase/schema.sql` en entier (il pose la table des dépenses
+perso et sa serrure).
+
 **Créer le compte de la maison dans Supabase.** Sans lui, le code ne peut
 ouvrir aucune porte.
 

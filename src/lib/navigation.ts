@@ -7,5 +7,7 @@ export type Vue =
   | { nom: 'importer-releve' }
   | { nom: 'nouvel-achat' }
   | { nom: 'nouvelle-ardoise' }
+  | { nom: 'depenses-perso' }
+  | { nom: 'nouvelle-depense-perso' }
   | { nom: 'dechets' }
   | { nom: 'maisonnee' }

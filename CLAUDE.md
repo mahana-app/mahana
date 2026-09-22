@@ -181,12 +181,26 @@ déjà payés, à ne pas réintroduire :
   le laisser fait échouer la décompression sur « junk found after end of
   compressed data ».
 
-## L'entrée : un code, puis une politesse
+## Ce qui est privé l'est dans la base, jamais dans l'écran
 
-**Le code de la maison est le mot de passe d'un compte Supabase unique**
-(`COMPTE_MAISON` dans `src/ecrans/Connexion.tsx`). L'adresse de ce compte est
-dans le code, jamais tapée par personne. Ne pas remplacer ce mécanisme par un
-code vérifié dans l'application : ce serait une porte peinte sur un mur.
+`depenses_perso` est la seule table qui n'a pas la politique « la maisonnée » :
+elle a « chaque famille la sienne », adossée à `foyer_du_compte()` qui lit le
+courriel du jeton et le retrouve dans `foyers.compte`. Un écran qui filtre par
+« qui es-tu ? » n'est pas une serrure — n'importe qui répond « Mana ».
+
+Deux choses à ne jamais désaligner : les adresses de `src/lib/comptes.ts` et
+celles de `foyers.compte`. Et `monFoyerId` (contexte) vient du **compte** sur
+le serveur, de « qui es-tu ? » seulement en mode essai.
+
+## L'entrée : un code par famille, puis une politesse
+
+**Le code d'une famille est le mot de passe de son compte Supabase**
+(`COMPTES_FOYER` dans `src/lib/comptes.ts`). L'app essaie chaque compte avec
+le code tapé, puis l'ancien compte commun `COMPTE_MAISON`. Le code fait quatre
+chiffres et Supabase en veut six : `motDePasseDe()` ajoute `-fare` en
+coulisses — le mot de passe réel dans Supabase est donc `1234-fare`. Ne pas
+remplacer ce mécanisme par un code vérifié dans l'application : ce serait une
+porte peinte sur un mur.
 
 Quatre comptes séparés étaient plus corrects et ont été essayés. Ils ont été
 abandonnés pour une raison qui n'est pas technique : quatre mots de passe à

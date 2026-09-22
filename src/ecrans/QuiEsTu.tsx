@@ -11,10 +11,13 @@ import { salutation } from '../lib/moi'
 import { foyersFamille } from '../lib/types'
 
 export default function QuiEsTu() {
-  const { maison, direQuiJeSuis } = useMaison()
+  const { maison, monFoyerId, direQuiJeSuis } = useMaison()
   // Ceux qui se servent de l'app, quel que soit leur âge : Mia et Manahiti
-  // ont un téléphone, Eva a quatre ans.
-  const gens = maison.membres.filter((m) => m.aUnTelephone && m.actif)
+  // ont un téléphone, Eva a quatre ans. Et quand le code tapé dit déjà de
+  // quelle famille on est, on ne propose que celle-là.
+  const gens = maison.membres.filter(
+    (m) => m.aUnTelephone && m.actif && (!monFoyerId || m.foyerId === monFoyerId),
+  )
 
   return (
     <div className="page" style={{ paddingTop: 60 }}>

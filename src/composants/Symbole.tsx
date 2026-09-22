@@ -22,6 +22,7 @@ export type NomSymbole =
   | 'crayon'
   | 'papier'
   | 'poubelle'
+  | 'cadenas'
 
 const TRACES: Record<NomSymbole, JSX.Element> = {
   /* le logo : le toit du fare, et la ligne du lagon dessous */
@@ -90,6 +91,14 @@ const TRACES: Record<NomSymbole, JSX.Element> = {
       <path d="M3 7.4h16.8" />
       <path d="M9 4.4h4.8v3H9z" />
       <path d="M9.4 11v5M13.4 11v5" />
+    </>
+  ),
+  /* un cadenas : ce que seule notre famille voit */
+  cadenas: (
+    <>
+      <path d="M5.4 10.6h13.2v10H5.4z" />
+      <path d="M8.2 10.6V7.4a3.8 3.8 0 017.6 0v3.2" />
+      <circle cx="12" cy="15.6" r="1.3" />
     </>
   ),
   /* une feuille au coin corné : la facture reçue du fournisseur */

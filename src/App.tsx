@@ -12,6 +12,8 @@ import Ardoise from './ecrans/Ardoise'
 import Caisse from './ecrans/Caisse'
 import Charges from './ecrans/Charges'
 import Dechets from './ecrans/Dechets'
+import DepensesPerso from './ecrans/DepensesPerso'
+import NouvelleDepensePerso from './ecrans/NouvelleDepensePerso'
 import Enfant from './ecrans/Enfant'
 import ImporterReleve from './ecrans/ImporterReleve'
 import Connexion from './ecrans/Connexion'
@@ -79,6 +81,10 @@ export default function App() {
         return <NouvelAchat fermer={fermer} />
       case 'nouvelle-ardoise':
         return <NouvelleArdoise fermer={fermer} />
+      case 'depenses-perso':
+        return <DepensesPerso ouvrir={ouvrir} fermer={fermer} />
+      case 'nouvelle-depense-perso':
+        return <NouvelleDepensePerso fermer={fermer} />
       case 'dechets':
         return <Dechets fermer={fermer} />
       case 'maisonnee':

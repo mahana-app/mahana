@@ -56,6 +56,13 @@ alter table public.membres
 alter table public.foyers
   add column if not exists est_une_entreprise boolean not null default false;
 
+-- Le compte Supabase de chaque famille. Un compte par foyer, pas un pour la
+-- maison : c'est ce qui permet à la base de ne rendre à chaque famille que
+-- SES dépenses. L'adresse est la même que dans src/lib/comptes.ts — changer
+-- l'une sans l'autre ouvre la serrure.
+alter table public.foyers
+  add column if not exists compte text;
+
 create index if not exists membres_foyer on public.membres(foyer_id);
 
 -- Les deux foyers de départ. « on conflict do nothing » : si Maru les a
@@ -92,6 +99,16 @@ begin
   end if;
 end
 $roulotte$;
+
+do $comptes$
+begin
+  if not exists (select 1 from public.deja_fait where cle = 'un-compte-par-famille') then
+    update public.foyers set compte = 'lai-ah-che@sweet-home.pf' where id = 'lai-ah-che';
+    update public.foyers set compte = 'lenoir@sweet-home.pf'     where id = 'lenoir';
+    insert into public.deja_fait (cle) values ('un-compte-par-famille');
+  end if;
+end
+$comptes$;
 
 
 -- Les sept personnes de la maison, telles que Maru les a données.
@@ -211,6 +228,48 @@ create table if not exists public.achats (
 create index if not exists achats_le on public.achats(le);
 
 -- =====================================================================
+--  Les dépenses de chaque famille
+-- =====================================================================
+
+-- Une dépense propre à une famille : les téléphones, les sorties, les courses
+-- perso. L'autre famille ne la voit pas — et ce n'est pas l'écran qui la
+-- cache, c'est la politique ci-dessous. Une politique « il faut être
+-- connecté » ne suffirait pas : les deux familles le sont.
+create table if not exists public.depenses_perso (
+  id            text primary key,
+  foyer_id      text not null references public.foyers(id) on delete cascade,
+  le            date not null default current_date,
+  libelle       text not null,
+  montant       integer not null,
+  categorie     text not null default 'autre',
+  par_membre_id text references public.membres(id) on delete set null,
+  note          text not null default ''
+);
+
+create index if not exists depenses_perso_foyer_le on public.depenses_perso(foyer_id, le);
+
+-- Le foyer du compte qui appelle, lu dans le jeton de session. Sur une base
+-- PostgreSQL ordinaire (le script de vérification) il n'y a pas de jeton :
+-- la fonction rend null, et la politique ne laisse rien passer — ce qui est
+-- le bon défaut.
+create or replace function public.foyer_du_compte()
+returns text
+language sql
+stable
+security definer
+set search_path = public
+as $$
+  select f.id
+  from public.foyers f
+  where f.compte is not null
+    and f.compte = coalesce(
+      nullif(current_setting('request.jwt.claims', true), '')::jsonb ->> 'email',
+      ''
+    )
+  limit 1
+$$;
+
+-- =====================================================================
 --  L'ardoise de la roulotte
 -- =====================================================================
 
@@ -290,6 +349,7 @@ alter table public.pieces_charge enable row level security;
 alter table public.cotisations  enable row level security;
 alter table public.achats       enable row level security;
 alter table public.ardoise      enable row level security;
+alter table public.depenses_perso enable row level security;
 alter table public.reglages     enable row level security;
 
 do $droits$
@@ -322,6 +382,22 @@ begin
       execute format('revoke all on public.%I from anon', t);
     end if;
   end loop;
+
+
+  -- Les dépenses perso : pas « la maisonnée », mais chaque famille la sienne.
+  -- Le droit d'atteindre la table est donné comme aux autres ; c'est la
+  -- politique qui trie les lignes.
+  execute 'drop policy if exists "la maisonnee" on public.depenses_perso';
+  execute 'drop policy if exists "chaque famille la sienne" on public.depenses_perso';
+  if supabase then
+    execute 'create policy "chaque famille la sienne" on public.depenses_perso
+      for all to authenticated
+      using (foyer_id = public.foyer_du_compte())
+      with check (foyer_id = public.foyer_du_compte())';
+    execute 'grant select, insert, update, delete on public.depenses_perso to authenticated';
+    execute 'revoke all on public.depenses_perso from anon';
+    execute 'grant execute on function public.foyer_du_compte() to authenticated';
+  end if;
 
   if supabase then
     execute 'grant usage on schema public to authenticated';

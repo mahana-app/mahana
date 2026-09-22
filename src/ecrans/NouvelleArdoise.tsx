@@ -8,11 +8,13 @@ import { useMaison } from '../lib/maison'
 import { foyersFamille } from '../lib/types'
 
 export default function NouvelleArdoise({ fermer }: { fermer: () => void }) {
-  const { maison, moiId, ajouterArdoise } = useMaison()
+  const { maison, moiId, monFoyerId, ajouterArdoise } = useMaison()
   // On part de celui qui tient le téléphone, et de son foyer : c'est presque
   // toujours pour soi qu'on prend à manger à la roulotte.
   const moi = maison.membres.find((m) => m.id === moiId)
-  const [foyerId, setFoyerId] = useState(moi?.foyerId ?? foyersFamille(maison)[0]?.id ?? '')
+  const [foyerId, setFoyerId] = useState(
+    moi?.foyerId ?? monFoyerId ?? foyersFamille(maison)[0]?.id ?? '',
+  )
   const [parMembreId, setParMembreId] = useState<string | null>(moi?.id ?? null)
   const [libelle, setLibelle] = useState('')
   const [montantTexte, setMontantTexte] = useState('')

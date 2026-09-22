@@ -40,6 +40,14 @@ const ACTIONS: Action[] = [
     vue: { nom: 'nouvelle-ardoise' },
   },
   {
+    icone: 'cadenas',
+    fond: 'var(--piste)',
+    couleur: 'var(--encre)',
+    nom: 'Une dépense de la famille',
+    detail: 'Téléphones, sorties, courses perso — les nôtres seulement',
+    vue: { nom: 'nouvelle-depense-perso' },
+  },
+  {
     icone: 'famille',
     fond: 'var(--feuille-pale)',
     couleur: 'var(--feuille)',

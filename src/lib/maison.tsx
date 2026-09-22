@@ -11,6 +11,7 @@ import { SERVEUR_BRANCHE, base, client, nouvelId, rubriqueDe } from './base'
 import type { NomTable } from './base'
 import { jourDe, partsDeLaNature, repartir } from './argent'
 import { ecrireMoi, lireMoi } from './moi'
+import { foyerDuCompte } from './comptes'
 import { retirerFichier } from './fichiers'
 import type { Fichier } from './fichiers'
 import type { LigneRelevee } from './releve'
@@ -19,6 +20,7 @@ import type {
   Achat,
   Charge,
   Cotisation,
+  DepensePerso,
   Foyer,
   Identifiant,
   LigneArdoise,
@@ -79,6 +81,9 @@ type Actions = {
   ajouterMembre: (membre: Omit<Membre, 'id'>) => Promise<void>
   modifierMembre: (id: Identifiant, changements: Partial<Membre>) => Promise<void>
   supprimerMembre: (id: Identifiant) => Promise<void>
+  /* les dépenses de la famille */
+  ajouterDepensePerso: (depense: Omit<DepensePerso, 'id'>) => Promise<void>
+  supprimerDepensePerso: (id: Identifiant) => Promise<void>
   reglerDechets: (dechets: ReglagesDechets) => Promise<void>
   reglerPartsParNature: (parts: Reglages['partsParNature']) => Promise<void>
   reglerCotisationMensuelle: (montants: Record<Identifiant, number>) => Promise<void>
@@ -94,6 +99,9 @@ type Contenu = {
   partagee: boolean
   /** Faux quand le serveur est branché mais que personne n'est connecté. */
   connecte: boolean
+  /** Le foyer du compte avec lequel on est entré. Rien avec l'ancien compte
+      commun, ou en mode essai tant qu'on n'a pas dit qui on est. */
+  monFoyerId: Identifiant | null
   sortir: () => Promise<void>
   /** Le membre qui se sert de ce téléphone. Vide tant qu'il ne l'a pas dit. */
   moiId: Identifiant | null
@@ -109,6 +117,7 @@ export function FournisseurMaison({ children }: { children: ReactNode }) {
   // Sans serveur, il n'y a personne à connecter : le mode essai est ouvert.
   const [connecte, setConnecte] = useState(!SERVEUR_BRANCHE)
   const [moiId, setMoiId] = useState<Identifiant | null>(() => lireMoi())
+  const [compte, setCompte] = useState<string | null>(null)
 
   // Les actions qui suppriment en cascade ou répartissent une facture doivent
   // lire l'état au moment où elles s'exécutent, pas celui figé à leur
@@ -122,12 +131,23 @@ export function FournisseurMaison({ children }: { children: ReactNode }) {
   // déconnecter sur un écran doit fermer l'app sur tous les autres.
   useEffect(() => {
     if (!client) return
-    void client.auth.getSession().then(({ data }) => setConnecte(Boolean(data.session)))
+    void client.auth.getSession().then(({ data }) => {
+      setConnecte(Boolean(data.session))
+      setCompte(data.session?.user.email ?? null)
+    })
     const { data } = client.auth.onAuthStateChange((_evenement, session) => {
       setConnecte(Boolean(session))
+      setCompte(session?.user.email ?? null)
     })
     return () => data.subscription.unsubscribe()
   }, [])
+
+  // Sur le serveur, c'est le compte qui dit de quelle famille on est — la
+  // base ne rend les dépenses perso qu'à lui. En mode essai il n'y a pas de
+  // compte : on se fie à « qui es-tu ? », ce qui suffit pour essayer.
+  const monFoyerId: Identifiant | null = SERVEUR_BRANCHE
+    ? foyerDuCompte(compte)
+    : (maison.membres.find((m) => m.id === moiId)?.foyerId ?? null)
 
   const recharger = useCallback(async () => {
     setChargement(true)
@@ -480,6 +500,16 @@ export function FournisseurMaison({ children }: { children: ReactNode }) {
     setMoiId(id)
   }, [])
 
+  const ajouterDepensePerso = useCallback<Actions['ajouterDepensePerso']>(
+    (depense) => poser('depenses_perso', { ...depense, id: nouvelId() }),
+    [poser],
+  )
+
+  const supprimerDepensePerso = useCallback<Actions['supprimerDepensePerso']>(
+    (id) => retirer('depenses_perso', id),
+    [retirer],
+  )
+
   const reglerDechets = useCallback<Actions['reglerDechets']>(async (dechets) => {
     try {
       await base.reglerLe('dechets', dechets)
@@ -520,6 +550,7 @@ export function FournisseurMaison({ children }: { children: ReactNode }) {
       erreur,
       partagee: SERVEUR_BRANCHE,
       connecte,
+      monFoyerId,
       sortir,
       moiId,
       direQuiJeSuis,
@@ -547,6 +578,8 @@ export function FournisseurMaison({ children }: { children: ReactNode }) {
       ajouterMembre,
       modifierMembre,
       supprimerMembre,
+      ajouterDepensePerso,
+      supprimerDepensePerso,
       reglerDechets,
       reglerPartsParNature,
       reglerCotisationMensuelle,
@@ -557,6 +590,7 @@ export function FournisseurMaison({ children }: { children: ReactNode }) {
       chargement,
       erreur,
       connecte,
+      monFoyerId,
       sortir,
       moiId,
       direQuiJeSuis,
@@ -584,6 +618,8 @@ export function FournisseurMaison({ children }: { children: ReactNode }) {
       ajouterMembre,
       modifierMembre,
       supprimerMembre,
+      ajouterDepensePerso,
+      supprimerDepensePerso,
       reglerDechets,
       reglerPartsParNature,
       reglerCotisationMensuelle,

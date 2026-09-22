@@ -37,7 +37,7 @@ export default function Accueil({
   ouvrir: (vue: Vue) => void
   allerA: (onglet: Onglet) => void
 }) {
-  const { maison, moiId } = useMaison()
+  const { maison, moiId, monFoyerId } = useMaison()
   const periode = moisDe()
   const caisse = etatCaisse(maison)
   const du = duALaRoulotte(maison)
@@ -52,6 +52,12 @@ export default function Accueil({
   const prochainRamassage = passagesAVenir(dechets, jourDe())[0]
   const dansCombienDeJours = prochainRamassage ? joursAvant(prochainRamassage, jourDe()) : null
   const aSortir = dansCombienDeJours !== null && sortirCeWeekEnd(dansCombienDeJours)
+
+  // Nos dépenses du mois : celles de notre foyer, que la base est seule à
+  // nous rendre. L'autre famille a la même carte avec ses chiffres à elle.
+  const nosDepenses = maison.depensesPerso
+    .filter((d) => d.foyerId === monFoyerId && d.le.startsWith(periode))
+    .reduce((somme, d) => somme + d.montant, 0)
 
   return (
     <div className="page">
@@ -135,6 +141,35 @@ export default function Accueil({
         </div>
       </button>
 
+
+
+      <button
+        type="button"
+        className="carte"
+        style={{ width: '100%', border: 0, textAlign: 'left' }}
+        onClick={() => ouvrir({ nom: 'depenses-perso' })}
+      >
+        <div className="rangee">
+          <span
+            className="pastille"
+            style={{ width: 46, height: 46, background: 'var(--piste)', color: 'var(--encre)' }}
+          >
+            <Symbole nom="cadenas" taille={21} />
+          </span>
+          <div style={{ flex: 1, minWidth: 0 }}>
+            <div className="kicker">Nos dépenses</div>
+            <div style={{ fontWeight: 700 }}>
+              {monFoyerId ? `${fcfp(nosDepenses)} ce mois-ci` : 'Réservées à chaque famille'}
+            </div>
+            <div className="doux mini">
+              {monFoyerId
+                ? 'téléphones, sorties, courses perso — les nôtres seulement'
+                : "entrez avec le code de votre famille pour les voir"}
+            </div>
+          </div>
+          <Symbole nom="fleche" taille={18} couleur="var(--estompe)" />
+        </div>
+      </button>
 
       {/* Les déchets verts : la carte ne prend le devant que quand le passage
           approche. Le reste du mois, elle reste discrète. */}

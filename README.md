@@ -172,6 +172,28 @@ dit ce que la commune écrit elle-même : **les semaines de jours fériés, les
 tournées sont décalées** et l'annonce passe sur la page Facebook de la commune.
 Mieux vaut le dire que laisser croire à une date sûre.
 
+## Nos dépenses : ce que l'autre famille ne voit pas
+
+Chaque famille note ses propres dépenses — les téléphones, les sorties, les
+courses perso, l'essence, l'école — et **l'autre famille ne les voit pas**.
+Sur l'accueil, carte *Nos dépenses* ; dans le +, *Une dépense de la famille*.
+
+Ce n'est pas l'écran qui les cache : c'est la base. La table `depenses_perso`
+n'a pas la politique « la maisonnée » des autres tables, mais « chaque famille
+la sienne » : elle ne rend à un compte que les lignes de son foyer, et refuse
+d'en écrire pour un autre. Un écran qui filtrerait, n'importe qui l'aurait
+contourné en répondant « Mana » à « qui es-tu ? ».
+
+Pour que la base sache qui frappe, il a fallu **un compte par famille** au lieu
+du compte unique : `lai-ah-che@sweet-home.pf` et `lenoir@sweet-home.pf`, chacun
+avec **son code à quatre chiffres**. Le code se tape dans le même champ
+qu'avant, l'app essaie chaque compte — personne n'a à choisir sa famille dans
+une liste. Supabase refuse un mot de passe de moins de six signes : l'app
+complète le code en coulisses (`1234` devient `1234-fare`), et c'est ce mot de
+passe complet qu'on donne au compte dans Supabase. L'ancien compte commun ouvre
+encore tout ce qui est partagé, mais ne voit les dépenses de personne : il
+n'est d'aucune famille.
+
 ## La caisse commune
 
 Chacun fait ses courses de son côté, mais certaines choses s'achètent en gros
@@ -325,6 +347,7 @@ src/
     releve.ts         lire le relevé de factures du fournisseur
     dechets.ts        le calendrier de ramassage de la commune
     pdf.ts            trouver le numéro de facture écrit dans un PDF
+    comptes.ts        un compte Supabase par famille, et le code à 4 chiffres
     navigation.ts     les écrans qui s'ouvrent par-dessus les onglets
   composants/         en-tête, onglets, symboles, bandeaux
   ecrans/             un fichier par écran
