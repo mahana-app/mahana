@@ -248,6 +248,22 @@ create table if not exists public.depenses_perso (
 
 create index if not exists depenses_perso_foyer_le on public.depenses_perso(foyer_id, le);
 
+-- La fiche budget d'une famille, pour un mois : revenus, dépenses fixes,
+-- budgets prévus par catégorie, objectifs d'épargne, notes. Même serrure que
+-- les dépenses perso.
+create table if not exists public.budget_perso (
+  id        text primary key,
+  foyer_id  text not null references public.foyers(id) on delete cascade,
+  periode   text not null,             -- « 2026-09 »
+  genre     text not null,             -- revenu, fixe, prevu, epargne, note
+  cle       text not null default '',  -- la catégorie, ou le nom de la note
+  libelle   text not null default '',
+  montant   integer not null default 0,
+  realise   integer not null default 0
+);
+
+create index if not exists budget_perso_foyer_periode on public.budget_perso(foyer_id, periode);
+
 -- Le foyer du compte qui appelle, lu dans le jeton de session. Sur une base
 -- PostgreSQL ordinaire (le script de vérification) il n'y a pas de jeton :
 -- la fonction rend null, et la politique ne laisse rien passer — ce qui est
@@ -350,6 +366,7 @@ alter table public.cotisations  enable row level security;
 alter table public.achats       enable row level security;
 alter table public.ardoise      enable row level security;
 alter table public.depenses_perso enable row level security;
+alter table public.budget_perso   enable row level security;
 alter table public.reglages     enable row level security;
 
 do $droits$
@@ -384,18 +401,26 @@ begin
   end loop;
 
 
-  -- Les dépenses perso : pas « la maisonnée », mais chaque famille la sienne.
-  -- Le droit d'atteindre la table est donné comme aux autres ; c'est la
-  -- politique qui trie les lignes.
-  execute 'drop policy if exists "la maisonnee" on public.depenses_perso';
-  execute 'drop policy if exists "chaque famille la sienne" on public.depenses_perso';
+  -- Les dépenses et le budget perso : pas « la maisonnée », mais chaque
+  -- famille la sienne. Le droit d'atteindre la table est donné comme aux
+  -- autres ; c'est la politique qui trie les lignes.
+  foreach t in array array['depenses_perso', 'budget_perso']
+  loop
+    execute format('drop policy if exists "la maisonnee" on public.%I', t);
+    execute format('drop policy if exists "chaque famille la sienne" on public.%I', t);
+    if supabase then
+      execute format(
+        'create policy "chaque famille la sienne" on public.%I
+           for all to authenticated
+           using (foyer_id = public.foyer_du_compte())
+           with check (foyer_id = public.foyer_du_compte())',
+        t
+      );
+      execute format('grant select, insert, update, delete on public.%I to authenticated', t);
+      execute format('revoke all on public.%I from anon', t);
+    end if;
+  end loop;
   if supabase then
-    execute 'create policy "chaque famille la sienne" on public.depenses_perso
-      for all to authenticated
-      using (foyer_id = public.foyer_du_compte())
-      with check (foyer_id = public.foyer_du_compte())';
-    execute 'grant select, insert, update, delete on public.depenses_perso to authenticated';
-    execute 'revoke all on public.depenses_perso from anon';
     execute 'grant execute on function public.foyer_du_compte() to authenticated';
   end if;
 

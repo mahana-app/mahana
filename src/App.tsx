@@ -12,6 +12,7 @@ import Ardoise from './ecrans/Ardoise'
 import Caisse from './ecrans/Caisse'
 import Charges from './ecrans/Charges'
 import Dechets from './ecrans/Dechets'
+import Budget from './ecrans/Budget'
 import DepensesPerso from './ecrans/DepensesPerso'
 import NouvelleDepensePerso from './ecrans/NouvelleDepensePerso'
 import Enfant from './ecrans/Enfant'
@@ -81,6 +82,8 @@ export default function App() {
         return <NouvelAchat fermer={fermer} />
       case 'nouvelle-ardoise':
         return <NouvelleArdoise fermer={fermer} />
+      case 'budget':
+        return <Budget fermer={fermer} />
       case 'depenses-perso':
         return <DepensesPerso ouvrir={ouvrir} fermer={fermer} />
       case 'nouvelle-depense-perso':

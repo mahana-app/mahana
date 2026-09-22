@@ -9,5 +9,6 @@ export type Vue =
   | { nom: 'nouvelle-ardoise' }
   | { nom: 'depenses-perso' }
   | { nom: 'nouvelle-depense-perso' }
+  | { nom: 'budget' }
   | { nom: 'dechets' }
   | { nom: 'maisonnee' }

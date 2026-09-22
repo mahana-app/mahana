@@ -200,6 +200,26 @@ LENOIR*), et après ça personne d'autre ne le sait. Ce que Maru garde, comme
 tout administrateur, c'est le pouvoir de le **réinitialiser** depuis Supabase
 — pas de le lire.
 
+### Notre budget du mois : la fiche
+
+Depuis *Nos dépenses*, la fiche budget que Maru tenait sur papier, même
+serrure que les dépenses. Dans l'ordre de la fiche : **mes revenus** ; **mes
+dépenses fixes** — où *notre part des charges de la maison* s'écrit toute
+seule depuis les factures ; **mes dépenses variables** avec le prévu, le
+dépensé et la différence — le dépensé vient tout seul de ce qu'on note au
+jour le jour ; **mon récap** (revenus − fixes − variables = reste à vivre, puis
+moins l'épargne mise de côté) ; **le suivi des épargnes** avec la progression ;
+**le bilan** (ai-je respecté mon budget, ai-je atteint mes objectifs, ce dont
+je suis fière, ce que je vais améliorer) ; et les notes.
+
+Un bouton recopie la fiche du mois dernier sur un mois vide — revenus, fixes,
+budgets et objectifs, mais pas le mis de côté ni les notes, qui repartent à
+zéro.
+
+Le modèle tient en une table, `budget_perso`, une ligne par élément avec son
+`genre` (revenu, fixe, prevu, epargne, note) et sa `cle` (la catégorie pour un
+prévu, le nom pour une note).
+
 ## La caisse commune
 
 Chacun fait ses courses de son côté, mais certaines choses s'achètent en gros

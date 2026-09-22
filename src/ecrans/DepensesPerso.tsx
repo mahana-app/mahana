@@ -74,6 +74,15 @@ export default function DepensesPerso({
             </div>
           </div>
 
+          <button
+            type="button"
+            className="bouton-fin"
+            style={{ width: '100%', marginBottom: 14 }}
+            onClick={() => ouvrir({ nom: 'budget' })}
+          >
+            Notre budget du mois — la fiche
+          </button>
+
           <ChoixMois periode={periode} changer={setPeriode} />
 
           {parCategorie.length > 1 && (

@@ -32,6 +32,7 @@ export type NomTable =
   | 'achats'
   | 'ardoise'
   | 'depenses_perso'
+  | 'budget_perso'
 
 /* Le rangement de la maison dans l'objet Maison, table par table. */
 const RUBRIQUE: Record<NomTable, keyof Maison> = {
@@ -45,6 +46,7 @@ const RUBRIQUE: Record<NomTable, keyof Maison> = {
   achats: 'achats',
   ardoise: 'ardoise',
   depenses_perso: 'depensesPerso',
+  budget_perso: 'budgetPerso',
 }
 
 export const TABLES = Object.keys(RUBRIQUE) as NomTable[]

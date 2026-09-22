@@ -3,7 +3,16 @@
    Tout est ici plutôt que dans la base : une règle de partage écrite à un
    seul endroit ne peut pas se contredire elle-même, et elle se relit. */
 
-import type { Achat, Charge, Foyer, Identifiant, LigneArdoise, Maison, NatureCharge } from './types'
+import type {
+  Achat,
+  Charge,
+  Foyer,
+  Identifiant,
+  LigneArdoise,
+  LigneBudget,
+  Maison,
+  NatureCharge,
+} from './types'
 
 /* ---------- les francs ---------- */
 
@@ -195,4 +204,71 @@ export function duALaRoulotte(maison: Maison): Record<Identifiant, number> {
     total[ligne.foyerId] = (total[ligne.foyerId] ?? 0) + ligne.montant
   }
   return total
+}
+
+/* ---------- la fiche budget d'une famille ---------- */
+
+export const budgetDuMois = (maison: Maison, foyerId: Identifiant, periode: string): LigneBudget[] =>
+  maison.budgetPerso.filter((l) => l.foyerId === foyerId && l.periode === periode)
+
+/** Ce que la famille a réellement dépensé ce mois-ci, par catégorie. */
+export function reelParCategorie(
+  maison: Maison,
+  foyerId: Identifiant,
+  periode: string,
+): Record<string, number> {
+  const total: Record<string, number> = {}
+  for (const d of maison.depensesPerso) {
+    if (d.foyerId !== foyerId || !d.le.startsWith(periode)) continue
+    total[d.categorie] = (total[d.categorie] ?? 0) + d.montant
+  }
+  return total
+}
+
+/**
+ * Notre part des charges de la maison ce mois-ci : c'est une dépense fixe
+ * qui s'écrit toute seule sur la fiche, puisque l'app la connaît déjà.
+ */
+export function notrePartDesCharges(maison: Maison, foyerId: Identifiant, periode: string): number {
+  return maison.charges
+    .filter((c) => c.periode === periode)
+    .reduce(
+      (somme, c) =>
+        somme +
+        (maison.partsCharge.find((p) => p.chargeId === c.id && p.foyerId === foyerId)?.montant ?? 0),
+      0,
+    )
+}
+
+/**
+ * Le récap du mois, comme sur la fiche : revenus − dépenses fixes − dépenses
+ * variables = reste à vivre. L'épargne est à part : on soustrait ce qui a
+ * été vraiment mis de côté, pas ce qu'on visait — un objectif non tenu ne
+ * doit pas faire croire que l'argent est parti.
+ */
+export function bilanDuMois(maison: Maison, foyerId: Identifiant, periode: string) {
+  const lignes = budgetDuMois(maison, foyerId, periode)
+  const somme = (genre: LigneBudget['genre'], champ: 'montant' | 'realise') =>
+    lignes.filter((l) => l.genre === genre).reduce((s, l) => s + l[champ], 0)
+  const variables = Object.values(reelParCategorie(maison, foyerId, periode)).reduce(
+    (s, v) => s + v,
+    0,
+  )
+  const revenus = somme('revenu', 'montant')
+  const fixes = somme('fixe', 'montant') + notrePartDesCharges(maison, foyerId, periode)
+  const prevu = somme('prevu', 'montant')
+  const epargneVisee = somme('epargne', 'montant')
+  const epargneFaite = somme('epargne', 'realise')
+  const resteAVivre = revenus - fixes - variables
+  return {
+    revenus,
+    fixes,
+    variables,
+    prevu,
+    epargneVisee,
+    epargneFaite,
+    resteAVivre,
+    /** Ce qui reste une fois l'épargne mise de côté. */
+    solde: resteAVivre - epargneFaite,
+  }
 }

@@ -22,6 +22,7 @@ import type {
   Cotisation,
   DepensePerso,
   Foyer,
+  LigneBudget,
   Identifiant,
   LigneArdoise,
   Maison,
@@ -84,6 +85,10 @@ type Actions = {
   /* les dépenses de la famille */
   ajouterDepensePerso: (depense: Omit<DepensePerso, 'id'>) => Promise<void>
   supprimerDepensePerso: (id: Identifiant) => Promise<void>
+  /* la fiche budget de la famille */
+  ajouterLigneBudget: (ligne: Omit<LigneBudget, 'id'>) => Promise<void>
+  modifierLigneBudget: (id: Identifiant, changements: Partial<LigneBudget>) => Promise<void>
+  supprimerLigneBudget: (id: Identifiant) => Promise<void>
   reglerDechets: (dechets: ReglagesDechets) => Promise<void>
   reglerPartsParNature: (parts: Reglages['partsParNature']) => Promise<void>
   reglerCotisationMensuelle: (montants: Record<Identifiant, number>) => Promise<void>
@@ -510,6 +515,19 @@ export function FournisseurMaison({ children }: { children: ReactNode }) {
     [retirer],
   )
 
+  const ajouterLigneBudget = useCallback<Actions['ajouterLigneBudget']>(
+    (ligne) => poser('budget_perso', { ...ligne, id: nouvelId() }),
+    [poser],
+  )
+  const modifierLigneBudget = useCallback<Actions['modifierLigneBudget']>(
+    (id, changements) => changer('budget_perso', id, changements),
+    [changer],
+  )
+  const supprimerLigneBudget = useCallback<Actions['supprimerLigneBudget']>(
+    (id) => retirer('budget_perso', id),
+    [retirer],
+  )
+
   const reglerDechets = useCallback<Actions['reglerDechets']>(async (dechets) => {
     try {
       await base.reglerLe('dechets', dechets)
@@ -580,6 +598,9 @@ export function FournisseurMaison({ children }: { children: ReactNode }) {
       supprimerMembre,
       ajouterDepensePerso,
       supprimerDepensePerso,
+      ajouterLigneBudget,
+      modifierLigneBudget,
+      supprimerLigneBudget,
       reglerDechets,
       reglerPartsParNature,
       reglerCotisationMensuelle,
@@ -620,6 +641,9 @@ export function FournisseurMaison({ children }: { children: ReactNode }) {
       supprimerMembre,
       ajouterDepensePerso,
       supprimerDepensePerso,
+      ajouterLigneBudget,
+      modifierLigneBudget,
+      supprimerLigneBudget,
       reglerDechets,
       reglerPartsParNature,
       reglerCotisationMensuelle,

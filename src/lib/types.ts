@@ -222,6 +222,33 @@ export type DepensePerso = {
   note: string
 }
 
+/**
+ * Une ligne de la fiche budget d'une famille, pour un mois. Même serrure que
+ * les dépenses : la base ne la rend qu'au compte de son foyer.
+ *
+ *  - revenu  : « Salaire Will » — montant
+ *  - fixe    : une dépense fixe, « Loyer », « Assurance » — montant
+ *  - prevu   : le budget d'une catégorie de dépense variable — cle = la
+ *              catégorie, montant = le prévu ; le dépensé vient tout seul de
+ *              « nos dépenses »
+ *  - epargne : un objectif — montant = visé, realise = mis de côté
+ *  - note    : un texte — cle = 'objectif' | 'fiere' | 'ameliorer' | 'notes',
+ *              libelle = le texte
+ */
+export type GenreBudget = 'revenu' | 'fixe' | 'prevu' | 'epargne' | 'note'
+
+export type LigneBudget = {
+  id: Identifiant
+  foyerId: Identifiant
+  periode: string
+  genre: GenreBudget
+  /** Ce qui distingue la ligne dans son genre : la catégorie, ou le nom de la note. */
+  cle: string
+  libelle: string
+  montant: number
+  realise: number
+}
+
 /* ---------- l'ardoise de la roulotte ---------- */
 
 /**
@@ -285,6 +312,7 @@ export type Maison = {
   achats: Achat[]
   ardoise: LigneArdoise[]
   depensesPerso: DepensePerso[]
+  budgetPerso: LigneBudget[]
   reglages: Reglages
 }
 
@@ -299,6 +327,7 @@ export const MAISON_VIDE: Maison = {
   achats: [],
   ardoise: [],
   depensesPerso: [],
+  budgetPerso: [],
   reglages: REGLAGES_PAR_DEFAUT,
 }
 
