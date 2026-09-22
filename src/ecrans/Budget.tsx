@@ -6,7 +6,11 @@
 
    Deux choses que le papier ne fait pas : le « dépensé » des dépenses
    variables s'écrit tout seul depuis ce qu'on note au jour le jour, et notre
-   part des charges de la maison arrive d'elle-même dans les dépenses fixes. */
+   part des charges de la maison arrive d'elle-même dans les dépenses fixes.
+
+   Et l'allure d'une page de planner — rose poudré, sauge, pointillés — parce
+   que c'est celle-là que Maru voulait, et qu'une fiche qu'on a envie
+   d'ouvrir est une fiche qu'on remplit. */
 
 import { useState } from 'react'
 import Entete from '../composants/Entete'
@@ -89,44 +93,63 @@ export default function Budget({ fermer }: { fermer: () => void }) {
   }
 
   return (
-    <div className="page">
+    <div className="page fiche">
       <Entete kicker={foyer.nom} titre="Notre budget" retour={fermer} />
 
-      <ChoixMois periode={periode} changer={setPeriode} />
-
-      {/* ---------- l'en-tête de la fiche : le mois et son objectif ---------- */}
-      <div className="carte" style={{ background: 'var(--lagon-pale)' }}>
-        <div className="rangee">
-          <div style={{ minWidth: 0, flex: 1 }}>
-            <div className="kicker">Reste à vivre · {moisEnMots(periode)}</div>
+      {/* ---------- la tête de la fiche ---------- */}
+      <div className="fiche-entete">
+        <span className="deco" style={{ left: 14, top: 12 }} aria-hidden="true">
+          🌿
+        </span>
+        <span className="deco" style={{ right: 14, top: 14 }} aria-hidden="true">
+          ☕
+        </span>
+        <span className="deco" style={{ right: 22, bottom: 14, fontSize: 18 }} aria-hidden="true">
+          🌸
+        </span>
+        <div className="fiche-titre">MON BUDGET</div>
+        <span className="fiche-script">du mois</span>
+        <div className="fiche-devise">Gérer son budget, c'est s'offrir plus de liberté !</div>
+        <div style={{ marginTop: 12 }}>
+          <ChoixMois periode={periode} changer={setPeriode} />
+        </div>
+        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 10, marginTop: -2 }}>
+          <div style={{ textAlign: 'left' }}>
+            <div className="etiquette" style={{ marginBottom: 2 }}>
+              Reste à vivre
+            </div>
             <div
               className="chiffre"
-              style={{ fontSize: 32, color: bilan.resteAVivre < 0 ? 'var(--corail-fonce)' : undefined }}
+              style={{
+                fontSize: 24,
+                color: bilan.resteAVivre < 0 ? 'var(--corail-fonce)' : 'var(--fiche-sauge)',
+              }}
             >
               {fcfp(bilan.resteAVivre)}
             </div>
-            <div className="doux mini">revenus − dépenses fixes − dépenses variables</div>
           </div>
-          <Symbole nom="cadenas" taille={24} couleur="var(--lagon)" />
+          <div style={{ textAlign: 'left' }}>
+            <label className="etiquette" htmlFor="objectif-mois" style={{ marginBottom: 2 }}>
+              Objectif du mois
+            </label>
+            <input
+              key={`objectif-${periode}-${note('objectif')?.id ?? ''}`}
+              id="objectif-mois"
+              className="champ"
+              style={{ padding: '7px 10px', fontSize: 14 }}
+              placeholder="ex. 20 000 F pour Moorea"
+              defaultValue={note('objectif')?.libelle ?? ''}
+              onBlur={(e) => void ecrireNote('objectif', e.target.value)}
+            />
+          </div>
         </div>
-        <label className="etiquette" style={{ marginTop: 14 }} htmlFor="objectif-mois">
-          Objectif du mois
-        </label>
-        <input
-          key={`objectif-${periode}-${note('objectif')?.id ?? ''}`}
-          id="objectif-mois"
-          className="champ"
-          placeholder="ex. Mettre 20 000 F de côté pour Moorea"
-          defaultValue={note('objectif')?.libelle ?? ''}
-          onBlur={(e) => void ecrireNote('objectif', e.target.value)}
-        />
       </div>
 
       {vide && lignesDernier.length > 0 && (
         <button
           type="button"
-          className="bouton-fin"
-          style={{ width: '100%', marginBottom: 14 }}
+          className="fiche-sticker"
+          style={{ width: '100%', justifyContent: 'center', padding: 10, marginBottom: 14 }}
           onClick={() => {
             // Les revenus, les fixes, les budgets et les objectifs d'épargne
             // se ressemblent d'un mois à l'autre. Le mis de côté, non.
@@ -135,12 +158,21 @@ export default function Budget({ fermer }: { fermer: () => void }) {
             }
           }}
         >
-          Recopier la fiche de {moisEnMots(moisDernier)}
+          📋 Recopier la fiche de {moisEnMots(moisDernier)}
         </button>
       )}
 
       {/* ---------- 1. les revenus ---------- */}
-      <Section numero={1} titre="Mes revenus" total={bilan.revenus}>
+      <div className="fiche-bloc sauge">
+        <div className="fiche-bloc-titre">
+          <span className="fiche-numero">1</span> Mes revenus
+          <span className="bout">💶</span>
+        </div>
+        <div className="fiche-tete" style={{ gridTemplateColumns: '1fr 96px 28px' }}>
+          <span>source</span>
+          <span style={{ textAlign: 'right' }}>montant</span>
+          <span />
+        </div>
         {de('revenu').map((l) => (
           <Ligne
             key={l.id}
@@ -153,17 +185,28 @@ export default function Budget({ fermer }: { fermer: () => void }) {
           placeholder="ex. Salaire Will"
           ajouter={(libelle, montant) => void nouvelle('revenu', '', libelle, montant)}
         />
-      </Section>
+        <div className="fiche-total">
+          <span>TOTAL REVENUS</span>
+          <span className="chiffre" style={{ color: 'inherit' }}>{fcfp(bilan.revenus)}</span>
+        </div>
+      </div>
 
       {/* ---------- 2. les dépenses fixes ---------- */}
-      <Section numero={2} titre="Mes dépenses fixes" total={bilan.fixes}>
+      <div className="fiche-bloc rose">
+        <div className="fiche-bloc-titre">
+          <span className="fiche-numero">2</span> Mes dépenses fixes
+          <span className="bout">🏠</span>
+        </div>
         {partCharges > 0 && (
-          <div className="ligne-liste">
-            <div style={{ flex: 1, minWidth: 0 }}>
-              <div style={{ fontWeight: 600, fontSize: 15 }}>Notre part des charges de la maison</div>
-              <div className="doux mini">électricité, eau… — calculée depuis les factures</div>
+          <div className="fiche-rangee" style={{ gridTemplateColumns: '1fr 96px 28px' }}>
+            <div style={{ minWidth: 0 }}>
+              <div style={{ fontWeight: 600, fontSize: 14 }}>⚡ Notre part des charges de la maison</div>
+              <div className="doux mini">calculée depuis les factures</div>
             </div>
-            <span className="chiffre mini">{fcfp(partCharges)}</span>
+            <span className="chiffre mini" style={{ textAlign: 'right' }}>
+              {fcfp(partCharges)}
+            </span>
+            <span />
           </div>
         )}
         {de('fixe').map((l) => (
@@ -180,8 +223,7 @@ export default function Budget({ fermer }: { fermer: () => void }) {
               <button
                 key={nom}
                 type="button"
-                className="pilule"
-                style={{ border: 0, cursor: 'pointer' }}
+                className="fiche-sticker"
                 onClick={() => void nouvelle('fixe', '', nom)}
               >
                 + {nom}
@@ -193,23 +235,19 @@ export default function Budget({ fermer }: { fermer: () => void }) {
           placeholder="ex. Assurance voiture"
           ajouter={(libelle, montant) => void nouvelle('fixe', '', libelle, montant)}
         />
-      </Section>
+        <div className="fiche-total">
+          <span>TOTAL FIXES</span>
+          <span className="chiffre" style={{ color: 'inherit' }}>{fcfp(bilan.fixes)}</span>
+        </div>
+      </div>
 
       {/* ---------- 3. les dépenses variables ---------- */}
-      <div className="carte">
-        <div className="rangee">
-          <div className="kicker">3 · Mes dépenses variables</div>
-          <span className="pilule">
-            {fcfp(bilan.variables)} / {fcfp(bilan.prevu)}
-          </span>
+      <div className="fiche-bloc">
+        <div className="fiche-bloc-titre">
+          <span className="fiche-numero">3</span> Mes dépenses variables
+          <span className="bout">🛍️</span>
         </div>
-        <div className="doux mini" style={{ margin: '4px 0 6px' }}>
-          Le dépensé vient de « nos dépenses ». Tapez le budget prévu de chaque catégorie.
-        </div>
-        <div
-          className="doux mini"
-          style={{ display: 'grid', gridTemplateColumns: '1fr 82px 82px', gap: 8, padding: '6px 0' }}
-        >
+        <div className="fiche-tete" style={{ gridTemplateColumns: '1fr 78px 78px' }}>
           <span>catégorie</span>
           <span style={{ textAlign: 'right' }}>prévu</span>
           <span style={{ textAlign: 'right' }}>dépensé</span>
@@ -219,25 +257,15 @@ export default function Budget({ fermer }: { fermer: () => void }) {
           const depense = reel[c.id] ?? 0
           const difference = prevu - depense
           return (
-            <div
-              key={c.id}
-              style={{
-                display: 'grid',
-                gridTemplateColumns: '1fr 82px 82px',
-                gap: 8,
-                alignItems: 'center',
-                padding: '7px 0',
-                borderTop: '1px solid var(--bord)',
-              }}
-            >
+            <div key={c.id} className="fiche-rangee" style={{ gridTemplateColumns: '1fr 78px 78px' }}>
               <div style={{ minWidth: 0 }}>
                 <div style={{ fontWeight: 600, fontSize: 14 }}>
                   {c.emoji} {c.nom}
                 </div>
                 {prevu > 0 && (
                   <div
-                    className="doux mini"
-                    style={{ color: difference < 0 ? 'var(--corail-fonce)' : 'var(--feuille)' }}
+                    className="mini"
+                    style={{ color: difference < 0 ? 'var(--corail-fonce)' : 'var(--fiche-sauge)' }}
                   >
                     {difference < 0 ? `dépassé de ${fcfp(-difference)}` : `reste ${fcfp(difference)}`}
                   </div>
@@ -250,7 +278,7 @@ export default function Budget({ fermer }: { fermer: () => void }) {
                 placeholder="0"
                 defaultValue={prevu || ''}
                 aria-label={`Budget prévu ${c.nom}`}
-                style={{ padding: '8px 8px', textAlign: 'right', fontSize: 14 }}
+                style={{ padding: '7px 8px', textAlign: 'right', fontSize: 14 }}
                 onBlur={(e) => {
                   const montant = lireMontant(e.target.value)
                   if (montant !== prevu) void ecrirePrevu(c.id, c.nom, montant)
@@ -262,52 +290,72 @@ export default function Budget({ fermer }: { fermer: () => void }) {
             </div>
           )
         })}
+        <div className="doux mini" style={{ margin: '8px 0 0' }}>
+          Le dépensé vient tout seul de « nos dépenses ».
+        </div>
+        <div className="fiche-total">
+          <span>TOTAL VARIABLES</span>
+          <span className="chiffre" style={{ color: 'inherit' }}>
+            {fcfp(bilan.variables)} <span className="mini">/ {fcfp(bilan.prevu)} prévu</span>
+          </span>
+        </div>
       </div>
 
       {/* ---------- le récap ---------- */}
-      <div className="carte" style={{ background: 'var(--creme)' }}>
-        <div className="kicker">Mon récap du mois</div>
+      <div className="fiche-bloc rose">
+        <div className="fiche-bloc-titre">
+          <span style={{ color: 'var(--fiche-rose)' }}>♥</span> Mon récap du mois
+        </div>
         <Recap nom="Total revenus" valeur={bilan.revenus} />
-        <Recap nom="− dépenses fixes" valeur={bilan.fixes} />
-        <Recap nom="− dépenses variables" valeur={bilan.variables} />
-        <Recap nom="= reste à vivre" valeur={bilan.resteAVivre} fort />
-        <Recap nom="− mis de côté" valeur={bilan.epargneFaite} />
-        <Recap nom="= ce qu'il reste" valeur={bilan.solde} fort />
-        <p className="doux mini" style={{ margin: '10px 0 0', lineHeight: 1.7 }}>
+        <Recap nom="− Total dépenses fixes" valeur={bilan.fixes} />
+        <Recap nom="− Total dépenses variables" valeur={bilan.variables} />
+        <Recap nom="= Reste à vivre" valeur={bilan.resteAVivre} fort />
+        <Recap nom="− Mis de côté" valeur={bilan.epargneFaite} />
+        <Recap nom="= Ce qu'il reste vraiment" valeur={bilan.solde} fort />
+      </div>
+
+      <div className="fiche-astuce">
+        <span style={{ fontSize: 30 }} aria-hidden="true">
+          🐷
+        </span>
+        <div>
+          <b style={{ fontStyle: 'normal' }}>
+            Astuce <span className="coeur">♥</span>
+          </b>
+          <br />
           Mettez de côté en premier ce que vous voulez épargner, puis vivez avec le reste.
-          C'est la clé.
-        </p>
+          C'est la clé !
+        </div>
       </div>
 
       {/* ---------- les épargnes ---------- */}
-      <div className="carte">
-        <div className="rangee">
-          <div className="kicker">Suivi de mes épargnes</div>
-          <span className="pilule vert">
+      <div className="fiche-bloc sauge">
+        <div className="fiche-bloc-titre">
+          <span style={{ color: 'var(--fiche-sauge)' }}>◎</span> Suivi de mes épargnes
+          <span className="bout">
             {fcfp(bilan.epargneFaite)} / {fcfp(bilan.epargneVisee)}
           </span>
         </div>
         {de('epargne').map((l) => {
           const pourcent = l.montant > 0 ? Math.min(100, Math.round((l.realise / l.montant) * 100)) : 0
           return (
-            <div key={l.id} style={{ padding: '10px 0', borderBottom: '1px solid var(--bord)' }}>
-              <div className="rangee">
+            <div key={l.id} style={{ padding: '8px 0', borderBottom: '1.5px dotted var(--fiche-trait)' }}>
+              <div className="rangee" style={{ gap: 8 }}>
                 <input
                   key={`nom-${l.id}`}
                   className="champ"
-                  style={{ padding: '6px 8px', fontSize: 14, flex: 1 }}
+                  style={{ padding: '7px 8px', fontSize: 14, flex: 1 }}
                   defaultValue={l.libelle}
                   aria-label="Objectif"
                   onBlur={(e) => void modifierLigneBudget(l.id, { libelle: e.target.value })}
                 />
                 <button
                   type="button"
-                  className="bouton-fin"
-                  style={{ padding: '4px 10px', flex: '0 0 auto' }}
+                  className="croix"
                   aria-label={`Retirer ${l.libelle}`}
                   onClick={() => void supprimerLigneBudget(l.id)}
                 >
-                  <Symbole nom="croix" taille={13} />
+                  <Symbole nom="croix" taille={12} />
                 </button>
               </div>
               <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 8, marginTop: 8 }}>
@@ -317,7 +365,7 @@ export default function Budget({ fermer }: { fermer: () => void }) {
                     key={`vise-${l.id}-${l.montant}`}
                     className="champ"
                     inputMode="numeric"
-                    style={{ padding: '8px', fontSize: 14, textAlign: 'right' }}
+                    style={{ padding: '7px 8px', fontSize: 14, textAlign: 'right' }}
                     defaultValue={l.montant || ''}
                     aria-label="Montant visé"
                     onBlur={(e) => void modifierLigneBudget(l.id, { montant: lireMontant(e.target.value) })}
@@ -329,7 +377,7 @@ export default function Budget({ fermer }: { fermer: () => void }) {
                     key={`fait-${l.id}-${l.realise}`}
                     className="champ"
                     inputMode="numeric"
-                    style={{ padding: '8px', fontSize: 14, textAlign: 'right' }}
+                    style={{ padding: '7px 8px', fontSize: 14, textAlign: 'right' }}
                     defaultValue={l.realise || ''}
                     aria-label="Mis de côté"
                     onBlur={(e) => void modifierLigneBudget(l.id, { realise: lireMontant(e.target.value) })}
@@ -337,8 +385,8 @@ export default function Budget({ fermer }: { fermer: () => void }) {
                 </div>
               </div>
               <div className="rangee" style={{ marginTop: 8, gap: 10 }}>
-                <div className="barre" style={{ flex: 1 }}>
-                  <i style={{ width: `${pourcent}%`, background: 'var(--feuille)' }} />
+                <div className="fiche-progression">
+                  <i style={{ width: `${pourcent}%` }} />
                 </div>
                 <span className="chiffre mini">{pourcent} %</span>
               </div>
@@ -353,8 +401,10 @@ export default function Budget({ fermer }: { fermer: () => void }) {
       </div>
 
       {/* ---------- 4. le bilan ---------- */}
-      <div className="carte">
-        <div className="kicker">4 · Bilan du mois</div>
+      <div className="fiche-bloc">
+        <div className="fiche-bloc-titre">
+          <span className="fiche-numero">4</span> Bilan du mois
+        </div>
         <Question
           texte="Ai-je respecté mon budget ?"
           reponse={bilan.prevu === 0 ? null : bilan.variables <= bilan.prevu}
@@ -381,8 +431,8 @@ export default function Budget({ fermer }: { fermer: () => void }) {
         <textarea
           key={`fiere-${periode}-${note('fiere')?.id ?? ''}`}
           id="fiere"
-          className="champ"
-          rows={2}
+          className="champ fiche-lignes"
+          rows={3}
           defaultValue={note('fiere')?.libelle ?? ''}
           onBlur={(e) => void ecrireNote('fiere', e.target.value)}
         />
@@ -392,57 +442,36 @@ export default function Budget({ fermer }: { fermer: () => void }) {
         <textarea
           key={`ameliorer-${periode}-${note('ameliorer')?.id ?? ''}`}
           id="ameliorer"
-          className="champ"
-          rows={2}
+          className="champ fiche-lignes"
+          rows={3}
           defaultValue={note('ameliorer')?.libelle ?? ''}
           onBlur={(e) => void ecrireNote('ameliorer', e.target.value)}
         />
       </div>
 
       {/* ---------- les notes ---------- */}
-      <div className="carte">
-        <label className="etiquette" htmlFor="notes">
-          Notes et idées
-        </label>
+      <div className="fiche-bloc sauge">
+        <div className="fiche-bloc-titre">
+          <span style={{ color: 'var(--fiche-or)' }}>✎</span> Notes &amp; idées
+        </div>
         <textarea
           key={`notes-${periode}-${note('notes')?.id ?? ''}`}
           id="notes"
-          className="champ"
-          rows={3}
+          className="champ fiche-lignes"
+          rows={4}
           placeholder="Un budget ne sert pas à se priver, mais à choisir ce qui compte vraiment pour vous."
           defaultValue={note('notes')?.libelle ?? ''}
           onBlur={(e) => void ecrireNote('notes', e.target.value)}
         />
+        <p className="doux mini" style={{ margin: '10px 0 0', textAlign: 'center', fontStyle: 'italic' }}>
+          Chaque petite action compte. Soyez fière de chaque pas vers vos objectifs ♥
+        </p>
       </div>
     </div>
   )
 }
 
 /* ---------- les petits morceaux de la fiche ---------- */
-
-function Section({
-  numero,
-  titre,
-  total,
-  children,
-}: {
-  numero: number
-  titre: string
-  total: number
-  children: React.ReactNode
-}) {
-  return (
-    <div className="carte">
-      <div className="rangee">
-        <div className="kicker">
-          {numero} · {titre}
-        </div>
-        <span className="pilule">{fcfp(total)}</span>
-      </div>
-      <div style={{ marginTop: 4 }}>{children}</div>
-    </div>
-  )
-}
 
 function Ligne({
   ligne,
@@ -454,11 +483,11 @@ function Ligne({
   retirer: () => void
 }) {
   return (
-    <div className="ligne-liste" style={{ gap: 8 }}>
+    <div className="fiche-rangee" style={{ gridTemplateColumns: '1fr 96px 28px' }}>
       <input
         key={`l-${ligne.id}`}
         className="champ"
-        style={{ padding: '8px', fontSize: 14, flex: 1, minWidth: 0 }}
+        style={{ padding: '7px 8px', fontSize: 14, minWidth: 0 }}
         defaultValue={ligne.libelle}
         aria-label="Libellé"
         onBlur={(e) => modifier({ libelle: e.target.value })}
@@ -467,7 +496,7 @@ function Ligne({
         key={`m-${ligne.id}-${ligne.montant}`}
         className="champ"
         inputMode="numeric"
-        style={{ padding: '8px', fontSize: 14, width: 96, textAlign: 'right' }}
+        style={{ padding: '7px 8px', fontSize: 14, textAlign: 'right' }}
         defaultValue={ligne.montant || ''}
         placeholder="0"
         aria-label={`Montant ${ligne.libelle}`}
@@ -476,14 +505,8 @@ function Ligne({
           if (montant !== ligne.montant) modifier({ montant })
         }}
       />
-      <button
-        type="button"
-        className="bouton-fin"
-        style={{ padding: '4px 10px', flex: '0 0 auto' }}
-        aria-label={`Retirer ${ligne.libelle}`}
-        onClick={retirer}
-      >
-        <Symbole nom="croix" taille={13} />
+      <button type="button" className="croix" aria-label={`Retirer ${ligne.libelle}`} onClick={retirer}>
+        <Symbole nom="croix" taille={12} />
       </button>
     </div>
   )
@@ -501,10 +524,10 @@ function AjouterLigne({
   const [libelle, setLibelle] = useState('')
   const [montant, setMontant] = useState('')
   return (
-    <div style={{ display: 'flex', gap: 8, marginTop: 10 }}>
+    <div style={{ display: 'grid', gridTemplateColumns: '1fr 96px 36px', gap: 8, marginTop: 10 }}>
       <input
         className="champ"
-        style={{ padding: '8px', fontSize: 14, flex: 1, minWidth: 0 }}
+        style={{ padding: '7px 8px', fontSize: 14, minWidth: 0 }}
         placeholder={placeholder}
         value={libelle}
         onChange={(e) => setLibelle(e.target.value)}
@@ -512,15 +535,16 @@ function AjouterLigne({
       <input
         className="champ"
         inputMode="numeric"
-        style={{ padding: '8px', fontSize: 14, width: 96, textAlign: 'right' }}
+        style={{ padding: '7px 8px', fontSize: 14, textAlign: 'right' }}
         placeholder={libelleMontant}
         value={montant}
         onChange={(e) => setMontant(e.target.value)}
       />
       <button
         type="button"
-        className="bouton"
-        style={{ width: 'auto', padding: '8px 14px', fontSize: 14, flex: '0 0 auto' }}
+        className="bouton-fiche"
+        style={{ padding: 0, width: 36, height: 36 }}
+        aria-label="Ajouter"
         disabled={libelle.trim().length === 0}
         onClick={() => {
           ajouter(libelle.trim(), lireMontant(montant))
@@ -536,10 +560,11 @@ function AjouterLigne({
 
 function Recap({ nom, valeur, fort = false }: { nom: string; valeur: number; fort?: boolean }) {
   return (
-    <div className="rangee" style={{ marginTop: 6 }}>
-      <span className={fort ? '' : 'doux'} style={{ fontWeight: fort ? 700 : 400 }}>
-        {nom}
-      </span>
+    <div
+      className="rangee"
+      style={{ padding: '6px 0', borderBottom: '1.5px dotted var(--fiche-trait)', fontWeight: fort ? 700 : 400 }}
+    >
+      <span>{nom}</span>
       <span
         className="chiffre mini"
         style={{ color: fort && valeur < 0 ? 'var(--corail-fonce)' : undefined }}
@@ -565,7 +590,7 @@ function Question({
         <div style={{ fontWeight: 600, fontSize: 15 }}>{texte}</div>
         <div className="doux mini">{detail}</div>
       </div>
-      <span style={{ fontSize: 24 }}>{reponse === null ? '🙂' : reponse ? '😄' : '😕'}</span>
+      <span style={{ fontSize: 26 }}>{reponse === null ? '🙂' : reponse ? '😄' : '😕'}</span>
     </div>
   )
 }

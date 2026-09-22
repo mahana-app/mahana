@@ -466,3 +466,270 @@ textarea {
   background: var(--corail-pale);
   color: var(--corail-fonce);
 }
+
+/* ---------- la fiche budget ----------
+   Une feuille de planner posée sur la table : rose poudré, sauge, papier
+   crème, lignes pointillées. Ses couleurs sont à elle — c'est une page
+   d'un autre carnet, glissée dans l'app — mais elles restent des variables,
+   jamais des valeurs en dur dans les écrans. */
+
+.fiche {
+  --fiche-rose: #c9857f;
+  --fiche-rose-pale: #f6e4e0;
+  --fiche-rose-fond: #fbf1ee;
+  --fiche-sauge: #7f9a6e;
+  --fiche-sauge-pale: #e6ecdc;
+  --fiche-sauge-fond: #f2f5ec;
+  --fiche-brun: #5d4a3c;
+  --fiche-papier: #fffaf3;
+  --fiche-trait: rgba(93, 74, 60, 0.28);
+  --fiche-or: #d1a35a;
+  color: var(--fiche-brun);
+}
+
+.fiche-entete {
+  position: relative;
+  text-align: center;
+  padding: 22px 16px 18px;
+  margin-bottom: 14px;
+  border-radius: 22px;
+  background:
+    radial-gradient(circle at 12% 18%, var(--fiche-rose-pale) 0, transparent 34%),
+    radial-gradient(circle at 88% 82%, var(--fiche-sauge-pale) 0, transparent 36%),
+    var(--fiche-papier);
+  box-shadow: var(--ombre);
+  overflow: hidden;
+}
+
+.fiche-entete .deco {
+  position: absolute;
+  font-size: 26px;
+  opacity: 0.85;
+}
+
+.fiche-titre {
+  font-family: var(--titre);
+  font-weight: 700;
+  font-size: 30px;
+  letter-spacing: 0.06em;
+  line-height: 1;
+  color: var(--fiche-brun);
+}
+
+.fiche-script {
+  font-family: var(--titre);
+  font-style: italic;
+  font-weight: 600;
+  font-size: 40px;
+  line-height: 0.95;
+  color: var(--fiche-rose);
+  display: block;
+  margin-top: 2px;
+}
+
+.fiche-devise {
+  display: inline-block;
+  margin-top: 12px;
+  padding: 6px 14px;
+  border-radius: 999px;
+  background: var(--fiche-sauge);
+  color: var(--fiche-papier);
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+}
+
+.fiche-bloc {
+  background: var(--fiche-papier);
+  border: 1.5px solid var(--fiche-trait);
+  border-radius: 16px;
+  padding: 14px 14px 12px;
+  margin-bottom: 14px;
+  box-shadow: 0 6px 18px rgba(93, 74, 60, 0.08);
+}
+
+.fiche-bloc.rose { background: var(--fiche-rose-fond); }
+.fiche-bloc.sauge { background: var(--fiche-sauge-fond); }
+
+.fiche-bloc-titre {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin: -14px -14px 10px;
+  padding: 10px 14px;
+  border-bottom: 1.5px solid var(--fiche-trait);
+  border-radius: 16px 16px 0 0;
+  background: var(--fiche-sauge-pale);
+  font-family: var(--titre);
+  font-weight: 700;
+  font-size: 17px;
+  letter-spacing: 0.02em;
+  text-transform: uppercase;
+}
+
+.fiche-bloc.rose .fiche-bloc-titre { background: var(--fiche-rose-pale); }
+
+.fiche-numero {
+  width: 26px;
+  height: 26px;
+  border-radius: 50%;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--fiche-brun);
+  color: var(--fiche-papier);
+  font-family: var(--sans);
+  font-size: 13px;
+  font-weight: 700;
+  flex: 0 0 auto;
+}
+
+.fiche-bloc-titre .bout {
+  margin-left: auto;
+  font-family: var(--sans);
+  font-size: 12px;
+  font-weight: 700;
+  text-transform: none;
+  letter-spacing: 0;
+  padding: 4px 10px;
+  border-radius: 999px;
+  background: var(--fiche-papier);
+  border: 1px solid var(--fiche-trait);
+}
+
+.fiche-tete {
+  display: grid;
+  gap: 8px;
+  padding: 2px 0 6px;
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--fiche-brun);
+  opacity: 0.7;
+}
+
+.fiche-rangee {
+  display: grid;
+  gap: 8px;
+  align-items: center;
+  padding: 7px 0;
+  border-bottom: 1.5px dotted var(--fiche-trait);
+}
+
+.fiche-rangee:last-of-type { border-bottom: 0; }
+
+.fiche-total {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin: 10px -14px -12px;
+  padding: 10px 14px;
+  border-radius: 0 0 16px 16px;
+  background: var(--fiche-rose-pale);
+  font-weight: 700;
+}
+
+.fiche-bloc.rose .fiche-total { background: var(--fiche-rose); color: var(--fiche-papier); }
+.fiche-bloc.sauge .fiche-total { background: var(--fiche-sauge); color: var(--fiche-papier); }
+
+.fiche .champ {
+  background: var(--fiche-papier);
+  border-color: var(--fiche-trait);
+  color: var(--fiche-brun);
+}
+
+.fiche .champ:focus { border-color: var(--fiche-rose); }
+
+.fiche .chiffre { color: var(--fiche-brun); }
+
+.fiche-sticker {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 4px 10px;
+  border-radius: 999px;
+  border: 1.5px solid var(--fiche-trait);
+  background: var(--fiche-papier);
+  color: var(--fiche-brun);
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.fiche-lignes {
+  background:
+    repeating-linear-gradient(
+      to bottom,
+      transparent 0,
+      transparent 27px,
+      var(--fiche-trait) 27px,
+      var(--fiche-trait) 28px
+    ),
+    var(--fiche-papier);
+  line-height: 28px;
+  min-height: 84px;
+  font-family: var(--titre);
+  font-style: italic;
+  font-size: 15px;
+}
+
+.fiche-astuce {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+  padding: 12px 14px;
+  border-radius: 16px;
+  border: 1.5px dashed var(--fiche-rose);
+  background: var(--fiche-rose-fond);
+  margin-bottom: 14px;
+  font-family: var(--titre);
+  font-style: italic;
+  font-size: 15px;
+  line-height: 1.5;
+}
+
+.fiche-astuce .coeur { color: var(--fiche-rose); }
+
+.fiche-progression {
+  height: 10px;
+  border-radius: 999px;
+  background: var(--fiche-rose-pale);
+  overflow: hidden;
+  flex: 1;
+}
+
+.fiche-progression i {
+  display: block;
+  height: 100%;
+  border-radius: 999px;
+  background: var(--fiche-sauge);
+}
+
+.fiche .bouton-fiche {
+  background: var(--fiche-rose);
+  color: var(--fiche-papier);
+  border: 0;
+  border-radius: 999px;
+  font-weight: 700;
+  padding: 8px 14px;
+  font-size: 14px;
+  cursor: pointer;
+  flex: 0 0 auto;
+}
+
+.fiche .bouton-fiche:disabled { opacity: 0.4; cursor: default; }
+
+.fiche .croix {
+  background: none;
+  border: 1.5px solid var(--fiche-trait);
+  border-radius: 50%;
+  width: 28px;
+  height: 28px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--fiche-brun);
+  cursor: pointer;
+  flex: 0 0 auto;
+}

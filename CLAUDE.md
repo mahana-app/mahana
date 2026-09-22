@@ -128,6 +128,14 @@ Conséquence à ne pas oublier : **un écran qui suppose deux participants est
 faux**. Quand un seul avance la facture, DEUX lui doivent — c'est ce qui a fait
 réécrire `QuiDoitQuoi`, qui nommait un débiteur et un seul.
 
+## La fiche budget a ses couleurs à elle
+
+L'écran `Budget.tsx` est une page de planner — rose poudré, sauge, papier —
+parce que c'est celle-là que Maru voulait. Ses couleurs sont des variables
+`--fiche-*` déclarées sur `.fiche` dans `theme.css`, jamais des valeurs en
+dur dans le TSX. Le reste de l'app garde la palette Fare : ne pas laisser le
+rose déborder hors de la fiche.
+
 ## Les fichiers des factures
 
 Les photos et PDF des factures ne vivent pas dans la base mais dans la réserve
